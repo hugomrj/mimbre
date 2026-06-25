@@ -33,18 +33,18 @@ Para gestionar el ciclo de vida de la aplicación, utiliza los siguientes comand
 
 
 
-# Limpiar y empaquetar
+### Limpiar y empaquetar
 ```bash
 ./mvnw clean package
 ```
 
 
-# Preparar carpeta de destino
+### Preparar carpeta de destino
 ```bash
 rm -rf release
 ```
 
-# Generar ejecutable
+### Generar ejecutable
 ```bash
 jpackage \
 --name "Desk" \

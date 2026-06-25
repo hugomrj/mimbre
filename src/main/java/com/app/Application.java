@@ -1,16 +1,19 @@
 package com.app;
 
-import io.micronaut.runtime.Micronaut;
-
+import io.micronaut.context.ApplicationContext;
+import io.micronaut.runtime.server.EmbeddedServer;
 
 public class Application {
-    public static void main(String[] args) {
-        // Lanzamos Micronaut en un hilo separado
-        new Thread(() -> Micronaut.run(Application.class, args)).start();
 
-        // Lanzamos la interfaz gráfica en el hilo principal
+    public static void main(String[] args) {
+
+        EmbeddedServer server =
+                ApplicationContext.run(EmbeddedServer.class);
+
+        System.out.println(server.getURL());
+
         new Launcher().open();
+
+        server.stop();
     }
 }
-
-
