@@ -7,7 +7,9 @@ target/
 out/
 .micronaut/
 
-Mimbre/
+# Configuración de compilación y empaquetado
+release/
+build/
 
 .idea
 *.iml

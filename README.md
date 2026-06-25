@@ -28,3 +28,29 @@ Para gestionar el ciclo de vida de la aplicación, utiliza los siguientes comand
 | **Empaquetar (JAR)** | `./mvnw package` | `mvnw.cmd package` |
 | **Limpiar proyecto** | `./mvnw clean` | `mvnw.cmd clean` |
 | **Validar (Enforcer)** | `./mvnw validate` | `mvnw.cmd validate` |
+
+
+
+
+
+# Limpiar y empaquetar
+```bash
+./mvnw clean package
+```
+
+
+# Preparar carpeta de destino
+```bash
+rm -rf release
+```
+
+# Generar ejecutable
+```bash
+jpackage \
+--name "Desk" \
+--input target \
+--main-jar mimbre-0.1.jar \
+--main-class com.app.Application \
+--type app-image \
+--dest release
+```
