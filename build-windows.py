@@ -8,9 +8,11 @@ PROJECT_NAME = "Desk"
 JAR_NAME = "mimbre-0.1.jar"
 MAIN_CLASS = "com.app.Application"
 
+
 def run(command):
     print(f"\n>>> {' '.join(command)}\n")
-    subprocess.run(command, check=True)
+    subprocess.run(command, check=True, shell=True)
+
 
 def main():
 
