@@ -1,43 +1,49 @@
 name: Build Windows Executable
 
 on:
+  workflow_dispatch: # <--- ESTO PERMITE EJECUTARLO A MANO DESDE LA WEB
   push:
-    branches: [ "main" ] # Se ejecutará cada que subas a la rama main
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch: # Te permite ejecutarlo manualmente desde la pestaña "Actions" en GitHub
+    tags:
+      - 'v*' # <--- ESTO SE EJECUTA SOLO SI HACES UN TAG (ej: git push v1.0.0)
 
 jobs:
   build-windows:
-    runs-on: windows-latest # ¡Aquí está la magia! Esto es un Windows puro
+    runs-on: windows-latest
 
     steps:
-      # 1. Descargar el código
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Instalar Java (Necesario para Maven y jpackage)
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21' # <--- CAMBIADO A 21
+          java-version: '21'
           distribution: 'temurin'
 
-
-      # 3. Instalar Python (Porque usamos tu script en Python)
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
-      # 4. Ejecutar tu script
       - name: Run build script
         run: python build-windows.py
 
-      # 5. Subir el ejecutable y sus dependencias (JRE interno) como un "Artefacto"
-      - name: Upload Windows Executable
+      # NUEVO: Crear un archivo .zip con la carpeta generada
+      - name: Zip the output
+        run: Compress-Archive -Path release/Desk/* -DestinationPath Desk-Windows.zip
+        shell: pwsh
+
+      # NUEVO: Si lo ejecutaste a mano, lo sube como "Artifact" temporal (expira en 90 días)
+      - name: Upload Development Artifact
+        if: startsWith(github.ref, 'refs/tags/') == false
         uses: actions/upload-artifact@v4
         with:
-          name: Desk-Windows-Exe
-          path: release/Desk/    # <--- CAMBIADO: Ahora sube toda la carpeta "Desk", no solo el .exe
-          if-no-files-found: error
+          name: Desk-Windows-Dev
+          path: Desk-Windows.zip
+
+      # NUEVO: Si es un Tag (versión oficial), lo publica en la sección "Releases" para siempre
+      - name: Publish to GitHub Releases
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Desk-Windows.zip
