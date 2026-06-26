@@ -34,10 +34,10 @@ jobs:
       - name: Run build script
         run: python build-windows.py
 
-      # 5. Subir el .exe resultante como un "Artefacto" descargable
+      # 5. Subir el ejecutable y sus dependencias (JRE interno) como un "Artefacto"
       - name: Upload Windows Executable
         uses: actions/upload-artifact@v4
         with:
           name: Desk-Windows-Exe
-          path: release/Desk/Desk.exe # Ruta donde tu script deja el .exe
+          path: release/Desk/    # <--- CAMBIADO: Ahora sube toda la carpeta "Desk", no solo el .exe
           if-no-files-found: error
