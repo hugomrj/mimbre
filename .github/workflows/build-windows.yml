@@ -31,7 +31,7 @@ jobs:
 
       # 4. Ejecutar tu script
       - name: Run build script
-        run: python build.py
+        run: python build-windows.py
 
       # 5. Subir el .exe resultante como un "Artefacto" descargable
       - name: Upload Windows Executable
