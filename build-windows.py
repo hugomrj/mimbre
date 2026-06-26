@@ -26,7 +26,7 @@ def main():
     if sys.platform != "win32":
         subprocess.run(["chmod", "+x", "mvnw"], check=False)
 
-    run([maven_cmd, "clean", "package", "-Pwindows", "-DskipTests"])
+    run([maven_cmd, "clean", "package", "-DskipTests"])
 
     release_dir = Path("release")
     if release_dir.exists():
