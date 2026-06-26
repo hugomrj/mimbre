@@ -1,22 +1,20 @@
 package com.app;
 
+
 import io.micronaut.context.ApplicationContext;
-import io.micronaut.runtime.server.EmbeddedServer;
+import io.micronaut.runtime.Micronaut;
 
 public class Application {
 
     public static void main(String[] args) {
 
-        // 1. Iniciar el contexto y el servidor
-        ApplicationContext context = ApplicationContext.run(EmbeddedServer.class);
-        EmbeddedServer server = context.getBean(EmbeddedServer.class);
+        // 1. Iniciamos Micronaut (Esto levanta el servidor en el puerto 8080)
+        ApplicationContext context = Micronaut.run(Application.class, args);
 
-        System.out.println("Servidor iniciado en: " + server.getURL());
-
-        // 2. Lanzar la ventana (Este método se queda bloqueado hasta que el usuario cierre la ventana)
+        // 2. Lanzamos la ventana SWT (Este método se queda bloqueado hasta que el usuario cierre la ventana)
         new Launcher().open();
 
-        // 3. Cuando la ventana se cierre, apagar todo limpiamente
+        // 3. Cuando la ventana se cierre, apagamos Micronaut limpiamente
         System.out.println("Cerrando aplicación...");
         context.close();
     }
