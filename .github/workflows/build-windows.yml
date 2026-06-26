@@ -17,11 +17,12 @@ jobs:
         uses: actions/checkout@v4
 
       # 2. Instalar Java (Necesario para Maven y jpackage)
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17' # Cambia esto si usas Java 21, 11, etc.
+          java-version: '21' # <--- CAMBIADO A 21
           distribution: 'temurin'
+
 
       # 3. Instalar Python (Porque usamos tu script en Python)
       - name: Set up Python
