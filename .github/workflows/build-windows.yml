@@ -24,6 +24,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          maven: '3.9.9'
 
       - name: Set up Python
         uses: actions/setup-python@v5

@@ -13,8 +13,12 @@ def run(command):
     subprocess.run(command, check=True)
 
 def main():
-    # Detectar si es Windows o Linux para usar el wrapper correcto
-    maven_cmd = "mvnw.cmd" if sys.platform == "win32" else "./mvnw"
+
+    # En Windows CI usamos Maven instalado en el sistema, en Linux usamos el wrapper
+    if sys.platform == "win32":
+        maven_cmd = "mvn"
+    else:
+        maven_cmd = "./mvnw"
 
     # Dar permisos de ejecución en Linux/Mac
     if sys.platform != "win32":
