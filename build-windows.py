@@ -38,8 +38,9 @@ def main():
         "--input", "target",
         "--main-jar", JAR_NAME,
         "--main-class", MAIN_CLASS,
-        "--type", "app-image", # Si quieres un instalador .exe, cambia esto a "exe"
-        "--dest", "release"
+        "--type", "app-image",
+        "--dest", "release",
+        "--java-options", "-Dorg.eclipse.swt.browser.DefaultType=edge"
     ])
 
     print("\nBuild finalizado.")

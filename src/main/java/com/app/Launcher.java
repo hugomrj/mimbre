@@ -17,7 +17,7 @@ public class Launcher {
         shell.setSize(1200, 800);
         shell.setLayout(new FillLayout());
 
-        Browser browser = new Browser(shell, SWT.NONE);
+        Browser browser = new Browser(shell, SWT.EDGE);
         browser.setUrl("http://localhost:8080");
 
         shell.open();

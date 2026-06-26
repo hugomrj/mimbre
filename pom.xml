@@ -115,31 +115,28 @@
 
   <profiles>
 
-    <profile>
-      <id>linux</id>
+      <profile>
+          <id>linux</id>
+          <dependencies>
+              <dependency>
+                  <groupId>org.eclipse.platform</groupId>
+                  <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+                  <version>3.130.100</version> <!-- ACTUALIZADO -->
+              </dependency>
+          </dependencies>
+      </profile>
 
-      <dependencies>
-        <dependency>
-          <groupId>org.eclipse.platform</groupId>
-          <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
-          <version>3.125.0</version>
-        </dependency>
-      </dependencies>
-
-    </profile>
-
-    <profile>
-      <id>windows</id>
-
-      <dependencies>
-        <dependency>
-          <groupId>org.eclipse.platform</groupId>
-          <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
-          <version>3.125.0</version>
-        </dependency>
-      </dependencies>
-
-    </profile>
+      <profile>
+          <id>windows</id>
+          <dependencies>
+              <dependency>
+                  <groupId>org.eclipse.platform</groupId>
+                  <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+                  <version>3.130.100</version> <!-- ACTUALIZADO -->
+              </dependency>
+          </dependencies>
+      </profile>
+      
 
   </profiles>
 
