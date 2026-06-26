@@ -6,6 +6,11 @@ on:
     tags:
       - 'v*' # <--- ESTO SE EJECUTA SOLO SI HACES UN TAG (ej: git push v1.0.0)
 
+# ---> AÑADE ESTO <---
+permissions:
+  contents: write
+  # ----------------------
+
 jobs:
   build-windows:
     runs-on: windows-latest
