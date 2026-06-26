@@ -1,0 +1,42 @@
+name: Build Windows Executable
+
+on:
+  push:
+    branches: [ "main" ] # Se ejecutará cada que subas a la rama main
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # Te permite ejecutarlo manualmente desde la pestaña "Actions" en GitHub
+
+jobs:
+  build-windows:
+    runs-on: windows-latest # ¡Aquí está la magia! Esto es un Windows puro
+
+    steps:
+      # 1. Descargar el código
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Instalar Java (Necesario para Maven y jpackage)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17' # Cambia esto si usas Java 21, 11, etc.
+          distribution: 'temurin'
+
+      # 3. Instalar Python (Porque usamos tu script en Python)
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # 4. Ejecutar tu script
+      - name: Run build script
+        run: python build.py
+
+      # 5. Subir el .exe resultante como un "Artefacto" descargable
+      - name: Upload Windows Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: Desk-Windows-Exe
+          path: release/Desk/Desk.exe # Ruta donde tu script deja el .exe
+          if-no-files-found: error

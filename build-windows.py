@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 PROJECT_NAME = "Desk"
@@ -13,11 +13,16 @@ def run(command):
     subprocess.run(command, check=True)
 
 def main():
+    # Detectar si es Windows o Linux para usar el wrapper correcto
+    maven_cmd = "mvnw.cmd" if sys.platform == "win32" else "./mvnw"
 
-    run(["mvnw.cmd", "clean", "package", "-Pwindows"])
+    # Dar permisos de ejecución en Linux/Mac
+    if sys.platform != "win32":
+        subprocess.run(["chmod", "+x", "mvnw"], check=False)
+
+    run([maven_cmd, "clean", "package", "-Pwindows", "-DskipTests"])
 
     release_dir = Path("release")
-
     if release_dir.exists():
         shutil.rmtree(release_dir)
 
@@ -27,12 +32,15 @@ def main():
         "--input", "target",
         "--main-jar", JAR_NAME,
         "--main-class", MAIN_CLASS,
-        "--type", "app-image",
+        "--type", "app-image", # Si quieres un instalador .exe, cambia esto a "exe"
         "--dest", "release"
     ])
 
-    print("\nBuild Windows finalizado.")
-    print(f"Ejecutable: release\\{PROJECT_NAME}\\{PROJECT_NAME}.exe")
+    print("\nBuild finalizado.")
+    if sys.platform == "win32":
+        print(f"Ejecutable: release\\{PROJECT_NAME}\\{PROJECT_NAME}.exe")
+    else:
+        print(f"Ejecutable: release/{PROJECT_NAME}/{PROJECT_NAME}.exe")
 
 if __name__ == "__main__":
     main()
