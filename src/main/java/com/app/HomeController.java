@@ -8,12 +8,11 @@ import java.util.Map;
 @Controller("/")
 public class HomeController {
 
-    @View("prueba") // Buscará src/main/resources/views/prueba.html
-    @Get
+    @View("main") // Buscará src/main/resources/views/main.html
+    @Get("/")
     public Map<String, Object> index() {
         return Map.of(
-                "titulo", "Prueba de Mimbre",
-                "mensaje", "Hola! El template Pebble está funcionando correctamente."
+                "titulo", "FARO - Dashboard Principal"
         );
     }
 }
