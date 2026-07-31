@@ -72,15 +72,23 @@ function closeSidebar() {
     setTimeout(() => overlay.style.display = 'none', 250);
 }
 
-function showToast(msg) {
+function showToast(msg, type = 'info') {
     const t = document.createElement('div');
-    t.className = 'toast';
-    t.textContent = msg;
+    t.className = `toast ${type}`;
+    
+    // Determinar el icono según el tipo
+    let iconClass = 'fas fa-info-circle';
+    if (type === 'success') iconClass = 'fas fa-check-circle';
+    if (type === 'error') iconClass = 'fas fa-times-circle';
+    if (type === 'warning') iconClass = 'fas fa-exclamation-triangle';
+
+    t.innerHTML = `<i class="${iconClass}"></i> <span>${msg}</span>`;
+    
     document.getElementById('toastContainer').appendChild(t);
     requestAnimationFrame(() => { t.style.transform = 'translateX(0)'; t.style.opacity = '1'; });
     setTimeout(() => { 
         t.style.transform = 'translateX(120%)'; 
         t.style.opacity = '0'; 
         setTimeout(() => t.remove(), 350); 
-    }, 2500);
+    }, 3000); // Aumenté el tiempo visible a 3 segundos para que se lean mejor
 }

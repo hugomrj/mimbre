@@ -685,21 +685,34 @@
         }
         .sidebar-overlay.visible { opacity: 1; }
 
+        /* ================= TOAST (NOTIFICACIONES) ================= */
         .toast {
-            padding: 12px 20px;
-            background: var(--dark-card);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--dark-card-border);
-            border-left: 3px solid var(--primary);
-            border-radius: 16px;
-            color: var(--dark-text);
+            padding: 12px 24px;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
             font-size: 14px;
             font-family: 'Inter', sans-serif;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             transform: translateX(120%);
             transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
             opacity: 0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
         }
+
+        .toast i {
+            font-size: 1.1rem;
+        }
+
+        /* Variantes de Toast */
+        .toast.info { background: var(--primary); }
+        .toast.success { background: #10B981; } /* Emerald */
+        .toast.error { background: #EF4444; }   /* Red */
+        .toast.warning { background: #F59E0B; color: #111827; } /* Amber, texto oscuro */
 
         @media (max-width: 1100px) {
             .data-table { display: block; overflow-x: auto; }

@@ -125,11 +125,9 @@ const VentaManager = {
         return true;
     },
 
-    showToast: function(message) {
-        // Asumiendo que existe una función global showToast en tu aplicación (común en este tipo de plantillas)
-        // Si no existe, podemos reemplazarla por un alert básico por ahora, pero usaremos la global si existe
+    showToast: function(message, type = 'error') {
         if (typeof window.showToast === 'function') {
-            window.showToast(message);
+            window.showToast(message, type);
         } else {
             alert(message);
         }
