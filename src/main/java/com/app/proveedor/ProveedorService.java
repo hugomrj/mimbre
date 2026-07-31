@@ -1,6 +1,5 @@
 package com.app.proveedor;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
@@ -14,15 +13,6 @@ public class ProveedorService {
 
     public ProveedorService(ProveedorRepository proveedorRepository) {
         this.proveedorRepository = proveedorRepository;
-    }
-
-    @PostConstruct
-    public void initDefaultProveedores() {
-        if (proveedorRepository.count() == 0) {
-            proveedorRepository.save(new Proveedor("Distribuidora Global S.A.", "80012345-1", "021-555-0101", "contacto@global.com", "Av. Principal 123"));
-            proveedorRepository.save(new Proveedor("TechImport SRL", "80098765-2", "021-555-0202", "ventas@techimport.com", "Calle Industria 456"));
-            proveedorRepository.save(new Proveedor("Comercial del Este", "80045678-3", "021-555-0303", "info@comercialeste.com", "Ruta 2 Km 10"));
-        }
     }
 
     public List<ProveedorDto> findAll() {

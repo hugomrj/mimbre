@@ -1,6 +1,5 @@
 package com.app.producto_categoria;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
@@ -14,17 +13,6 @@ public class ProductoCategoriaService {
 
     public ProductoCategoriaService(ProductoCategoriaRepository productoCategoriaRepository) {
         this.productoCategoriaRepository = productoCategoriaRepository;
-    }
-
-    @PostConstruct
-    public void initDefaultCategorias() {
-        if (productoCategoriaRepository.count() == 0) {
-            productoCategoriaRepository.save(new ProductoCategoria("Electrónica", "Dispositivos y gadgets electrónicos"));
-            productoCategoriaRepository.save(new ProductoCategoria("Ropa", "Vestimenta y prendas"));
-            productoCategoriaRepository.save(new ProductoCategoria("Hogar", "Artículos para el hogar y decoración"));
-            productoCategoriaRepository.save(new ProductoCategoria("Alimentos", "Productos alimenticios y bebidas"));
-            productoCategoriaRepository.save(new ProductoCategoria("Accesorios", "Accesorios variados"));
-        }
     }
 
     public List<ProductoCategoriaDto> findAll() {

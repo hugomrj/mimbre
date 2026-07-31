@@ -1,6 +1,5 @@
 package com.app.producto;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,15 +14,6 @@ public class ProductoService {
 
     public ProductoService(ProductoRepository productoRepository) {
         this.productoRepository = productoRepository;
-    }
-
-    @PostConstruct
-    public void initDefaultProductos() {
-        if (productoRepository.count() == 0) {
-            productoRepository.save(new Producto("Laptop Pro 15", "LAP-001", new BigDecimal("12000000"), 15, "Electrónica"));
-            productoRepository.save(new Producto("Mouse Inalámbrico", "MOU-002", new BigDecimal("150000"), 45, "Electrónica"));
-            productoRepository.save(new Producto("Teclado Mecánico RGB", "TEC-003", new BigDecimal("450000"), 20, "Electrónica"));
-        }
     }
 
     public List<ProductoDto> findAll() {
