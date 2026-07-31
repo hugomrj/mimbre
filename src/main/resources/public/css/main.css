@@ -833,9 +833,41 @@ textarea.form-control {
     min-height: 100px;
 }
 
-/* ═══════════════════════════════════════
-   ACCIONES DEL FORMULARIO
-   ═══════════════════════════════════════ */
+/* Autocompletado buscador de clientes */
+.cliente-dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: #0E1828;
+    border: 1px solid var(--dark-card-border);
+    border-radius: 12px;
+    margin-top: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+[data-theme="light"] .cliente-dropdown-list {
+    background: #FFFFFF;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.cliente-dropdown-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--dark-card-border);
+    transition: background 0.15s ease;
+}
+
+.cliente-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.cliente-dropdown-item:hover {
+    background: rgba(6, 182, 212, 0.15);
+}
 
 .form-actions {
     grid-column: 1 / -1; /* Siempre al final, ancho completo (6/6) */

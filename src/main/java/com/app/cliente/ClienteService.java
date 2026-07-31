@@ -31,6 +31,16 @@ public class ClienteService {
                 .collect(Collectors.toList());
     }
 
+    public List<ClienteDto> buscar(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return findAll().stream().limit(10).collect(Collectors.toList());
+        }
+        String pattern = "%" + query.trim() + "%";
+        return clienteRepository.buscar(pattern).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
     public Optional<ClienteDto> findById(Long id) {
         return clienteRepository.findById(id).map(this::mapToDto);
     }

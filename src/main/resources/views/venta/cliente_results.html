@@ -1,0 +1,12 @@
+<div class="cliente-dropdown-list">
+    {% for cli in clientes %}
+    <div class="cliente-dropdown-item" onclick="seleccionarCliente({{ cli.id }}, '{{ cli.nombre }} ({{ cli.rucDocumento }})')">
+        <div style="font-weight: 600; color: var(--dark-text);">{{ cli.nombre }}</div>
+        <div style="font-size: 0.75rem; color: var(--dark-text-muted);">Doc: {{ cli.rucDocumento }} | Tel: {{ cli.telefono }}</div>
+    </div>
+    {% else %}
+    <div style="padding: 12px; font-size: 0.85rem; color: var(--dark-text-muted); text-align: center;">
+        No se encontraron clientes
+    </div>
+    {% endfor %}
+</div>

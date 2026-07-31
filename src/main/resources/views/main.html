@@ -52,9 +52,8 @@
                 <i class="fas fa-chevron-down nav-chevron"></i>
             </button>
             <div class="nav-sub">
-                <a href="#" class="nav-sub-item" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Ventas</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/ventas/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Ventas</span></a>
                 <a href="#" class="nav-sub-item" hx-get="/ui/clientes/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Clientes</span></a>
-                <a href="#" class="nav-sub-item" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Facturacion</span></a>
             </div>
 
             <a href="#" class="nav-item" onclick="navTo(this, event)">

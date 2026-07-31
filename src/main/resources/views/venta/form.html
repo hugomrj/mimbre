@@ -1,0 +1,221 @@
+<div class="toolbar animate-fade-in delay-1">
+    <div class="toolbar-left">
+        <h2 style="font-size: 1.25rem; font-weight: 600;">
+            Nueva Venta / Facturación
+        </h2>
+    </div>
+</div>
+
+<div class="table-card animate-fade-in delay-2" style="padding: 24px;">
+
+    <form hx-post="/ui/ventas/save" hx-target="#id-main" class="form-container" id="formVenta" onsubmit="return validarVenta()">
+
+        <!-- FILA 1: Cliente Autocompletar (4/6) + Condición (2/6) -->
+        <div class="form-group col-4" style="position: relative;">
+            <label class="form-label" for="buscarClienteInput">Cliente</label>
+            <input type="text" id="buscarClienteInput" name="q" placeholder="Escriba para buscar por Nombre o RUC/Cédula..." required class="form-control" autocomplete="off"
+                   hx-get="/ui/ventas/buscar-cliente" hx-trigger="keyup changed delay:300ms, focus" hx-target="#clienteResultados">
+            <input type="hidden" id="selectCliente" name="clienteId" required>
+            <div id="clienteResultados"></div>
+        </div>
+
+        <div class="form-group col-2">
+            <label class="form-label" for="selectCondicion">Condición de Venta</label>
+            <select id="selectCondicion" name="condicion" class="form-control">
+                <option value="Contado" selected>Contado</option>
+                <option value="Crédito">Crédito</option>
+            </select>
+        </div>
+
+        <!-- SECCIÓN: Selección de Producto y Cantidad -->
+        <div class="form-group col-full" style="background: var(--dark-input-bg); border: 1px solid var(--dark-card-border); border-radius: 16px; padding: 16px; margin-top: 8px;">
+            <label class="form-label" style="font-weight: 600; font-size: 0.95rem; margin-bottom: 12px; display: block; color: var(--primary);">
+                <i class="fas fa-cart-plus"></i> Agregar Productos a la Venta
+            </label>
+            <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+                <div style="flex: 3; min-width: 200px;">
+                    <label class="form-label" for="selectProducto">Producto</label>
+                    <select id="selectProducto" class="form-control">
+                        <option value="" disabled selected>Seleccione un producto</option>
+                        {% for prod in productos %}
+                        <option value="{{ prod.id }}" data-nombre="{{ prod.nombre }}" data-precio="{{ prod.precio }}" data-stock="{{ prod.stock }}">
+                            {{ prod.nombre }} - ₲ {{ prod.precio }} (Stock: {{ prod.stock }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="flex: 1; min-width: 100px;">
+                    <label class="form-label" for="inputCantidad">Cantidad</label>
+                    <input type="number" id="inputCantidad" value="1" min="1" class="form-control">
+                </div>
+
+                <div>
+                    <button type="button" class="btn-add" onclick="agregarItemDesdeSelect()"><i class="fas fa-plus"></i> Agregar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA DE DETALLE DE LA VENTA -->
+        <div class="form-group col-full" style="margin-top: 12px;">
+            <table class="data-table" id="tablaItemsVenta">
+                <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th style="width: 120px; text-align: center;">Cantidad</th>
+                    <th style="width: 150px; text-align: right;">Precio Unit.</th>
+                    <th style="width: 150px; text-align: right;">Subtotal</th>
+                    <th style="width: 60px; text-align: center;">Acción</th>
+                </tr>
+                </thead>
+                <tbody id="tbodyItemsVenta">
+                <tr id="rowVacia">
+                    <td colspan="5" style="text-align: center; padding: 24px; color: var(--dark-text-muted);">
+                        No se han agregado productos a la venta.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- CONTENEDOR OCULTO PARA FORM INPUTS -->
+        <div id="inputsOcultosDetalle"></div>
+
+        <!-- TOTAL GENERAL -->
+        <div class="form-group col-full" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--dark-card-border); padding-top: 16px; margin-top: 8px;">
+            <div style="font-size: 1.1rem; color: var(--dark-text-muted);">
+                Total a Pagar:
+            </div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary);" id="labelTotalVenta">
+                ₲ 0
+            </div>
+        </div>
+
+        <!-- FILA DE ACCIONES -->
+        <div class="form-actions">
+            <button type="submit" class="btn-add"><i class="fas fa-check"></i> Emitir Factura / Confirmar Venta</button>
+            <button type="button" class="btn-ghost" hx-get="/ui/ventas/table" hx-target="#id-main">Cancelar</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    var itemsVenta = [];
+
+    function seleccionarCliente(id, label) {
+        document.getElementById('selectCliente').value = id;
+        document.getElementById('buscarClienteInput').value = label;
+        document.getElementById('clienteResultados').innerHTML = '';
+    }
+
+    // Ocultar resultados si se hace clic fuera
+    document.addEventListener('click', function(e) {
+        var container = document.getElementById('clienteResultados');
+        var input = document.getElementById('buscarClienteInput');
+        if (container && input && !container.contains(e.target) && e.target !== input) {
+            container.innerHTML = '';
+        }
+    });
+
+    function agregarItemDesdeSelect() {
+        var sel = document.getElementById('selectProducto');
+        var cantInput = document.getElementById('inputCantidad');
+
+        if (!sel.value) {
+            showToast('Seleccione un producto primero');
+            return;
+        }
+
+        var opt = sel.options[sel.selectedIndex];
+        var id = parseInt(sel.value);
+        var nombre = opt.getAttribute('data-nombre');
+        var precio = parseFloat(opt.getAttribute('data-precio'));
+        var stock = parseInt(opt.getAttribute('data-stock'));
+        var cantidad = parseInt(cantInput.value) || 1;
+
+        if (cantidad <= 0) {
+            showToast('Ingrese una cantidad mayor a 0');
+            return;
+        }
+
+        if (cantidad > stock) {
+            showToast('Stock insuficiente. Disponible: ' + stock);
+            return;
+        }
+
+        var existente = itemsVenta.find(i => i.id === id);
+        if (existente) {
+            if (existente.cantidad + cantidad > stock) {
+                showToast('Supera el stock disponible (' + stock + ')');
+                return;
+            }
+            existente.cantidad += cantidad;
+            existente.subtotal = existente.cantidad * existente.precio;
+        } else {
+            itemsVenta.push({
+                id: id,
+                nombre: nombre,
+                precio: precio,
+                cantidad: cantidad,
+                subtotal: cantidad * precio
+            });
+        }
+
+        renderizarTablaItems();
+        cantInput.value = 1;
+        sel.value = "";
+    }
+
+    function eliminarItem(index) {
+        itemsVenta.splice(index, 1);
+        renderizarTablaItems();
+    }
+
+    function renderizarTablaItems() {
+        var tbody = document.getElementById('tbodyItemsVenta');
+        var inputsDiv = document.getElementById('inputsOcultosDetalle');
+        var totalLabel = document.getElementById('labelTotalVenta');
+
+        tbody.innerHTML = '';
+        inputsDiv.innerHTML = '';
+
+        if (itemsVenta.length === 0) {
+            tbody.innerHTML = '<tr id="rowVacia"><td colspan="5" style="text-align: center; padding: 24px; color: var(--dark-text-muted);">No se han agregado productos a la venta.</td></tr>';
+            totalLabel.textContent = '₲ 0';
+            return;
+        }
+
+        var total = 0;
+
+        itemsVenta.forEach(function(item, idx) {
+            total += item.subtotal;
+
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td><strong>' + item.nombre + '</strong></td>' +
+                '<td style="text-align: center;">' + item.cantidad + '</td>' +
+                '<td style="text-align: right;">₲ ' + item.precio.toLocaleString('es-PY') + '</td>' +
+                '<td style="text-align: right;"><strong>₲ ' + item.subtotal.toLocaleString('es-PY') + '</strong></td>' +
+                '<td style="text-align: center;"><button type="button" class="row-action-btn" onclick="eliminarItem(' + idx + ')"><i class="fas fa-trash-alt" style="color: #F43F5E;"></i></button></td>';
+            tbody.appendChild(tr);
+
+            inputsDiv.innerHTML += '<input type="hidden" name="productoId" value="' + item.id + '">' +
+                '<input type="hidden" name="cantidad" value="' + item.cantidad + '">' +
+                '<input type="hidden" name="precioUnitario" value="' + item.precio + '">';
+        });
+
+        totalLabel.textContent = '₲ ' + total.toLocaleString('es-PY');
+    }
+
+    function validarVenta() {
+        if (!document.getElementById('selectCliente').value) {
+            showToast('Seleccione un cliente válido de la lista');
+            return false;
+        }
+        if (itemsVenta.length === 0) {
+            showToast('Agregue al menos un producto a la venta');
+            return false;
+        }
+        return true;
+    }
+</script>

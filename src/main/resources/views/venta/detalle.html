@@ -1,0 +1,60 @@
+<div class="toolbar animate-fade-in delay-1">
+    <div class="toolbar-left">
+        <h2 style="font-size: 1.25rem; font-weight: 600;">
+            Detalle de Factura: {{ venta.numeroFactura }}
+        </h2>
+    </div>
+    <div class="toolbar-right">
+        <button class="btn-ghost" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button>
+        <button class="btn-ghost" hx-get="/ui/ventas/table" hx-target="#id-main"><i class="fas fa-arrow-left"></i> Volver a Ventas</button>
+    </div>
+</div>
+
+<div class="table-card animate-fade-in delay-2" style="padding: 28px;">
+    <!-- Encabezado Factura -->
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--dark-card-border); padding-bottom: 20px; margin-bottom: 24px;">
+        <div>
+            <h3 style="font-size: 1.1rem; color: var(--dark-text); margin-bottom: 6px;">Factura {{ venta.numeroFactura }}</h3>
+            <p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Cliente:</strong> {{ venta.clienteNombre }}</p>
+            <p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Condición:</strong> {{ venta.condicion }}</p>
+        </div>
+        <div style="text-align: right;">
+            <p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Fecha:</strong> {{ venta.fecha | date("dd/MM/yyyy HH:mm") }}</p>
+            <p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Estado:</strong>
+                {% if venta.estado == 'COMPLETADA' %}
+                <span style="color: #22C55E; font-weight: 600;">Completada</span>
+                {% else %}
+                <span style="color: #F43F5E; font-weight: 600;">Anulada</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Tabla Ítems -->
+    <table class="data-table" style="margin-bottom: 24px;">
+        <thead>
+        <tr>
+            <th>Producto</th>
+            <th style="text-align: center;">Cantidad</th>
+            <th style="text-align: right;">Precio Unitario</th>
+            <th style="text-align: right;">Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for d in venta.detalles %}
+        <tr>
+            <td><strong>{{ d.productoNombre }}</strong></td>
+            <td style="text-align: center;">{{ d.cantidad }}</td>
+            <td style="text-align: right;">₲ {{ d.precioUnitario }}</td>
+            <td style="text-align: right;"><strong>₲ {{ d.subtotal }}</strong></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Resumen Total -->
+    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 16px; font-size: 1.25rem;">
+        <span style="color: var(--dark-text-muted);">Total de la Venta:</span>
+        <strong style="color: var(--primary); font-size: 1.5rem;">₲ {{ venta.montoTotal }}</strong>
+    </div>
+</div>
