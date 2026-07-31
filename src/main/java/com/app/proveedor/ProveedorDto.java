@@ -8,16 +8,12 @@ import jakarta.validation.constraints.NotBlank;
 public class ProveedorDto {
     private Long id;
 
-    @NotBlank(message = "El nombre del proveedor no puede estar vacío")
     private String nombre;
 
-    @NotBlank(message = "El RUC es obligatorio")
     private String ruc;
 
-    @NotBlank(message = "El teléfono es obligatorio")
     private String telefono;
 
-    @NotBlank(message = "El correo electrónico es obligatorio")
     @Email(message = "El formato del correo electrónico no es válido")
     private String email;
 
