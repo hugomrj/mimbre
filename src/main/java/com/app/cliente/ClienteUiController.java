@@ -16,6 +16,12 @@ public class ClienteUiController {
         this.clienteService = clienteService;
     }
 
+    @View("cliente/results")
+    @Get("/buscar-cliente{?q}")
+    public Map<String, Object> buscarCliente(@Nullable String q) {
+        return Map.of("clientes", clienteService.buscar(q));
+    }
+
     @View("cliente/table")
     @Get("/table")
     public Map<String, Object> table() {

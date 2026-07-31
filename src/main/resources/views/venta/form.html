@@ -14,7 +14,7 @@
         <div class="form-group col-4" style="position: relative;">
             <label class="form-label" for="buscarClienteInput">Cliente</label>
             <input type="text" id="buscarClienteInput" name="q" placeholder="Escriba para buscar por Nombre o RUC/Cédula..." required class="form-control" autocomplete="off"
-                   hx-get="/ui/ventas/buscar-cliente" hx-trigger="keyup changed delay:300ms, focus" hx-target="#clienteResultados">
+                   hx-get="/ui/clientes/buscar-cliente" hx-trigger="keyup changed delay:300ms, focus" hx-target="#clienteResultados">
             <input type="hidden" id="selectCliente" name="clienteId" required>
             <div id="clienteResultados"></div>
         </div>

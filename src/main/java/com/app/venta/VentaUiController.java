@@ -41,12 +41,6 @@ public class VentaUiController {
         );
     }
 
-    @View("venta/cliente_results")
-    @Get("/buscar-cliente{?q}")
-    public Map<String, Object> buscarCliente(@Nullable String q) {
-        return Map.of("clientes", clienteService.buscar(q));
-    }
-
     @View("venta/detalle")
     @Get("/detalle{?id}")
     public Map<String, Object> detalle(@Nullable Long id) {
