@@ -1,10 +1,10 @@
 <div class="toolbar animate-fade-in delay-1">
     <div class="toolbar-filters">
-        <button class="filter-chip active" onclick="setFilter(this)">Todas <span class="count">{{ categories.size() | default(0) }}</span></button>
+        <button class="filter-chip active" onclick="setFilter(this)">Todas <span class="count">{{ categorias.size() | default(0) }}</span></button>
     </div>
     <div class="toolbar-right">
         <button class="btn-ghost" onclick="showToast('Exportando...')"><i class="fas fa-file-export"></i> Exportar</button>
-        <button class="btn-add" hx-get="/ui/categories/form" hx-target="#id-main"><i class="fas fa-plus"></i> Nueva categoría</button>
+        <button class="btn-add" hx-get="/ui/categorias/form" hx-target="#id-main"><i class="fas fa-plus"></i> Nueva categoría</button>
     </div>
 </div>
 
@@ -19,15 +19,15 @@
         </tr>
         </thead>
         <tbody>
-        {% for c in categories %}
+        {% for c in categorias %}
         <tr class="row-anim" style="animation-delay: 0.04s">
             <td>{{ c.id }}</td>
-            <td><strong>{{ c.name }}</strong></td>
-            <td style="color:var(--dark-text-muted)">{{ c.description }}</td>
+            <td><strong>{{ c.nombre }}</strong></td>
+            <td style="color:var(--dark-text-muted)">{{ c.descripcion }}</td>
             <td>
                 <div class="row-actions">
-                    <button class="row-action-btn" title="Editar" hx-get="/ui/categories/form?id={{ c.id }}" hx-target="#id-main"><i class="fas fa-pen"></i></button>
-                    <button class="row-action-btn" title="Eliminar" hx-delete="/api/categories/{{ c.id }}" hx-target="#id-main" hx-confirm="¿Eliminar categoría?"><i class="fas fa-trash-alt"></i></button>
+                    <button class="row-action-btn" title="Editar" hx-get="/ui/categorias/form?id={{ c.id }}" hx-target="#id-main"><i class="fas fa-pen"></i></button>
+                    <button class="row-action-btn" title="Eliminar" hx-delete="/api/producto-categorias/{{ c.id }}" hx-target="#id-main" hx-confirm="¿Eliminar categoría?"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </td>
         </tr>

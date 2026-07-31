@@ -1,6 +1,6 @@
 package com.app.producto;
 
-import com.app.category.CategoryService;
+import com.app.producto_categoria.ProductoCategoriaService;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -13,11 +13,11 @@ import java.util.Map;
 public class ProductoUiController {
 
     private final ProductoService productoService;
-    private final CategoryService categoryService;
+    private final ProductoCategoriaService productoCategoriaService;
 
-    public ProductoUiController(ProductoService productoService, CategoryService categoryService) {
+    public ProductoUiController(ProductoService productoService, ProductoCategoriaService productoCategoriaService) {
         this.productoService = productoService;
-        this.categoryService = categoryService;
+        this.productoCategoriaService = productoCategoriaService;
     }
 
     @View("producto/table")
@@ -30,7 +30,7 @@ public class ProductoUiController {
     @Get("/form{?id}")
     public Map<String, Object> form(@Nullable Long id) {
         Map<String, Object> model = new HashMap<>();
-        model.put("categorias", categoryService.findAll());
+        model.put("categorias", productoCategoriaService.findAll());
         if (id != null) {
             productoService.findById(id).ifPresent(producto -> model.put("producto", producto));
         }
