@@ -27,32 +27,18 @@
             </select>
         </div>
 
-        <!-- SECCIÓN: Selección de Producto y Cantidad -->
-        <div class="form-group col-full" style="background: var(--dark-input-bg); border: 1px solid var(--dark-card-border); border-radius: 16px; padding: 16px; margin-top: 8px;">
-            <label class="form-label" style="font-weight: 600; font-size: 0.95rem; margin-bottom: 12px; display: block; color: var(--primary);">
-                <i class="fas fa-cart-plus"></i> Agregar Productos a la Venta
+        <!-- SECCIÓN: Encabezado de Productos y Botón Modal -->
+        <div class="form-group col-full" style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 4px;">
+            <label class="form-label" style="font-weight: 600; font-size: 1rem; color: var(--primary); margin: 0;">
+                <i class="fas fa-boxes-stacked"></i> Detalle de Productos
             </label>
-            <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
-                <div style="flex: 3; min-width: 200px; position: relative;">
-                    <label class="form-label" for="buscarProductoInput">Buscar Producto</label>
-                    <input type="text" id="buscarProductoInput" placeholder="Escriba Nombre o SKU..." class="form-control" autocomplete="off"
-                           hx-get="/ui/productos/buscar-producto" hx-trigger="keyup changed delay:300ms, focus" hx-target="#productoResultados">
-                    <div id="productoResultados"></div>
-                </div>
-
-                <div style="flex: 1; min-width: 100px;">
-                    <label class="form-label" for="inputCantidad">Cantidad</label>
-                    <input type="number" id="inputCantidad" value="1" min="1" class="form-control">
-                </div>
-
-                <div>
-                    <button type="button" class="btn-add" onclick="VentaManager.agregarItemDesdeInput()"><i class="fas fa-plus"></i> Agregar</button>
-                </div>
-            </div>
+            <button type="button" class="btn-add" onclick="VentaManager.abrirModalProducto()">
+                <i class="fas fa-cart-plus"></i> Agregar Producto
+            </button>
         </div>
 
         <!-- TABLA DE DETALLE DE LA VENTA -->
-        <div class="form-group col-full" style="margin-top: 12px;">
+        <div class="form-group col-full" style="margin-top: 4px;">
             <table class="data-table" id="tablaItemsVenta">
                 <thead>
                 <tr>
@@ -95,5 +81,37 @@
     </form>
 </div>
 
+<!-- MODAL BÚSQUEDA Y SELECCIÓN DE PRODUCTO -->
+<div id="modalProducto" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fas fa-search" style="color: var(--primary);"></i> Buscar y Agregar Producto
+            </div>
+            <button type="button" class="modal-close-btn" onclick="VentaManager.cerrarModalProducto()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div style="position: relative;">
+                <label class="form-label" for="buscarProductoInput">Buscar Producto</label>
+                <input type="text" id="buscarProductoInput" placeholder="Escriba Nombre o SKU..." class="form-control" autocomplete="off"
+                       hx-get="/ui/productos/buscar-producto" hx-trigger="keyup changed delay:300ms, focus" hx-target="#productoResultados">
+                <div id="productoResultados"></div>
+            </div>
 
-
+            <div>
+                <label class="form-label" for="inputCantidad">Cantidad</label>
+                <input type="number" id="inputCantidad" value="1" min="1" class="form-control">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-ghost" onclick="VentaManager.agregarItemDesdeInput(false)">
+                <i class="fas fa-check"></i> Agregar y Cerrar
+            </button>
+            <button type="button" class="btn-add" onclick="VentaManager.agregarItemDesdeInput(true)">
+                <i class="fas fa-plus-circle"></i> Agregar y Continuar
+            </button>
+        </div>
+    </div>
+</div>
