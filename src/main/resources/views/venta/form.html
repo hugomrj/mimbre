@@ -33,16 +33,11 @@
                 <i class="fas fa-cart-plus"></i> Agregar Productos a la Venta
             </label>
             <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
-                <div style="flex: 3; min-width: 200px;">
-                    <label class="form-label" for="selectProducto">Producto</label>
-                    <select id="selectProducto" class="form-control">
-                        <option value="" disabled selected>Seleccione un producto</option>
-                        {% for prod in productos %}
-                        <option value="{{ prod.id }}" data-nombre="{{ prod.nombre }}" data-precio="{{ prod.precio }}" data-stock="{{ prod.stock }}">
-                            {{ prod.nombre }} - ₲ {{ prod.precio }} (Stock: {{ prod.stock }})
-                        </option>
-                        {% endfor %}
-                    </select>
+                <div style="flex: 3; min-width: 200px; position: relative;">
+                    <label class="form-label" for="buscarProductoInput">Buscar Producto</label>
+                    <input type="text" id="buscarProductoInput" placeholder="Escriba Nombre o SKU..." class="form-control" autocomplete="off"
+                           hx-get="/ui/productos/buscar-producto" hx-trigger="keyup changed delay:300ms, focus" hx-target="#productoResultados">
+                    <div id="productoResultados"></div>
                 </div>
 
                 <div style="flex: 1; min-width: 100px;">
@@ -51,7 +46,7 @@
                 </div>
 
                 <div>
-                    <button type="button" class="btn-add" onclick="VentaManager.agregarItemDesdeSelect()"><i class="fas fa-plus"></i> Agregar</button>
+                    <button type="button" class="btn-add" onclick="VentaManager.agregarItemDesdeInput()"><i class="fas fa-plus"></i> Agregar</button>
                 </div>
             </div>
         </div>

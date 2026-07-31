@@ -1,6 +1,7 @@
 // Estado del módulo de ventas
 const VentaManager = {
     itemsVenta: [],
+    productoTemporal: null,
 
     seleccionarCliente: function(id, label) {
         const selectCliente = document.getElementById('selectCliente');
@@ -14,53 +15,69 @@ const VentaManager = {
         }
     },
 
-    agregarItemDesdeSelect: function() {
-        const sel = document.getElementById('selectProducto');
+    seleccionarProducto: function(id, nombre, precio, stock) {
+        const buscarProductoInput = document.getElementById('buscarProductoInput');
+        const productoResultados = document.getElementById('productoResultados');
+        
+        if (buscarProductoInput && productoResultados) {
+            buscarProductoInput.value = nombre;
+            productoResultados.innerHTML = '';
+            
+            // Guardamos el producto temporalmente hasta que le dé a "Agregar"
+            this.productoTemporal = {
+                id: id,
+                nombre: nombre,
+                precio: precio,
+                stock: stock
+            };
+        }
+    },
+
+    agregarItemDesdeInput: function() {
         const cantInput = document.getElementById('inputCantidad');
 
-        if (!sel.value) {
-            this.showToast('Seleccione un producto primero');
+        if (!this.productoTemporal) {
+            this.showToast('Busque y seleccione un producto de la lista primero', 'warning');
             return;
         }
 
-        const opt = sel.options[sel.selectedIndex];
-        const id = parseInt(sel.value);
-        const nombre = opt.getAttribute('data-nombre');
-        const precio = parseFloat(opt.getAttribute('data-precio'));
-        const stock = parseInt(opt.getAttribute('data-stock'));
         const cantidad = parseInt(cantInput.value) || 1;
+        const prod = this.productoTemporal;
 
         if (cantidad <= 0) {
-            this.showToast('Ingrese una cantidad mayor a 0');
+            this.showToast('Ingrese una cantidad mayor a 0', 'error');
             return;
         }
 
-        if (cantidad > stock) {
-            this.showToast('Stock insuficiente. Disponible: ' + stock);
+        if (cantidad > prod.stock) {
+            this.showToast(`Stock insuficiente. Disponible: ${prod.stock}`, 'error');
             return;
         }
 
-        const existente = this.itemsVenta.find(i => i.id === id);
+        const existente = this.itemsVenta.find(i => i.id === prod.id);
         if (existente) {
-            if (existente.cantidad + cantidad > stock) {
-                this.showToast('Supera el stock disponible (' + stock + ')');
+            if (existente.cantidad + cantidad > prod.stock) {
+                this.showToast(`Supera el stock disponible (${prod.stock})`, 'error');
                 return;
             }
             existente.cantidad += cantidad;
             existente.subtotal = existente.cantidad * existente.precio;
         } else {
             this.itemsVenta.push({
-                id: id,
-                nombre: nombre,
-                precio: precio,
+                id: prod.id,
+                nombre: prod.nombre,
+                precio: prod.precio,
                 cantidad: cantidad,
-                subtotal: cantidad * precio
+                subtotal: cantidad * prod.precio
             });
         }
 
         this.renderizarTablaItems();
+        
+        // Limpiar para el siguiente producto
         cantInput.value = 1;
-        sel.value = "";
+        document.getElementById('buscarProductoInput').value = '';
+        this.productoTemporal = null;
     },
 
     eliminarItem: function(index) {
@@ -136,17 +153,26 @@ const VentaManager = {
     // Método para inicializar/limpiar el estado cuando se carga el formulario de nuevo
     reset: function() {
         this.itemsVenta = [];
+        this.productoTemporal = null;
     }
 };
 
 // Configurar los event listeners globales necesarios
 document.addEventListener('DOMContentLoaded', () => {
-    // Ocultar resultados de cliente si se hace clic fuera
+    // Ocultar resultados si se hace clic fuera (para clientes y productos)
     document.addEventListener('click', function(e) {
-        const container = document.getElementById('clienteResultados');
-        const input = document.getElementById('buscarClienteInput');
-        if (container && input && !container.contains(e.target) && e.target !== input) {
-            container.innerHTML = '';
+        // Clientes
+        const contCliente = document.getElementById('clienteResultados');
+        const inputCliente = document.getElementById('buscarClienteInput');
+        if (contCliente && inputCliente && !contCliente.contains(e.target) && e.target !== inputCliente) {
+            contCliente.innerHTML = '';
+        }
+        
+        // Productos
+        const contProd = document.getElementById('productoResultados');
+        const inputProd = document.getElementById('buscarProductoInput');
+        if (contProd && inputProd && !contProd.contains(e.target) && e.target !== inputProd) {
+            contProd.innerHTML = '';
         }
     });
 });

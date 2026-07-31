@@ -37,6 +37,12 @@ public class ProductoUiController {
         return model;
     }
 
+    @View("producto/results")
+    @Get("/buscar-producto{?q}")
+    public Map<String, Object> buscarProducto(@Nullable String q) {
+        return Map.of("productos", productoService.buscar(q));
+    }
+
     @View("producto/table")
     @Post(uri = "/save", consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public Map<String, Object> save(@Body ProductoDto productoDto) {

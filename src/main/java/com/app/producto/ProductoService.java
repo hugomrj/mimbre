@@ -22,6 +22,16 @@ public class ProductoService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductoDto> buscar(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return findAll().stream().limit(10).collect(Collectors.toList());
+        }
+        String pattern = "%" + query.trim() + "%";
+        return productoRepository.buscar(pattern).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
     public Optional<ProductoDto> findById(Long id) {
         return productoRepository.findById(id).map(this::mapToDto);
     }
