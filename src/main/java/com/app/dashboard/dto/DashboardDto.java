@@ -1,6 +1,6 @@
 package com.app.dashboard.dto;
 
-import com.app.producto.ProductoDto;
+import com.app.producto.dto.ProductoDto;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 

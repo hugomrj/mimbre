@@ -1,11 +1,15 @@
 package com.app.producto_categoria;
 
 import io.micronaut.serde.annotation.Serdeable;
+import jakarta.validation.constraints.NotBlank;
 
 @Serdeable
 public class ProductoCategoriaDto {
     private Long id;
+
+    @NotBlank(message = "El nombre de la categoría no puede estar vacío")
     private String nombre;
+
     private String descripcion;
 
     public Long getId() { return id; }

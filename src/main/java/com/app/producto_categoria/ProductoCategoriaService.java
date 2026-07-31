@@ -1,5 +1,8 @@
 package com.app.producto_categoria;
 
+import com.app.exception.BusinessException;
+import com.app.producto.repository.ProductoRepository;
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
@@ -10,9 +13,12 @@ import java.util.stream.StreamSupport;
 public class ProductoCategoriaService {
 
     private final ProductoCategoriaRepository productoCategoriaRepository;
+    private final ProductoRepository productoRepository;
 
-    public ProductoCategoriaService(ProductoCategoriaRepository productoCategoriaRepository) {
+    public ProductoCategoriaService(ProductoCategoriaRepository productoCategoriaRepository,
+                                    ProductoRepository productoRepository) {
         this.productoCategoriaRepository = productoCategoriaRepository;
+        this.productoRepository = productoRepository;
     }
 
     public List<ProductoCategoriaDto> findAll() {
@@ -25,12 +31,14 @@ public class ProductoCategoriaService {
         return productoCategoriaRepository.findById(id).map(this::mapToDto);
     }
 
+    @Transactional
     public ProductoCategoriaDto save(ProductoCategoriaDto dto) {
         ProductoCategoria categoria = mapToEntity(dto);
         ProductoCategoria saved = productoCategoriaRepository.save(categoria);
         return mapToDto(saved);
     }
 
+    @Transactional
     public Optional<ProductoCategoriaDto> update(Long id, ProductoCategoriaDto dto) {
         if (!productoCategoriaRepository.existsById(id)) {
             return Optional.empty();
@@ -41,8 +49,15 @@ public class ProductoCategoriaService {
         return Optional.of(mapToDto(updated));
     }
 
+    @Transactional
     public boolean delete(Long id) {
-        if (productoCategoriaRepository.existsById(id)) {
+        Optional<ProductoCategoria> catOpt = productoCategoriaRepository.findById(id);
+        if (catOpt.isPresent()) {
+            ProductoCategoria cat = catOpt.get();
+            long countProductos = productoRepository.countByCategoria(cat.getNombre());
+            if (countProductos > 0) {
+                throw new BusinessException("No se puede eliminar la categoría '" + cat.getNombre() + "' porque tiene " + countProductos + " producto(s) asociado(s).");
+            }
             productoCategoriaRepository.deleteById(id);
             return true;
         }

@@ -51,9 +51,9 @@
                 <i class="fas fa-chevron-down nav-chevron"></i>
             </button>
             <div class="nav-sub open">
-                <a href="#" class="nav-sub-item" hx-get="/ui/productos/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Productos</span></a>
-                <a href="#" class="nav-sub-item" hx-get="/ui/categorias/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Categorias</span></a>
-                <a href="#" class="nav-sub-item" hx-get="/ui/proveedores/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Proveedores</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/productos/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Productos</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/categorias/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Categorias</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/proveedores/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Proveedores</span></a>
             </div>
 
             <button class="nav-item" onclick="toggleSub(this)">
@@ -62,8 +62,8 @@
                 <i class="fas fa-chevron-down nav-chevron"></i>
             </button>
             <div class="nav-sub">
-                <a href="#" class="nav-sub-item" hx-get="/ui/ventas/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Ventas</span></a>
-                <a href="#" class="nav-sub-item" hx-get="/ui/clientes/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Clientes</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/ventas/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Ventas</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/clientes/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Clientes</span></a>
             </div>
 
             <a href="#" class="nav-item" onclick="navTo(this, event)">
@@ -119,6 +119,33 @@
 </div>
 
 <div id="toastContainer" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;"></div>
+
+<!-- MODAL GLOBAL DE CONFIRMACIÓN DE ELIMINACIÓN -->
+<div id="modalConfirmarEliminacion" class="modal-overlay">
+    <div class="modal-container" style="max-width: 440px;">
+        <div class="modal-header" style="border-bottom: none; padding-bottom: 0;">
+            <div class="modal-title" style="color: #F43F5E;">
+                <i class="fas fa-exclamation-triangle"></i> ¿Confirmar Eliminación?
+            </div>
+            <button type="button" class="modal-close-btn" onclick="cerrarModalEliminacion()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body" style="padding-top: 12px; padding-bottom: 20px;">
+            <p id="modalConfirmarTexto" style="color: var(--dark-text); font-size: 0.95rem; margin: 0; line-height: 1.5;">
+                ¿Está seguro de que desea eliminar este registro? Esta acción no se puede deshacer.
+            </p>
+        </div>
+        <div class="modal-footer" style="border-top: 1px solid var(--dark-card-border); padding-top: 16px;">
+            <button type="button" class="btn-ghost" onclick="cerrarModalEliminacion()">
+                Cancelar
+            </button>
+            <button type="button" class="btn-add" id="btnConfirmarEliminar" style="background: #F43F5E; border-color: #F43F5E;" onclick="cerrarModalEliminacion()">
+                <i class="fas fa-trash-alt"></i> Confirmar y Eliminar
+            </button>
+        </div>
+    </div>
+</div>
 
 <script>
     function createWaveRipple(e, element) {

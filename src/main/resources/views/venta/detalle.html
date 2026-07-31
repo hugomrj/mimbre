@@ -6,11 +6,23 @@
     </div>
     <div class="toolbar-right">
         <button class="btn-ghost" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button>
-        <button class="btn-ghost" hx-get="/ui/ventas/table" hx-target="#id-main"><i class="fas fa-arrow-left"></i> Volver a Ventas</button>
+        <button class="btn-ghost" hx-get="/ui/ventas/list" hx-target="#id-main"><i class="fas fa-arrow-left"></i> Volver a Ventas</button>
     </div>
 </div>
 
 <div class="table-card animate-fade-in delay-2" style="padding: 28px;">
+    {% if venta.estado == 'ANULADA' %}
+    <div style="background: rgba(244,63,94,0.12); border: 1px solid rgba(244,63,94,0.3); border-radius: 12px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; color: #F43F5E;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem;"></i>
+        <div>
+            <strong style="font-size: 1rem;">FACTURA ANULADA</strong>
+            <div style="font-size: 0.85rem; color: var(--dark-text-muted); margin-top: 2px;">
+                Esta factura fue anulada el {{ venta.fechaAnulacion | date("dd/MM/yyyy HH:mm") }}. Los productos de la venta fueron reincorporados al inventario.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Encabezado Factura -->
     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--dark-card-border); padding-bottom: 20px; margin-bottom: 24px;">
         <div>
@@ -19,7 +31,7 @@
             <p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Condición:</strong> {{ venta.condicion }}</p>
         </div>
         <div style="text-align: right;">
-            <p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Fecha:</strong> {{ venta.fecha | date("dd/MM/yyyy HH:mm") }}</p>
+            <p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Fecha Emisión:</strong> {{ venta.fecha | date("dd/MM/yyyy HH:mm") }}</p>
             <p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Estado:</strong>
                 {% if venta.estado == 'COMPLETADA' %}
                 <span style="color: #22C55E; font-weight: 600;">Completada</span>
@@ -27,6 +39,9 @@
                 <span style="color: #F43F5E; font-weight: 600;">Anulada</span>
                 {% endif %}
             </p>
+            {% if venta.estado == 'ANULADA' %}
+            <p style="color: var(--dark-text-muted); font-size: 0.85rem; margin-top: 4px;"><strong>Anulada el:</strong> {{ venta.fechaAnulacion | date("dd/MM/yyyy HH:mm") }}</p>
+            {% endif %}
         </div>
     </div>
 

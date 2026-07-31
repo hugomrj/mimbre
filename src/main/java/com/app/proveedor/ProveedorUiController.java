@@ -4,6 +4,7 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.views.View;
+import jakarta.validation.Valid;
 
 import java.util.Map;
 
@@ -17,8 +18,8 @@ public class ProveedorUiController {
     }
 
     @View("proveedor/table")
-    @Get("/table")
-    public Map<String, Object> table() {
+    @Get("/list")
+    public Map<String, Object> list() {
         return Map.of("proveedores", proveedorService.findAll());
     }
 
@@ -35,12 +36,44 @@ public class ProveedorUiController {
 
     @View("proveedor/table")
     @Post(uri = "/save", consumes = MediaType.APPLICATION_FORM_URLENCODED)
-    public Map<String, Object> save(@Body ProveedorDto proveedorDto) {
+    public Map<String, Object> save(@Valid @Body ProveedorDto proveedorDto) {
         if (proveedorDto.getId() != null) {
             proveedorService.update(proveedorDto.getId(), proveedorDto);
+            return Map.of("proveedores", proveedorService.findAll(), "mensaje", "Proveedor actualizado correctamente.");
         } else {
             proveedorService.save(proveedorDto);
+            return Map.of("proveedores", proveedorService.findAll(), "mensaje", "Proveedor registrado correctamente.");
         }
-        return Map.of("proveedores", proveedorService.findAll());
+    }
+
+    @View("proveedor/table")
+    @Post(uri = "/delete/{id}", consumes = MediaType.ALL)
+    public Map<String, Object> deletePost(@PathVariable Long id) {
+        return performDelete(id);
+    }
+
+    @View("proveedor/table")
+    @Delete(uri = "/delete/{id}", consumes = MediaType.ALL)
+    public Map<String, Object> deleteDelete(@PathVariable Long id) {
+        return performDelete(id);
+    }
+
+    @View("proveedor/table")
+    @Delete(uri = "/{id}", consumes = MediaType.ALL)
+    public Map<String, Object> deleteById(@PathVariable Long id) {
+        return performDelete(id);
+    }
+
+    private Map<String, Object> performDelete(Long id) {
+        try {
+            boolean eliminado = proveedorService.delete(id);
+            if (eliminado) {
+                return Map.of("proveedores", proveedorService.findAll(), "mensaje", "Proveedor eliminado correctamente.");
+            } else {
+                return Map.of("proveedores", proveedorService.findAll(), "error", "No se encontró el proveedor a eliminar.");
+            }
+        } catch (Exception e) {
+            return Map.of("proveedores", proveedorService.findAll(), "error", e.getMessage() != null ? e.getMessage() : "No se puede eliminar el proveedor porque está asociado a otros registros.");
+        }
     }
 }

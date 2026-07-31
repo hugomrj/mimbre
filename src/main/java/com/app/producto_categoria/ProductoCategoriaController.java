@@ -2,6 +2,7 @@ package com.app.producto_categoria;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @Controller("/api/producto-categorias")
@@ -26,12 +27,12 @@ public class ProductoCategoriaController {
     }
 
     @Post
-    public HttpResponse<ProductoCategoriaDto> create(@Body ProductoCategoriaDto dto) {
+    public HttpResponse<ProductoCategoriaDto> create(@Valid @Body ProductoCategoriaDto dto) {
         return HttpResponse.created(productoCategoriaService.save(dto));
     }
 
     @Put("/{id}")
-    public HttpResponse<ProductoCategoriaDto> update(@PathVariable Long id, @Body ProductoCategoriaDto dto) {
+    public HttpResponse<ProductoCategoriaDto> update(@PathVariable Long id, @Valid @Body ProductoCategoriaDto dto) {
         return productoCategoriaService.update(id, dto)
                 .map(HttpResponse::ok)
                 .orElse(HttpResponse.notFound());

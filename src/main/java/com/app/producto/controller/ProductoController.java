@@ -1,7 +1,11 @@
-package com.app.producto;
+package com.app.producto.controller;
 
+import com.app.producto.dto.ProductoDto;
+import com.app.producto.dto.ProductoFormDto;
+import com.app.producto.service.ProductoService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @Controller("/api/productos")
@@ -26,13 +30,13 @@ public class ProductoController {
     }
 
     @Post
-    public HttpResponse<ProductoDto> create(@Body ProductoDto productoDto) {
-        return HttpResponse.created(productoService.save(productoDto));
+    public HttpResponse<ProductoDto> create(@Valid @Body ProductoFormDto formDto) {
+        return HttpResponse.created(productoService.save(formDto));
     }
 
     @Put("/{id}")
-    public HttpResponse<ProductoDto> update(@PathVariable Long id, @Body ProductoDto productoDto) {
-        return productoService.update(id, productoDto)
+    public HttpResponse<ProductoDto> update(@PathVariable Long id, @Valid @Body ProductoFormDto formDto) {
+        return productoService.update(id, formDto)
                 .map(HttpResponse::ok)
                 .orElse(HttpResponse.notFound());
     }

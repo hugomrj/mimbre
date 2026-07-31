@@ -2,8 +2,8 @@ package com.app.dashboard.controller;
 
 import com.app.cliente.ClienteService;
 import com.app.dashboard.dto.DashboardDto;
-import com.app.producto.ProductoDto;
-import com.app.producto.ProductoService;
+import com.app.producto.dto.ProductoDto;
+import com.app.producto.service.ProductoService;
 import com.app.venta.dto.VentaDto;
 import com.app.venta.service.VentaService;
 import io.micronaut.http.annotation.Controller;

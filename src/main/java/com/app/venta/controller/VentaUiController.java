@@ -1,10 +1,9 @@
 package com.app.venta.controller;
 
 import com.app.cliente.ClienteService;
-import com.app.producto.ProductoService;
+import com.app.producto.service.ProductoService;
 import com.app.venta.dto.VentaDetalleDto;
 import com.app.venta.dto.VentaDto;
-import com.app.venta.dto.VentaFormRequest;
 import com.app.venta.service.VentaService;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
@@ -16,9 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller("/ui/ventas")
 public class VentaUiController {
@@ -36,9 +35,15 @@ public class VentaUiController {
     }
 
     @View("venta/table")
-    @Get("/table")
-    public Map<String, Object> table() {
-        return Map.of("ventas", ventaService.findAll());
+    @Get("/list{?estado}")
+    public Map<String, Object> list(@Nullable String estado) {
+        List<VentaDto> ventas = ventaService.findAll();
+        if (estado != null && !estado.trim().isEmpty() && !"TODAS".equalsIgnoreCase(estado)) {
+            ventas = ventas.stream()
+                    .filter(v -> estado.equalsIgnoreCase(v.getEstado()))
+                    .collect(Collectors.toList());
+        }
+        return Map.of("ventas", ventas, "estadoFiltro", estado != null ? estado.toUpperCase() : "TODAS");
     }
 
     @View("venta/form")
@@ -67,7 +72,7 @@ public class VentaUiController {
 
         if (body == null || body.isEmpty()) {
             LOG.warn("Cuerpo de la petición recibido es NULO o VACÍO.");
-            return Map.of("ventas", ventaService.findAll());
+            return Map.of("ventas", ventaService.findAll(), "error", "No se recibieron datos de la venta.");
         }
 
         LOG.info("Cuerpo del formulario parseado como Map: {}", body);
@@ -82,11 +87,11 @@ public class VentaUiController {
                 ventaDto.setClienteId(Long.parseLong(clienteIdObj.toString().trim()));
             } catch (NumberFormatException e) {
                 LOG.error("Error al parsear clienteId: {}", clienteIdObj, e);
-                return Map.of("ventas", ventaService.findAll());
+                return Map.of("ventas", ventaService.findAll(), "error", "Identificador de cliente no válido.");
             }
         } else {
             LOG.warn("Falta el clienteId en la petición. No se guardará la venta.");
-            return Map.of("ventas", ventaService.findAll());
+            return Map.of("ventas", ventaService.findAll(), "error", "Debe seleccionar un cliente válido.");
         }
         
         Object condicionObj = body.get("condicion");
@@ -132,11 +137,11 @@ public class VentaUiController {
             VentaDto ventaGuardada = ventaService.registrarVenta(ventaDto);
             LOG.info("¡Venta registrada con éxito! ID: {}, Nro Factura: {}, Total: {}", 
                     ventaGuardada.getId(), ventaGuardada.getNumeroFactura(), ventaGuardada.getMontoTotal());
+            return Map.of("ventas", ventaService.findAll(), "mensaje", "Venta Factura " + ventaGuardada.getNumeroFactura() + " registrada con éxito.");
         } catch (Exception e) {
             LOG.error("Error al registrar la venta en el servicio: {}", e.getMessage(), e);
+            return Map.of("ventas", ventaService.findAll(), "error", e.getMessage() != null ? e.getMessage() : "Error al registrar la venta.");
         }
-
-        return Map.of("ventas", ventaService.findAll());
     }
 
     private List<String> getAsList(Object val) {
@@ -161,10 +166,14 @@ public class VentaUiController {
     }
 
     @View("venta/table")
-    @Post(uri = "/anular/{id}")
+    @Post(uri = "/anular/{id}", consumes = MediaType.ALL)
     public Map<String, Object> anular(@PathVariable Long id) {
         LOG.info("Anulando venta con ID: {}", id);
-        ventaService.anular(id);
-        return Map.of("ventas", ventaService.findAll());
+        boolean anulado = ventaService.anular(id);
+        if (anulado) {
+            return Map.of("ventas", ventaService.findAll(), "mensaje", "Venta anulada correctamente.");
+        } else {
+            return Map.of("ventas", ventaService.findAll(), "error", "No se pudo anular la venta.");
+        }
     }
 }

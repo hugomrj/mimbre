@@ -1,5 +1,6 @@
 package com.app.proveedor;
 
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +26,14 @@ public class ProveedorService {
         return proveedorRepository.findById(id).map(this::mapToDto);
     }
 
+    @Transactional
     public ProveedorDto save(ProveedorDto dto) {
         Proveedor proveedor = mapToEntity(dto);
         Proveedor saved = proveedorRepository.save(proveedor);
         return mapToDto(saved);
     }
 
+    @Transactional
     public Optional<ProveedorDto> update(Long id, ProveedorDto dto) {
         if (!proveedorRepository.existsById(id)) {
             return Optional.empty();
@@ -41,6 +44,7 @@ public class ProveedorService {
         return Optional.of(mapToDto(updated));
     }
 
+    @Transactional
     public boolean delete(Long id) {
         if (proveedorRepository.existsById(id)) {
             proveedorRepository.deleteById(id);

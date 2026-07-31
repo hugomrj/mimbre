@@ -11,4 +11,5 @@ import java.util.List;
 public interface VentaRepository extends CrudRepository<Venta, Long> {
 
     List<Venta> findAllOrderByIdDesc();
+    long countByClienteId(Long clienteId);
 }

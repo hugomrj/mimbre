@@ -9,4 +9,5 @@ import java.util.List;
 @JdbcRepository(dialect = Dialect.H2)
 public interface VentaDetalleRepository extends CrudRepository<VentaDetalle, Long> {
     List<VentaDetalle> findByVentaId(Long ventaId);
+    long countByProductoId(Long productoId);
 }

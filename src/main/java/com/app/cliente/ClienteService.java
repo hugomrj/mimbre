@@ -1,5 +1,8 @@
 package com.app.cliente;
 
+import com.app.exception.BusinessException;
+import com.app.venta.repository.VentaRepository;
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
@@ -10,9 +13,11 @@ import java.util.stream.StreamSupport;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
+    private final VentaRepository ventaRepository;
 
-    public ClienteService(ClienteRepository clienteRepository) {
+    public ClienteService(ClienteRepository clienteRepository, VentaRepository ventaRepository) {
         this.clienteRepository = clienteRepository;
+        this.ventaRepository = ventaRepository;
     }
 
     public List<ClienteDto> findAll() {
@@ -35,12 +40,14 @@ public class ClienteService {
         return clienteRepository.findById(id).map(this::mapToDto);
     }
 
+    @Transactional
     public ClienteDto save(ClienteDto dto) {
         Cliente cliente = mapToEntity(dto);
         Cliente saved = clienteRepository.save(cliente);
         return mapToDto(saved);
     }
 
+    @Transactional
     public Optional<ClienteDto> update(Long id, ClienteDto dto) {
         if (!clienteRepository.existsById(id)) {
             return Optional.empty();
@@ -51,8 +58,15 @@ public class ClienteService {
         return Optional.of(mapToDto(updated));
     }
 
+    @Transactional
     public boolean delete(Long id) {
-        if (clienteRepository.existsById(id)) {
+        Optional<Cliente> cliOpt = clienteRepository.findById(id);
+        if (cliOpt.isPresent()) {
+            Cliente cli = cliOpt.get();
+            long countVentas = ventaRepository.countByClienteId(id);
+            if (countVentas > 0) {
+                throw new BusinessException("No se puede eliminar el cliente '" + cli.getNombre() + "' porque cuenta con " + countVentas + " venta(s) registrada(s).");
+            }
             clienteRepository.deleteById(id);
             return true;
         }

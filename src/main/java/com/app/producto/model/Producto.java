@@ -1,16 +1,34 @@
-package com.app.producto;
+package com.app.producto.model;
 
-import io.micronaut.serde.annotation.Serdeable;
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+
 import java.math.BigDecimal;
 
-@Serdeable
-public class ProductoDto {
+@MappedEntity
+public class Producto {
+
+    @Id
+    @GeneratedValue(GeneratedValue.Type.AUTO)
     private Long id;
+
     private String nombre;
     private String sku;
     private BigDecimal precio;
     private Integer stock;
     private String categoria;
+
+    public Producto() {
+    }
+
+    public Producto(String nombre, String sku, BigDecimal precio, Integer stock, String categoria) {
+        this.nombre = nombre;
+        this.sku = sku;
+        this.precio = precio;
+        this.stock = stock;
+        this.categoria = categoria;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

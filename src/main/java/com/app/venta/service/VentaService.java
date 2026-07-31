@@ -1,14 +1,18 @@
 package com.app.venta.service;
 
 import com.app.cliente.ClienteRepository;
-import com.app.producto.Producto;
-import com.app.producto.ProductoRepository;
+import com.app.exception.BusinessException;
+import com.app.exception.ResourceNotFoundException;
+import com.app.exception.StockInsuficienteException;
+import com.app.producto.model.Producto;
+import com.app.producto.repository.ProductoRepository;
 import com.app.venta.model.VentaDetalle;
 import com.app.venta.repository.VentaDetalleRepository;
 import com.app.venta.repository.VentaRepository;
 import com.app.venta.dto.VentaDetalleDto;
 import com.app.venta.dto.VentaDto;
 import com.app.venta.model.Venta;
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 
 import java.math.BigDecimal;
@@ -54,7 +58,24 @@ public class VentaService {
         });
     }
 
+    @Transactional
     public VentaDto registrarVenta(VentaDto dto) {
+        if (dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
+            throw new BusinessException("La venta debe contener al menos un producto.");
+        }
+
+        // Validar stock antes de realizar cambios
+        for (VentaDetalleDto dDto : dto.getDetalles()) {
+            if (dDto.getProductoId() != null) {
+                Producto prod = productoRepository.findById(dDto.getProductoId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado (ID: " + dDto.getProductoId() + ")"));
+                int cantidad = dDto.getCantidad() != null ? dDto.getCantidad() : 1;
+                if (prod.getStock() < cantidad) {
+                    throw new StockInsuficienteException("Stock insuficiente para '" + prod.getNombre() + "'. Stock disponible: " + prod.getStock() + ", solicitado: " + cantidad);
+                }
+            }
+        }
+
         Venta venta = new Venta();
         
         // Número de factura autogenerado
@@ -125,11 +146,13 @@ public class VentaService {
         return findById(savedVenta.getId()).orElse(mapToDto(savedVenta));
     }
 
+    @Transactional
     public boolean anular(Long id) {
         Optional<Venta> ventaOpt = ventaRepository.findById(id);
         if (ventaOpt.isPresent() && !"ANULADA".equals(ventaOpt.get().getEstado())) {
             Venta venta = ventaOpt.get();
             venta.setEstado("ANULADA");
+            venta.setFechaAnulacion(LocalDateTime.now());
             ventaRepository.update(venta);
 
             // Reponer stock
@@ -156,7 +179,8 @@ public class VentaService {
         dto.setFecha(venta.getFecha());
         dto.setCondicion(venta.getCondicion());
         dto.setMontoTotal(venta.getMontoTotal());
-        dto.setEstado(venta.getEstado());
+        dto.setEstado(venta.getEstado() != null && !venta.getEstado().trim().isEmpty() ? venta.getEstado() : "COMPLETADA");
+        dto.setFechaAnulacion(venta.getFechaAnulacion());
         return dto;
     }
 

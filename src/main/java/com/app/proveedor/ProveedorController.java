@@ -2,6 +2,7 @@ package com.app.proveedor;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @Controller("/api/proveedores")
@@ -26,12 +27,12 @@ public class ProveedorController {
     }
 
     @Post
-    public HttpResponse<ProveedorDto> create(@Body ProveedorDto proveedorDto) {
+    public HttpResponse<ProveedorDto> create(@Valid @Body ProveedorDto proveedorDto) {
         return HttpResponse.created(proveedorService.save(proveedorDto));
     }
 
     @Put("/{id}")
-    public HttpResponse<ProveedorDto> update(@PathVariable Long id, @Body ProveedorDto proveedorDto) {
+    public HttpResponse<ProveedorDto> update(@PathVariable Long id, @Valid @Body ProveedorDto proveedorDto) {
         return proveedorService.update(id, proveedorDto)
                 .map(HttpResponse::ok)
                 .orElse(HttpResponse.notFound());

@@ -1,7 +1,14 @@
-package com.app.producto;
+package com.app.producto.service;
 
+import com.app.exception.BusinessException;
+import com.app.producto.dto.ProductoDto;
+import com.app.producto.dto.ProductoFormDto;
+import com.app.producto.repository.ProductoRepository;
+import com.app.producto.model.Producto;
+import com.app.venta.repository.VentaDetalleRepository;
+import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
-import java.math.BigDecimal;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,9 +18,12 @@ import java.util.stream.StreamSupport;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
+    private final VentaDetalleRepository ventaDetalleRepository;
 
-    public ProductoService(ProductoRepository productoRepository) {
+    public ProductoService(ProductoRepository productoRepository,
+                           VentaDetalleRepository ventaDetalleRepository) {
         this.productoRepository = productoRepository;
+        this.ventaDetalleRepository = ventaDetalleRepository;
     }
 
     public List<ProductoDto> findAll() {
@@ -36,24 +46,33 @@ public class ProductoService {
         return productoRepository.findById(id).map(this::mapToDto);
     }
 
-    public ProductoDto save(ProductoDto dto) {
-        Producto producto = mapToEntity(dto);
+    @Transactional
+    public ProductoDto save(ProductoFormDto formDto) {
+        Producto producto = mapFormToEntity(formDto);
         Producto saved = productoRepository.save(producto);
         return mapToDto(saved);
     }
 
-    public Optional<ProductoDto> update(Long id, ProductoDto dto) {
+    @Transactional
+    public Optional<ProductoDto> update(Long id, ProductoFormDto formDto) {
         if (!productoRepository.existsById(id)) {
             return Optional.empty();
         }
-        Producto producto = mapToEntity(dto);
+        Producto producto = mapFormToEntity(formDto);
         producto.setId(id);
         Producto updated = productoRepository.update(producto);
         return Optional.of(mapToDto(updated));
     }
 
+    @Transactional
     public boolean delete(Long id) {
-        if (productoRepository.existsById(id)) {
+        Optional<Producto> prodOpt = productoRepository.findById(id);
+        if (prodOpt.isPresent()) {
+            Producto prod = prodOpt.get();
+            long countVentas = ventaDetalleRepository.countByProductoId(id);
+            if (countVentas > 0) {
+                throw new BusinessException("No se puede eliminar el producto '" + prod.getNombre() + "' porque está registrado en " + countVentas + " factura(s) de venta.");
+            }
             productoRepository.deleteById(id);
             return true;
         }
@@ -71,14 +90,14 @@ public class ProductoService {
         return dto;
     }
 
-    private Producto mapToEntity(ProductoDto dto) {
+    private Producto mapFormToEntity(ProductoFormDto formDto) {
         Producto producto = new Producto();
-        producto.setId(dto.getId());
-        producto.setNombre(dto.getNombre());
-        producto.setSku(dto.getSku());
-        producto.setPrecio(dto.getPrecio());
-        producto.setStock(dto.getStock());
-        producto.setCategoria(dto.getCategoria());
+        producto.setId(formDto.getId());
+        producto.setNombre(formDto.getNombre());
+        producto.setSku(formDto.getSku());
+        producto.setPrecio(formDto.getPrecio());
+        producto.setStock(formDto.getStock());
+        producto.setCategoria(formDto.getCategoria());
         return producto;
     }
 }

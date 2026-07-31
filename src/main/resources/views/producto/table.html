@@ -38,7 +38,7 @@
             <td>
                 <div class="row-actions">
                     <button class="row-action-btn" title="Editar" hx-get="/ui/productos/form?id={{ p.id }}" hx-target="#id-main"><i class="fas fa-pen"></i></button>
-                    <button class="row-action-btn" title="Eliminar" hx-delete="/api/productos/{{ p.id }}" hx-target="#id-main" hx-confirm="¿Eliminar producto?"><i class="fas fa-trash-alt"></i></button>
+                    <button class="row-action-btn" title="Eliminar" onclick="abrirModalEliminacion('{{ p.nombre }}', '/ui/productos/delete/{{ p.id }}')"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </td>
         </tr>
@@ -50,3 +50,10 @@
         </tbody>
     </table>
 </div>
+
+{% if mensaje %}
+<script>if (typeof showToast === 'function') showToast("{{ mensaje }}", "success");</script>
+{% endif %}
+{% if error %}
+<script>if (typeof showToast === 'function') showToast("{{ error }}", "error");</script>
+{% endif %}

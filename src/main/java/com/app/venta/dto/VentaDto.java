@@ -16,6 +16,7 @@ public class VentaDto {
     private String condicion;
     private BigDecimal montoTotal;
     private String estado;
+    private LocalDateTime fechaAnulacion;
     private List<VentaDetalleDto> detalles = new ArrayList<>();
 
     public Long getId() { return id; }
@@ -41,6 +42,9 @@ public class VentaDto {
 
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
+
+    public LocalDateTime getFechaAnulacion() { return fechaAnulacion; }
+    public void setFechaAnulacion(LocalDateTime fechaAnulacion) { this.fechaAnulacion = fechaAnulacion; }
 
     public List<VentaDetalleDto> getDetalles() { return detalles; }
     public void setDetalles(List<VentaDetalleDto> detalles) { this.detalles = detalles; }

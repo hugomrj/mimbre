@@ -1,14 +1,26 @@
 package com.app.proveedor;
 
 import io.micronaut.serde.annotation.Serdeable;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Serdeable
 public class ProveedorDto {
     private Long id;
+
+    @NotBlank(message = "El nombre del proveedor no puede estar vacío")
     private String nombre;
+
+    @NotBlank(message = "El RUC es obligatorio")
     private String ruc;
+
+    @NotBlank(message = "El teléfono es obligatorio")
     private String telefono;
+
+    @NotBlank(message = "El correo electrónico es obligatorio")
+    @Email(message = "El formato del correo electrónico no es válido")
     private String email;
+
     private String direccion;
 
     public Long getId() { return id; }

@@ -16,6 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Aquí puedes agregar inicializaciones para otros módulos en el futuro.
         // if (evt.target.querySelector('#formCotizacion')) { ... }
     });
+
+    // Clic fuera del contenedor del modal de eliminación para cerrarlo
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('modalConfirmarEliminacion');
+        if (modal && e.target === modal) {
+            cerrarModalEliminacion();
+        }
+    });
+
+    // Tecla ESC para cerrar modal de eliminación
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            cerrarModalEliminacion();
+        }
+    });
 });
 
 // =========================================================
@@ -91,4 +106,63 @@ function showToast(msg, type = 'info') {
         t.style.opacity = '0'; 
         setTimeout(() => t.remove(), 350); 
     }, 3000); // Aumenté el tiempo visible a 3 segundos para que se lean mejor
+}
+
+// =========================================================
+// MODAL GLOBAL DE CONFIRMACIÓN DE ELIMINACIÓN Y ANULACIÓN
+// =========================================================
+function abrirModalEliminacion(nombreRegistro, urlDelete) {
+    const modal = document.getElementById('modalConfirmarEliminacion');
+    const titulo = modal ? modal.querySelector('.modal-title') : null;
+    const texto = document.getElementById('modalConfirmarTexto');
+    const btnConfirmar = document.getElementById('btnConfirmarEliminar');
+
+    if (modal && texto && btnConfirmar) {
+        if (titulo) {
+            titulo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ¿Confirmar Eliminación?`;
+        }
+        texto.innerHTML = `¿Está seguro de que desea eliminar <strong>${nombreRegistro}</strong>? Esta acción no se puede deshacer.`;
+        
+        btnConfirmar.innerHTML = `<i class="fas fa-trash-alt"></i> Confirmar y Eliminar`;
+        btnConfirmar.setAttribute('hx-post', urlDelete);
+        btnConfirmar.setAttribute('hx-target', '#id-main');
+        
+        // Procesar el botón con HTMX para que reconozca hx-post
+        if (typeof htmx !== 'undefined') {
+            htmx.process(btnConfirmar);
+        }
+
+        modal.classList.add('active');
+    }
+}
+
+function abrirModalAnularVenta(nroFactura, urlAnular) {
+    const modal = document.getElementById('modalConfirmarEliminacion');
+    const titulo = modal ? modal.querySelector('.modal-title') : null;
+    const texto = document.getElementById('modalConfirmarTexto');
+    const btnConfirmar = document.getElementById('btnConfirmarEliminar');
+
+    if (modal && texto && btnConfirmar) {
+        if (titulo) {
+            titulo.innerHTML = `<i class="fas fa-ban"></i> ¿Anular Venta / Factura?`;
+        }
+        texto.innerHTML = `¿Está seguro de anular la factura <strong>${nroFactura}</strong>? Se repondrá automáticamente el stock de los productos.`;
+        
+        btnConfirmar.innerHTML = `<i class="fas fa-ban"></i> Confirmar y Anular`;
+        btnConfirmar.setAttribute('hx-post', urlAnular);
+        btnConfirmar.setAttribute('hx-target', '#id-main');
+        
+        if (typeof htmx !== 'undefined') {
+            htmx.process(btnConfirmar);
+        }
+
+        modal.classList.add('active');
+    }
+}
+
+function cerrarModalEliminacion() {
+    const modal = document.getElementById('modalConfirmarEliminacion');
+    if (modal) {
+        modal.classList.remove('active');
+    }
 }

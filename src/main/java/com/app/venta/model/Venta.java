@@ -1,8 +1,10 @@
 package com.app.venta.model;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,6 +23,8 @@ public class Venta {
     private String condicion;
     private BigDecimal montoTotal;
     private String estado;
+    @Nullable
+    private LocalDateTime fechaAnulacion;
 
     public Venta() {
     }
@@ -58,4 +62,7 @@ public class Venta {
 
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
+
+    public LocalDateTime getFechaAnulacion() { return fechaAnulacion; }
+    public void setFechaAnulacion(LocalDateTime fechaAnulacion) { this.fechaAnulacion = fechaAnulacion; }
 }

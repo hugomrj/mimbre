@@ -2,6 +2,7 @@ package com.app.cliente;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @Controller("/api/clientes")
@@ -26,12 +27,12 @@ public class ClienteController {
     }
 
     @Post
-    public HttpResponse<ClienteDto> create(@Body ClienteDto clienteDto) {
+    public HttpResponse<ClienteDto> create(@Valid @Body ClienteDto clienteDto) {
         return HttpResponse.created(clienteService.save(clienteDto));
     }
 
     @Put("/{id}")
-    public HttpResponse<ClienteDto> update(@PathVariable Long id, @Body ClienteDto clienteDto) {
+    public HttpResponse<ClienteDto> update(@PathVariable Long id, @Valid @Body ClienteDto clienteDto) {
         return clienteService.update(id, clienteDto)
                 .map(HttpResponse::ok)
                 .orElse(HttpResponse.notFound());

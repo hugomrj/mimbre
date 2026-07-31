@@ -1,0 +1,767 @@
+================================================================================
+ARCHIVO: src/main/java/com/app/venta/model/Venta.java
+================================================================================
+package com.app.venta.model;
+
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@MappedEntity
+public class Venta {
+
+    @Id
+    @GeneratedValue(GeneratedValue.Type.AUTO)
+    private Long id;
+
+    private String numeroFactura;
+    private Long clienteId;
+    private String clienteNombre;
+    private LocalDateTime fecha;
+    private String condicion;
+    private BigDecimal montoTotal;
+    private String estado;
+    private LocalDateTime fechaAnulacion;
+
+    public Venta() {
+    }
+
+    public Venta(String numeroFactura, Long clienteId, String clienteNombre, LocalDateTime fecha, String condicion, BigDecimal montoTotal, String estado) {
+        this.numeroFactura = numeroFactura;
+        this.clienteId = clienteId;
+        this.clienteNombre = clienteNombre;
+        this.fecha = fecha;
+        this.condicion = condicion;
+        this.montoTotal = montoTotal;
+        this.estado = estado;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNumeroFactura() { return numeroFactura; }
+    public void setNumeroFactura(String numeroFactura) { this.numeroFactura = numeroFactura; }
+
+    public Long getClienteId() { return clienteId; }
+    public void setClienteId(Long clienteId) { this.clienteId = clienteId; }
+
+    public String getClienteNombre() { return clienteNombre; }
+    public void setClienteNombre(String clienteNombre) { this.clienteNombre = clienteNombre; }
+
+    public LocalDateTime getFecha() { return fecha; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
+
+    public String getCondicion() { return condicion; }
+    public void setCondicion(String condicion) { this.condicion = condicion; }
+
+    public BigDecimal getMontoTotal() { return montoTotal; }
+    public void setMontoTotal(BigDecimal montoTotal) { this.montoTotal = montoTotal; }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+
+    public LocalDateTime getFechaAnulacion() { return fechaAnulacion; }
+    public void setFechaAnulacion(LocalDateTime fechaAnulacion) { this.fechaAnulacion = fechaAnulacion; }
+}
+
+
+================================================================================
+ARCHIVO: src/main/java/com/app/venta/model/VentaDetalle.java
+================================================================================
+package com.app.venta.model;
+
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+
+import java.math.BigDecimal;
+
+@MappedEntity
+public class VentaDetalle {
+
+    @Id
+    @GeneratedValue(GeneratedValue.Type.AUTO)
+    private Long id;
+
+    private Long ventaId;
+    private Long productoId;
+    private String productoNombre;
+    private Integer cantidad;
+    private BigDecimal precioUnitario;
+    private BigDecimal subtotal;
+
+    public VentaDetalle() {
+    }
+
+    public VentaDetalle(Long ventaId, Long productoId, String productoNombre, Integer cantidad, BigDecimal precioUnitario, BigDecimal subtotal) {
+        this.ventaId = ventaId;
+        this.productoId = productoId;
+        this.productoNombre = productoNombre;
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+        this.subtotal = subtotal;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Long getVentaId() { return ventaId; }
+    public void setVentaId(Long ventaId) { this.ventaId = ventaId; }
+
+    public Long getProductoId() { return productoId; }
+    public void setProductoId(Long productoId) { this.productoId = productoId; }
+
+    public String getProductoNombre() { return productoNombre; }
+    public void setProductoNombre(String productoNombre) { this.productoNombre = productoNombre; }
+
+    public Integer getCantidad() { return cantidad; }
+    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
+
+    public BigDecimal getPrecioUnitario() { return precioUnitario; }
+    public void setPrecioUnitario(BigDecimal precioUnitario) { this.precioUnitario = precioUnitario; }
+
+    public BigDecimal getSubtotal() { return subtotal; }
+    public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
+}
+
+
+================================================================================
+ARCHIVO: src/main/java/com/app/venta/dto/VentaDto.java
+================================================================================
+package com.app.venta.dto;
+
+import io.micronaut.serde.annotation.Serdeable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Serdeable
+public class VentaDto {
+    private Long id;
+    private String numeroFactura;
+    private Long clienteId;
+    private String clienteNombre;
+    private LocalDateTime fecha;
+    private String condicion;
+    private BigDecimal montoTotal;
+    private String estado;
+    private LocalDateTime fechaAnulacion;
+    private List<VentaDetalleDto> detalles = new ArrayList<>();
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNumeroFactura() { return numeroFactura; }
+    public void setNumeroFactura(String numeroFactura) { this.numeroFactura = numeroFactura; }
+
+    public Long getClienteId() { return clienteId; }
+    public void setClienteId(Long clienteId) { this.clienteId = clienteId; }
+
+    public String getClienteNombre() { return clienteNombre; }
+    public void setClienteNombre(String clienteNombre) { this.clienteNombre = clienteNombre; }
+
+    public LocalDateTime getFecha() { return fecha; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
+
+    public String getCondicion() { return condicion; }
+    public void setCondicion(String condicion) { this.condicion = condicion; }
+
+    public BigDecimal getMontoTotal() { return montoTotal; }
+    public void setMontoTotal(BigDecimal montoTotal) { this.montoTotal = montoTotal; }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+
+    public LocalDateTime getFechaAnulacion() { return fechaAnulacion; }
+    public void setFechaAnulacion(LocalDateTime fechaAnulacion) { this.fechaAnulacion = fechaAnulacion; }
+
+    public List<VentaDetalleDto> getDetalles() { return detalles; }
+    public void setDetalles(List<VentaDetalleDto> detalles) { this.detalles = detalles; }
+}
+
+
+================================================================================
+ARCHIVO: src/main/java/com/app/venta/dto/VentaDetalleDto.java
+================================================================================
+package com.app.venta.dto;
+
+import io.micronaut.serde.annotation.Serdeable;
+import java.math.BigDecimal;
+
+@Serdeable
+public class VentaDetalleDto {
+    private Long id;
+    private Long ventaId;
+    private Long productoId;
+    private String productoNombre;
+    private Integer cantidad;
+    private BigDecimal precioUnitario;
+    private BigDecimal subtotal;
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Long getVentaId() { return ventaId; }
+    public void setVentaId(Long ventaId) { this.ventaId = ventaId; }
+
+    public Long getProductoId() { return productoId; }
+    public void setProductoId(Long productoId) { this.productoId = productoId; }
+
+    public String getProductoNombre() { return productoNombre; }
+    public void setProductoNombre(String productoNombre) { this.productoNombre = productoNombre; }
+
+    public Integer getCantidad() { return cantidad; }
+    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
+
+    public BigDecimal getPrecioUnitario() { return precioUnitario; }
+    public void setPrecioUnitario(BigDecimal precioUnitario) { this.precioUnitario = precioUnitario; }
+
+    public BigDecimal getSubtotal() { return subtotal; }
+    public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
+}
+
+
+================================================================================
+ARCHIVO: src/main/java/com/app/venta/dto/VentaFormRequest.java
+================================================================================
+package com.app.venta.dto;
+
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+@Serdeable
+@Introspected
+public class VentaFormRequest {
+
+    private Long clienteId;
+    private String condicion;
+    private List<Long> productoId = new ArrayList<>();
+    private List<Integer> cantidad = new ArrayList<>();
+    private List<BigDecimal> precioUnitario = new ArrayList<>();
+
+    public Long getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
+    }
+
+    public String getCondicion() {
+        return condicion;
+    }
+
+    public void setCondicion(String condicion) {
+        this.condicion = condicion;
+    }
+
+    public List<Long> getProductoId() {
+        return productoId;
+    }
+
+    public void setProductoId(List<Long> productoId) {
+        this.productoId = productoId;
+    }
+
+    public List<Integer> getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(List<Integer> cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public List<BigDecimal> getPrecioUnitario() {
+        return precioUnitario;
+    }
+
+    public void setPrecioUnitario(List<BigDecimal> precioUnitario) {
+        this.precioUnitario = precioUnitario;
+    }
+
+    @Override
+    public String toString() {
+        return "VentaFormRequest{" +
+                "clienteId=" + clienteId +
+                ", condicion='" + condicion + '\'' +
+                ", productoId=" + productoId +
+                ", cantidad=" + cantidad +
+                ", precioUnitario=" + precioUnitario +
+                '}';
+    }
+}
+
+
+================================================================================
+ARCHIVO: src/main/java/com/app/venta/repository/VentaRepository.java
+================================================================================
+package com.app.venta.repository;
+
+import com.app.venta.model.Venta;
+import io.micronaut.data.jdbc.annotation.JdbcRepository;
+import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.repository.CrudRepository;
+
+import java.util.List;
+
+@JdbcRepository(dialect = Dialect.H2)
+public interface VentaRepository extends CrudRepository<Venta, Long> {
+
+    List<Venta> findAllOrderByIdDesc();
+    long countByClienteId(Long clienteId);
+}
+
+
+================================================================================
+ARCHIVO: src/main/java/com/app/venta/repository/VentaDetalleRepository.java
+================================================================================
+package com.app.venta.repository;
+
+import com.app.venta.model.VentaDetalle;
+import io.micronaut.data.jdbc.annotation.JdbcRepository;
+import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.repository.CrudRepository;
+import java.util.List;
+
+@JdbcRepository(dialect = Dialect.H2)
+public interface VentaDetalleRepository extends CrudRepository<VentaDetalle, Long> {
+    List<VentaDetalle> findByVentaId(Long ventaId);
+    long countByProductoId(Long productoId);
+}
+
+
+================================================================================
+ARCHIVO: src/main/java/com/app/venta/service/VentaService.java
+================================================================================
+package com.app.venta.service;
+
+import com.app.cliente.ClienteRepository;
+import com.app.producto.model.Producto;
+import com.app.producto.repository.ProductoRepository;
+import com.app.venta.model.VentaDetalle;
+import com.app.venta.repository.VentaDetalleRepository;
+import com.app.venta.repository.VentaRepository;
+import com.app.venta.dto.VentaDetalleDto;
+import com.app.venta.dto.VentaDto;
+import com.app.venta.model.Venta;
+import io.micronaut.transaction.annotation.Transactional;
+import jakarta.inject.Singleton;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+@Singleton
+public class VentaService {
+
+    private final VentaRepository ventaRepository;
+    private final VentaDetalleRepository ventaDetalleRepository;
+    private final ProductoRepository productoRepository;
+    private final ClienteRepository clienteRepository;
+
+    public VentaService(VentaRepository ventaRepository,
+                        VentaDetalleRepository ventaDetalleRepository,
+                        ProductoRepository productoRepository,
+                        ClienteRepository clienteRepository) {
+        this.ventaRepository = ventaRepository;
+        this.ventaDetalleRepository = ventaDetalleRepository;
+        this.productoRepository = productoRepository;
+        this.clienteRepository = clienteRepository;
+    }
+
+    public List<VentaDto> findAll() {
+        return StreamSupport.stream(ventaRepository.findAllOrderByIdDesc().spliterator(), false)
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public Optional<VentaDto> findById(Long id) {
+        return ventaRepository.findById(id).map(venta -> {
+            VentaDto dto = mapToDto(venta);
+            List<VentaDetalleDto> detalles = ventaDetalleRepository.findByVentaId(venta.getId())
+                    .stream()
+                    .map(this::mapDetalleToDto)
+                    .collect(Collectors.toList());
+            dto.setDetalles(detalles);
+            return dto;
+        });
+    }
+
+    @Transactional
+    public VentaDto registrarVenta(VentaDto dto) {
+        if (dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
+            throw new IllegalArgumentException("La venta debe contener al menos un producto.");
+        }
+
+        // Validar stock antes de realizar cambios
+        for (VentaDetalleDto dDto : dto.getDetalles()) {
+            if (dDto.getProductoId() != null) {
+                Producto prod = productoRepository.findById(dDto.getProductoId())
+                        .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado (ID: " + dDto.getProductoId() + ")"));
+                int cantidad = dDto.getCantidad() != null ? dDto.getCantidad() : 1;
+                if (prod.getStock() < cantidad) {
+                    throw new IllegalArgumentException("Stock insuficiente para '" + prod.getNombre() + "'. Stock disponible: " + prod.getStock() + ", solicitado: " + cantidad);
+                }
+            }
+        }
+
+        Venta venta = new Venta();
+        
+        // Número de factura autogenerado
+        if (dto.getNumeroFactura() == null || dto.getNumeroFactura().trim().isEmpty()) {
+            long count = ventaRepository.count() + 1;
+            venta.setNumeroFactura(String.format("001-001-%07d", count));
+        } else {
+            venta.setNumeroFactura(dto.getNumeroFactura());
+        }
+
+        // Cliente
+        venta.setClienteId(dto.getClienteId());
+        if (dto.getClienteId() != null) {
+            clienteRepository.findById(dto.getClienteId())
+                    .ifPresent(cli -> venta.setClienteNombre(cli.getNombre()));
+        } else {
+            venta.setClienteNombre(dto.getClienteNombre() != null ? dto.getClienteNombre() : "Cliente Ocasional");
+        }
+
+        venta.setFecha(dto.getFecha() != null ? dto.getFecha() : LocalDateTime.now());
+        venta.setCondicion(dto.getCondicion() != null ? dto.getCondicion() : "Contado");
+        venta.setEstado("COMPLETADA");
+
+        BigDecimal total = BigDecimal.ZERO;
+        venta.setMontoTotal(total);
+
+        // Guardar venta inicial para obtener ID
+        Venta savedVenta = ventaRepository.save(venta);
+
+        // Procesar detalles y descontar stock
+        for (VentaDetalleDto dDto : dto.getDetalles()) {
+            VentaDetalle detalle = new VentaDetalle();
+            detalle.setVentaId(savedVenta.getId());
+            detalle.setProductoId(dDto.getProductoId());
+
+            Optional<Producto> prodOpt = dDto.getProductoId() != null 
+                    ? productoRepository.findById(dDto.getProductoId()) 
+                    : Optional.empty();
+
+            if (prodOpt.isPresent()) {
+                Producto prod = prodOpt.get();
+                detalle.setProductoNombre(prod.getNombre());
+                detalle.setPrecioUnitario(dDto.getPrecioUnitario() != null ? dDto.getPrecioUnitario() : prod.getPrecio());
+                
+                // Descontar stock
+                int cantidad = dDto.getCantidad() != null ? dDto.getCantidad() : 1;
+                detalle.setCantidad(cantidad);
+                prod.setStock(prod.getStock() - cantidad);
+                productoRepository.update(prod);
+            } else {
+                detalle.setProductoNombre(dDto.getProductoNombre() != null ? dDto.getProductoNombre() : "Producto");
+                detalle.setPrecioUnitario(dDto.getPrecioUnitario() != null ? dDto.getPrecioUnitario() : BigDecimal.ZERO);
+                detalle.setCantidad(dDto.getCantidad() != null ? dDto.getCantidad() : 1);
+            }
+
+            BigDecimal subtotal = detalle.getPrecioUnitario().multiply(BigDecimal.valueOf(detalle.getCantidad()));
+            detalle.setSubtotal(subtotal);
+            total = total.add(subtotal);
+
+            ventaDetalleRepository.save(detalle);
+        }
+
+        savedVenta.setMontoTotal(total);
+        savedVenta = ventaRepository.update(savedVenta);
+
+        return findById(savedVenta.getId()).orElse(mapToDto(savedVenta));
+    }
+
+    @Transactional
+    public boolean anular(Long id) {
+        Optional<Venta> ventaOpt = ventaRepository.findById(id);
+        if (ventaOpt.isPresent() && !"ANULADA".equals(ventaOpt.get().getEstado())) {
+            Venta venta = ventaOpt.get();
+            venta.setEstado("ANULADA");
+            venta.setFechaAnulacion(LocalDateTime.now());
+            ventaRepository.update(venta);
+
+            // Reponer stock
+            List<VentaDetalle> detalles = ventaDetalleRepository.findByVentaId(venta.getId());
+            for (VentaDetalle d : detalles) {
+                if (d.getProductoId() != null) {
+                    productoRepository.findById(d.getProductoId()).ifPresent(prod -> {
+                        prod.setStock(prod.getStock() + d.getCantidad());
+                        productoRepository.update(prod);
+                    });
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private VentaDto mapToDto(Venta venta) {
+        VentaDto dto = new VentaDto();
+        dto.setId(venta.getId());
+        dto.setNumeroFactura(venta.getNumeroFactura());
+        dto.setClienteId(venta.getClienteId());
+        dto.setClienteNombre(venta.getClienteNombre());
+        dto.setFecha(venta.getFecha());
+        dto.setCondicion(venta.getCondicion());
+        dto.setMontoTotal(venta.getMontoTotal());
+        dto.setEstado(venta.getEstado());
+        dto.setFechaAnulacion(venta.getFechaAnulacion());
+        return dto;
+    }
+
+    private VentaDetalleDto mapDetalleToDto(VentaDetalle detalle) {
+        VentaDetalleDto dto = new VentaDetalleDto();
+        dto.setId(detalle.getId());
+        dto.setVentaId(detalle.getVentaId());
+        dto.setProductoId(detalle.getProductoId());
+        dto.setProductoNombre(detalle.getProductoNombre());
+        dto.setCantidad(detalle.getCantidad());
+        dto.setPrecioUnitario(detalle.getPrecioUnitario());
+        dto.setSubtotal(detalle.getSubtotal());
+        return dto;
+    }
+}
+
+
+================================================================================
+ARCHIVO: src/main/java/com/app/venta/controller/VentaController.java
+================================================================================
+package com.app.venta.controller;
+
+import com.app.venta.dto.VentaDto;
+import com.app.venta.service.VentaService;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.*;
+import java.util.List;
+
+@Controller("/api/ventas")
+public class VentaController {
+
+    private final VentaService ventaService;
+
+    public VentaController(VentaService ventaService) {
+        this.ventaService = ventaService;
+    }
+
+    @Get
+    public HttpResponse<List<VentaDto>> getAll() {
+        return HttpResponse.ok(ventaService.findAll());
+    }
+
+    @Get("/{id}")
+    public HttpResponse<VentaDto> getById(@PathVariable Long id) {
+        return ventaService.findById(id)
+                .map(HttpResponse::ok)
+                .orElse(HttpResponse.notFound());
+    }
+
+    @Post
+    public HttpResponse<VentaDto> create(@Body VentaDto ventaDto) {
+        return HttpResponse.created(ventaService.registrarVenta(ventaDto));
+    }
+
+    @Post("/{id}/anular")
+    public HttpResponse<?> anular(@PathVariable Long id) {
+        if (ventaService.anular(id)) {
+            return HttpResponse.noContent();
+        }
+        return HttpResponse.notFound();
+    }
+}
+
+
+================================================================================
+ARCHIVO: src/main/java/com/app/venta/controller/VentaUiController.java
+================================================================================
+package com.app.venta.controller;
+
+import com.app.cliente.ClienteService;
+import com.app.producto.service.ProductoService;
+import com.app.venta.dto.VentaDetalleDto;
+import com.app.venta.dto.VentaDto;
+import com.app.venta.service.VentaService;
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.*;
+import io.micronaut.views.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Controller("/ui/ventas")
+public class VentaUiController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(VentaUiController.class);
+
+    private final VentaService ventaService;
+    private final ClienteService clienteService;
+    private final ProductoService productoService;
+
+    public VentaUiController(VentaService ventaService, ClienteService clienteService, ProductoService productoService) {
+        this.ventaService = ventaService;
+        this.clienteService = clienteService;
+        this.productoService = productoService;
+    }
+
+    @View("venta/table")
+    @Get("/list{?estado}")
+    public Map<String, Object> list(@Nullable String estado) {
+        List<VentaDto> ventas = ventaService.findAll();
+        if (estado != null && !estado.trim().isEmpty() && !"TODAS".equalsIgnoreCase(estado)) {
+            ventas = ventas.stream()
+                    .filter(v -> estado.equalsIgnoreCase(v.getEstado()))
+                    .collect(Collectors.toList());
+        }
+        return Map.of("ventas", ventas, "estadoFiltro", estado != null ? estado.toUpperCase() : "TODAS");
+    }
+
+    @View("venta/form")
+    @Get("/form")
+    public Map<String, Object> form() {
+        return Map.of();
+    }
+
+    @View("venta/detalle")
+    @Get("/detalle{?id}")
+    public Map<String, Object> detalle(@Nullable Long id) {
+        if (id != null) {
+            return ventaService.findById(id)
+                    .map(venta -> Map.<String, Object>of("venta", venta))
+                    .orElseGet(Map::of);
+        }
+        return Map.of();
+    }
+
+    @View("venta/table")
+    @Post(uri = "/save", consumes = MediaType.APPLICATION_FORM_URLENCODED)
+    public Map<String, Object> save(@Nullable @Body Map<String, Object> body, HttpRequest<?> request) {
+        LOG.info("=========================================");
+        LOG.info("=== RECIBIDA PETICIÓN DE GUARDAR VENTA ===");
+        LOG.info("=========================================");
+
+        if (body == null || body.isEmpty()) {
+            LOG.warn("Cuerpo de la petición recibido es NULO o VACÍO.");
+            return Map.of("ventas", ventaService.findAll(), "error", "No se recibieron datos de la venta.");
+        }
+
+        LOG.info("Cuerpo del formulario parseado como Map: {}", body);
+
+        VentaDto ventaDto = new VentaDto();
+        
+        Object clienteIdObj = body.get("clienteId");
+        LOG.info("clienteId objeto recibido: {}", clienteIdObj);
+
+        if (clienteIdObj != null && !clienteIdObj.toString().trim().isEmpty()) {
+            try {
+                ventaDto.setClienteId(Long.parseLong(clienteIdObj.toString().trim()));
+            } catch (NumberFormatException e) {
+                LOG.error("Error al parsear clienteId: {}", clienteIdObj, e);
+                return Map.of("ventas", ventaService.findAll(), "error", "Identificador de cliente no válido.");
+            }
+        } else {
+            LOG.warn("Falta el clienteId en la petición. No se guardará la venta.");
+            return Map.of("ventas", ventaService.findAll(), "error", "Debe seleccionar un cliente válido.");
+        }
+        
+        Object condicionObj = body.get("condicion");
+        String condicion = condicionObj != null ? condicionObj.toString().trim() : "Contado";
+        ventaDto.setCondicion(condicion);
+        LOG.info("Condición de venta establecida: '{}'", condicion);
+
+        List<String> prodIds = getAsList(body.get("productoId"));
+        List<String> cantidades = getAsList(body.get("cantidad"));
+        List<String> precios = getAsList(body.get("precioUnitario"));
+
+        LOG.info("Productos IDs recibidos: {}", prodIds);
+        LOG.info("Cantidades recibidas: {}", cantidades);
+        LOG.info("Precios recibidos: {}", precios);
+
+        List<VentaDetalleDto> detalles = new ArrayList<>();
+        for (int i = 0; i < prodIds.size(); i++) {
+            String pIdStr = prodIds.get(i);
+            if (pIdStr == null || pIdStr.trim().isEmpty()) continue;
+            
+            VentaDetalleDto d = new VentaDetalleDto();
+            d.setProductoId(Long.parseLong(pIdStr.trim()));
+            
+            int qty = 1;
+            if (i < cantidades.size() && cantidades.get(i) != null && !cantidades.get(i).trim().isEmpty()) {
+                qty = Integer.parseInt(cantidades.get(i).trim());
+            }
+            d.setCantidad(qty);
+
+            if (i < precios.size() && precios.get(i) != null && !precios.get(i).trim().isEmpty()) {
+                d.setPrecioUnitario(new BigDecimal(precios.get(i).trim()));
+            }
+
+            detalles.add(d);
+            LOG.info("Detalle agregado #{} -> Producto ID: {}, Cantidad: {}, Precio: {}", 
+                    i + 1, d.getProductoId(), d.getCantidad(), d.getPrecioUnitario());
+        }
+
+        ventaDto.setDetalles(detalles);
+
+        try {
+            LOG.info("Registrando venta en VentaService...");
+            VentaDto ventaGuardada = ventaService.registrarVenta(ventaDto);
+            LOG.info("¡Venta registrada con éxito! ID: {}, Nro Factura: {}, Total: {}", 
+                    ventaGuardada.getId(), ventaGuardada.getNumeroFactura(), ventaGuardada.getMontoTotal());
+            return Map.of("ventas", ventaService.findAll(), "mensaje", "Venta Factura " + ventaGuardada.getNumeroFactura() + " registrada con éxito.");
+        } catch (Exception e) {
+            LOG.error("Error al registrar la venta en el servicio: {}", e.getMessage(), e);
+            return Map.of("ventas", ventaService.findAll(), "error", e.getMessage() != null ? e.getMessage() : "Error al registrar la venta.");
+        }
+    }
+
+    private List<String> getAsList(Object val) {
+        if (val == null) {
+            return new ArrayList<>();
+        }
+        if (val instanceof List<?> list) {
+            List<String> result = new ArrayList<>();
+            for (Object item : list) {
+                if (item != null) result.add(item.toString());
+            }
+            return result;
+        }
+        if (val instanceof Object[] arr) {
+            List<String> result = new ArrayList<>();
+            for (Object item : arr) {
+                if (item != null) result.add(item.toString());
+            }
+            return result;
+        }
+        return new ArrayList<>(List.of(val.toString()));
+    }
+
+    @View("venta/table")
+    @Post(uri = "/anular/{id}")
+    public Map<String, Object> anular(@PathVariable Long id) {
+        LOG.info("Anulando venta con ID: {}", id);
+        boolean anulado = ventaService.anular(id);
+        if (anulado) {
+            return Map.of("ventas", ventaService.findAll(), "mensaje", "Venta anulada correctamente.");
+        } else {
+            return Map.of("ventas", ventaService.findAll(), "error", "No se pudo anular la venta.");
+        }
+    }
+}
