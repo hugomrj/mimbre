@@ -1,0 +1,33 @@
+<div class="toolbar animate-fade-in delay-1">
+    <div class="toolbar-left">
+        <h2 style="font-size: 1.25rem; font-weight: 600;">
+            {% if category.id %}Editar Categoría{% else %}Nueva Categoría{% endif %}
+        </h2>
+    </div>
+</div>
+
+<div class="table-card animate-fade-in delay-2" style="padding: 24px;">
+
+    <form hx-post="/ui/categories/save" hx-target="#id-main" class="form-container">
+
+        {% if category.id %}
+        <input type="hidden" name="id" value="{{ category.id }}">
+        {% endif %}
+
+        <div class="form-group col-full">
+            <label class="form-label" for="catName">Nombre de la categoría</label>
+            <input type="text" id="catName" name="name" value="{{ category.name }}" required class="form-control">
+        </div>
+
+        <div class="form-group col-full">
+            <label class="form-label" for="catDesc">Descripción</label>
+            <input type="text" id="catDesc" name="description" value="{{ category.description }}" class="form-control">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-add">Guardar Categoría</button>
+            <button type="button" class="btn-ghost" hx-get="/ui/categories/table" hx-target="#id-main">Cancelar</button>
+        </div>
+
+    </form>
+</div>

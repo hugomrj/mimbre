@@ -28,12 +28,7 @@
 
         <div class="form-group col-4">
             <label class="form-label" for="prodCategory">Categoría</label>
-            <select id="prodCategory" name="category" required class="form-control">
-                <option value="" disabled {% if not product.category %}selected{% endif %}>Seleccione una categoría</option>
-                {% for cat in categories %}
-                <option value="{{ cat.name }}" {% if product.category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
-                {% endfor %}
-            </select>
+            <input type="text" id="prodCategory" name="category" value="{{ product.category }}" required class="form-control">
         </div>
 
         <!-- FILA 3: Precio (3/6) + Stock (3/6) = 6 columnas completas -->

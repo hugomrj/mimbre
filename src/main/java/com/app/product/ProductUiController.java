@@ -1,18 +1,23 @@
 package com.app.product;
 
+import com.app.category.CategoryService;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.MediaType;
 import io.micronaut.views.View;
 import io.micronaut.core.annotation.Nullable;
+
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller("/ui/products")
 public class ProductUiController {
 
     private final ProductService productService;
+    private final CategoryService categoryService;
 
-    public ProductUiController(ProductService productService) {
+    public ProductUiController(ProductService productService, CategoryService categoryService) {
         this.productService = productService;
+        this.categoryService = categoryService;
     }
 
     @View("product/table")
@@ -24,12 +29,12 @@ public class ProductUiController {
     @View("product/form")
     @Get("/form{?id}")
     public Map<String, Object> form(@Nullable Long id) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("categories", categoryService.findAll());
         if (id != null) {
-            return productService.findById(id)
-                    .map(product -> (Map<String, Object>) Map.<String, Object>of("product", product))
-                    .orElseGet(Map::of);
+            productService.findById(id).ifPresent(product -> model.put("product", product));
         }
-        return Map.of();
+        return model;
     }
 
     @View("product/table")

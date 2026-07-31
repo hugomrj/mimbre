@@ -5,10 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FARO - Dashboard</title>
+
+    <!-- Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Tus estilos personalizados -->
     <link rel="stylesheet" href="/css/main.css">
+
+    <!-- HTMX para la navegación SPA -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    <!-- Chart.js para los gráficos del dashboard (¡NUEVO!) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body data-theme="dark">
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
@@ -31,8 +41,8 @@
                 <i class="fas fa-chevron-down nav-chevron"></i>
             </button>
             <div class="nav-sub open">
-                <a href="#" class="nav-sub-item active" hx-get="/ui/products/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Productos</span></a>
-                <a href="#" class="nav-sub-item" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Categorias</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/products/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Productos</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/categories/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Categorias</span></a>
                 <a href="#" class="nav-sub-item" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Proveedores</span></a>
             </div>
 
