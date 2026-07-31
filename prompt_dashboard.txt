@@ -1,3 +1,47 @@
+PROMPT PARA GENERAR / REDISEÑAR EL DASHBOARD GRÁFICO (100% AGNÓSTICO VIA REST API)
+
+Instrucciones para la IA:
+Eres un diseñador web experto en UI/UX y desarrollo frontend. Tu tarea es diseñar un Dashboard moderno, elegante, responsivo y visualmente atractivo utilizando HTML5, CSS3, Font Awesome (v6), Chart.js (v4) y JavaScript nativo (Vanilla JS).
+
+SISTEMA DE DISEÑO Y CONTEXTO:
+- La aplicación se llama "FARO" / "Mimbre" (sistema de ventas e inventario).
+- Tema: Modo Oscuro por defecto usando variables CSS preexistentes (var(--dark-card), var(--dark-card-border), var(--dark-text), var(--dark-text-muted), var(--primary), etc.).
+- La vista es 100% AGNÓSTICA. Se alimenta mediante una petición GET a la API REST: fetch('/api/dashboard').
+- El contenido será inyectado dinámicamente mediante HTMX dentro del contenedor principal (#id-main), por lo que NO debes incluir las etiquetas <html>, <head> o <body>, únicamente el fragmento HTML/JS del dashboard.
+
+================================================================================
+RESPUESTA JSON QUE DEVUELVE LA API REST GET /api/dashboard
+================================================================================
+{
+  "totalVentasMes": 24150000,
+  "facturasEmitidasCount": 12,
+  "totalProductosCount": 45,
+  "totalClientesCount": 18,
+  "fechasVentas": ["25/07", "28/07", "31/07"],
+  "montosVentas": [12000000, 350000, 24150000],
+  "productosBajoStockList": [
+    {
+      "id": 2,
+      "nombre": "Mouse Inalámbrico",
+      "sku": "MOU-002",
+      "categoria": "Electrónica",
+      "precio": 150000,
+      "stock": 3
+    },
+    {
+      "id": 5,
+      "nombre": "Teclado Mecánico RGB",
+      "sku": "TEC-003",
+      "categoria": "Electrónica",
+      "precio": 450000,
+      "stock": 1
+    }
+  ]
+}
+
+================================================================================
+CÓDIGO HTML Y JAVASCRIPT ACTUAL DE REFERENCIA (dashboard.html)
+================================================================================
 <!-- TARJETAS DE KPIs CLARAS Y SENCILLAS -->
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;" class="animate-fade-in delay-1">
     <!-- KPI 1: Ventas del Mes -->
@@ -112,13 +156,6 @@
         fetch('/api/dashboard')
             .then(res => res.json())
             .then(data => {
-                console.log("=========================================");
-                console.log("=== JSON RECIBIDO DESDE /api/dashboard ===");
-                console.log(data);
-                console.log(JSON.stringify(data, null, 2));
-                console.log("=========================================");
-
-                // 1. Actualizar KPIs
                 const kpiVentas = document.getElementById('kpiVentasMes');
                 const kpiFacturas = document.getElementById('kpiFacturas');
                 const kpiProductos = document.getElementById('kpiProductos');
@@ -129,7 +166,6 @@
                 if (kpiProductos) kpiProductos.textContent = data.totalProductosCount || 0;
                 if (kpiClientes) kpiClientes.textContent = data.totalClientesCount || 0;
 
-                // 2. Renderizar Tabla de Stock Bajo
                 const tbody = document.getElementById('tbodyBajoStock');
                 if (tbody) {
                     tbody.innerHTML = '';
@@ -163,7 +199,6 @@
                     }
                 }
 
-                // 3. Renderizar Gráfico de Chart.js
                 const ctx = document.getElementById('chartEvolucionVentas');
                 if (ctx && typeof Chart !== 'undefined') {
                     const fechas = data.fechasVentas && data.fechasVentas.length > 0 ? data.fechasVentas : ['Hoy'];
@@ -223,3 +258,9 @@
             .catch(err => console.error('Error al cargar datos del dashboard:', err));
     })();
 </script>
+
+================================================================================
+ REQUERIMIENTOS DE REDISEÑO:
+- Utiliza JavaScript Vanilla para consumir fetch('/api/dashboard').
+- Utiliza las claves del JSON que devuelve la API.
+- Devuelve únicamente el fragmento HTML/JS mejorado, pulido y listo para copiar y reemplazar en dashboard.html.

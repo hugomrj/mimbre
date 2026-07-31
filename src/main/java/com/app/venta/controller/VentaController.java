@@ -1,5 +1,7 @@
-package com.app.venta;
+package com.app.venta.controller;
 
+import com.app.venta.dto.VentaDto;
+import com.app.venta.service.VentaService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import java.util.List;

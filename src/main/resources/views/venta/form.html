@@ -8,13 +8,14 @@
 
 <div class="table-card animate-fade-in delay-2" style="padding: 24px;">
 
-    <form hx-post="/ui/ventas/save" hx-target="#id-main" class="form-container" id="formVenta" onsubmit="return VentaManager.validarVenta()">
+    <form hx-post="/ui/ventas/save" hx-target="#id-main" class="form-container" id="formVenta">
 
         <!-- FILA 1: Cliente Autocompletar (4/6) + Condición (2/6) -->
         <div class="form-group col-4" style="position: relative;">
             <label class="form-label" for="buscarClienteInput">Cliente</label>
             <input type="text" id="buscarClienteInput" name="q" placeholder="Escriba para buscar por Nombre o RUC/Cédula..." required class="form-control" autocomplete="off"
-                   hx-get="/ui/clientes/buscar-cliente" hx-trigger="keyup changed delay:300ms, focus" hx-target="#clienteResultados">
+                   hx-get="/ui/clientes/buscar-cliente" hx-trigger="keyup changed delay:300ms, focus" hx-target="#clienteResultados"
+                   oninput="document.getElementById('selectCliente').value=''">
             <input type="hidden" id="selectCliente" name="clienteId" required>
             <div id="clienteResultados"></div>
         </div>

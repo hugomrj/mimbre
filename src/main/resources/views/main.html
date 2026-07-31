@@ -1,10 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090E1E"> <!-- Color de la barra del navegador en móvil -->
     <title>FARO - Dashboard</title>
+
+    <!-- 1. FUENTE INTER (CRÍTICO: Tu CSS depende de esto) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -12,16 +17,17 @@
     <!-- Tus estilos personalizados -->
     <link rel="stylesheet" href="/css/main.css">
 
-    <!-- HTMX para la navegación SPA -->
+    <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
-    <!-- Chart.js para los gráficos del dashboard (¡NUEVO!) -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Scripts de la aplicación -->
     <script src="/js/main.js"></script>
     <script src="/js/venta.js"></script>
 </head>
+
 
 <body data-theme="dark">
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>

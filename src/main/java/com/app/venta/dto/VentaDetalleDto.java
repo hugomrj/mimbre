@@ -1,4 +1,4 @@
-package com.app.venta;
+package com.app.venta.dto;
 
 import io.micronaut.serde.annotation.Serdeable;
 import java.math.BigDecimal;

@@ -15,7 +15,9 @@
             --dark-card-border: rgba(255,255,255,0.06);
             --dark-text: #F0F9FF;
             --dark-text-secondary: #7DD3FC;
-            --dark-text-muted: #94A3B8;
+
+            --dark-text-muted: #CBD5E1;
+
             --dark-nav-item: rgba(255,255,255,0.45);
             --dark-nav-active-bg: rgba(6,182,212,0.12);
             --dark-nav-active-text: #F0F9FF;

@@ -1,9 +1,14 @@
-package com.app.venta;
+package com.app.venta.service;
 
-import com.app.cliente.Cliente;
 import com.app.cliente.ClienteRepository;
 import com.app.producto.Producto;
 import com.app.producto.ProductoRepository;
+import com.app.venta.model.VentaDetalle;
+import com.app.venta.repository.VentaDetalleRepository;
+import com.app.venta.repository.VentaRepository;
+import com.app.venta.dto.VentaDetalleDto;
+import com.app.venta.dto.VentaDto;
+import com.app.venta.model.Venta;
 import jakarta.inject.Singleton;
 
 import java.math.BigDecimal;
@@ -32,7 +37,7 @@ public class VentaService {
     }
 
     public List<VentaDto> findAll() {
-        return StreamSupport.stream(ventaRepository.findAll().spliterator(), false)
+        return StreamSupport.stream(ventaRepository.findAllOrderByIdDesc().spliterator(), false)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -74,6 +79,7 @@ public class VentaService {
         venta.setEstado("COMPLETADA");
 
         BigDecimal total = BigDecimal.ZERO;
+        venta.setMontoTotal(total);
 
         // Guardar venta inicial para obtener ID
         Venta savedVenta = ventaRepository.save(venta);

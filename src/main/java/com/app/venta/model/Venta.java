@@ -1,4 +1,4 @@
-package com.app.venta;
+package com.app.venta.model;
 
 import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;

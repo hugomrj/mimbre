@@ -165,14 +165,19 @@ const VentaManager = {
     },
 
     validarVenta: function() {
-        if (!document.getElementById('selectCliente').value) {
-            this.showToast('Seleccione un cliente válido de la lista');
+        const selectCliente = document.getElementById('selectCliente');
+        const clienteId = selectCliente ? selectCliente.value : '';
+
+        if (!clienteId) {
+            this.showToast('Seleccione un cliente válido de la lista de sugerencias', 'warning');
             return false;
         }
+
         if (this.itemsVenta.length === 0) {
-            this.showToast('Agregue al menos un producto a la venta');
+            this.showToast('Agregue al menos un producto a la venta', 'warning');
             return false;
         }
+
         return true;
     },
 
@@ -194,6 +199,15 @@ const VentaManager = {
 
 // Configurar los event listeners globales necesarios
 document.addEventListener('DOMContentLoaded', () => {
+    // Interceptar el envío del formulario de ventas por HTMX antes de hacer el POST
+    document.body.addEventListener('htmx:beforeRequest', function(evt) {
+        if (evt.target && evt.target.id === 'formVenta') {
+            if (typeof VentaManager !== 'undefined' && !VentaManager.validarVenta()) {
+                evt.preventDefault();
+            }
+        }
+    });
+
     // Ocultar resultados si se hace clic fuera (para clientes y productos)
     document.addEventListener('click', function(e) {
         // Clientes
