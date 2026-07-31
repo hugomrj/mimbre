@@ -4,7 +4,6 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.views.View;
-import jakarta.validation.Valid;
 
 import java.util.Map;
 
@@ -36,7 +35,7 @@ public class ProveedorUiController {
 
     @View("proveedor/table")
     @Post(uri = "/save", consumes = MediaType.APPLICATION_FORM_URLENCODED)
-    public Map<String, Object> save(@Valid @Body ProveedorDto proveedorDto) {
+    public Map<String, Object> save(@Body ProveedorDto proveedorDto) {
         if (proveedorDto.getId() != null) {
             proveedorService.update(proveedorDto.getId(), proveedorDto);
             return Map.of("proveedores", proveedorService.findAll(), "mensaje", "Proveedor actualizado correctamente.");
