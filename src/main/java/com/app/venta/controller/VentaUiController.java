@@ -66,21 +66,19 @@ public class VentaUiController {
     @View("venta/table")
     @Post(uri = "/save", consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public Map<String, Object> save(@Nullable @Body Map<String, Object> body, HttpRequest<?> request) {
-        LOG.info("=========================================");
-        LOG.info("=== RECIBIDA PETICIÓN DE GUARDAR VENTA ===");
-        LOG.info("=========================================");
+
 
         if (body == null || body.isEmpty()) {
             LOG.warn("Cuerpo de la petición recibido es NULO o VACÍO.");
             return Map.of("ventas", ventaService.findAll(), "error", "No se recibieron datos de la venta.");
         }
 
-        LOG.info("Cuerpo del formulario parseado como Map: {}", body);
+
 
         VentaDto ventaDto = new VentaDto();
         
         Object clienteIdObj = body.get("clienteId");
-        LOG.info("clienteId objeto recibido: {}", clienteIdObj);
+
 
         if (clienteIdObj != null && !clienteIdObj.toString().trim().isEmpty()) {
             try {
@@ -97,15 +95,13 @@ public class VentaUiController {
         Object condicionObj = body.get("condicion");
         String condicion = condicionObj != null ? condicionObj.toString().trim() : "Contado";
         ventaDto.setCondicion(condicion);
-        LOG.info("Condición de venta establecida: '{}'", condicion);
+
 
         List<String> prodIds = getAsList(body.get("productoId"));
         List<String> cantidades = getAsList(body.get("cantidad"));
         List<String> precios = getAsList(body.get("precioUnitario"));
 
-        LOG.info("Productos IDs recibidos: {}", prodIds);
-        LOG.info("Cantidades recibidas: {}", cantidades);
-        LOG.info("Precios recibidos: {}", precios);
+
 
         List<VentaDetalleDto> detalles = new ArrayList<>();
         for (int i = 0; i < prodIds.size(); i++) {
@@ -126,17 +122,13 @@ public class VentaUiController {
             }
 
             detalles.add(d);
-            LOG.info("Detalle agregado #{} -> Producto ID: {}, Cantidad: {}, Precio: {}", 
-                    i + 1, d.getProductoId(), d.getCantidad(), d.getPrecioUnitario());
+
         }
 
         ventaDto.setDetalles(detalles);
 
         try {
-            LOG.info("Registrando venta en VentaService...");
             VentaDto ventaGuardada = ventaService.registrarVenta(ventaDto);
-            LOG.info("¡Venta registrada con éxito! ID: {}, Nro Factura: {}, Total: {}", 
-                    ventaGuardada.getId(), ventaGuardada.getNumeroFactura(), ventaGuardada.getMontoTotal());
             return Map.of("ventas", ventaService.findAll(), "mensaje", "Venta Factura " + ventaGuardada.getNumeroFactura() + " registrada con éxito.");
         } catch (Exception e) {
             LOG.error("Error al registrar la venta en el servicio: {}", e.getMessage(), e);
@@ -168,7 +160,7 @@ public class VentaUiController {
     @View("venta/table")
     @Post(uri = "/anular/{id}", consumes = MediaType.ALL)
     public Map<String, Object> anular(@PathVariable Long id) {
-        LOG.info("Anulando venta con ID: {}", id);
+
         boolean anulado = ventaService.anular(id);
         if (anulado) {
             return Map.of("ventas", ventaService.findAll(), "mensaje", "Venta anulada correctamente.");
