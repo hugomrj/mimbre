@@ -1,0 +1,45 @@
+<div class="toolbar animate-fade-in delay-1">
+    <div class="toolbar-filters">
+        <button class="filter-chip active" onclick="setFilter(this)">Todos <span class="count">{{ clientes.size() | default(0) }}</span></button>
+    </div>
+    <div class="toolbar-right">
+        <button class="btn-ghost" onclick="showToast('Exportando...')"><i class="fas fa-file-export"></i> Exportar</button>
+        <button class="btn-add" hx-get="/ui/clientes/form" hx-target="#id-main"><i class="fas fa-plus"></i> Nuevo cliente</button>
+    </div>
+</div>
+
+<div class="table-card animate-fade-in delay-2">
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>RUC / Cédula</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Dirección</th>
+            <th style="text-align:right">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for c in clientes %}
+        <tr class="row-anim" style="animation-delay: 0.04s">
+            <td><strong>{{ c.nombre }}</strong></td>
+            <td><code>{{ c.rucDocumento }}</code></td>
+            <td>{{ c.telefono }}</td>
+            <td style="color:var(--dark-text-muted)">{{ c.email }}</td>
+            <td style="color:var(--dark-text-muted)">{{ c.direccion }}</td>
+            <td>
+                <div class="row-actions">
+                    <button class="row-action-btn" title="Editar" hx-get="/ui/clientes/form?id={{ c.id }}" hx-target="#id-main"><i class="fas fa-pen"></i></button>
+                    <button class="row-action-btn" title="Eliminar" hx-delete="/api/clientes/{{ c.id }}" hx-target="#id-main" hx-confirm="¿Eliminar cliente?"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6" style="text-align: center; padding: 32px; color: var(--dark-text-muted);">No hay clientes registrados.</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
