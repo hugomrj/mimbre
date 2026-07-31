@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // FUNCIONES GLOBALES DE UI (Extraídas de main.html)
 // =========================================================
 
-function toggleSubMenuAcc(btn) {
+function toggleSub(btn) {
     const isOpen = btn.classList.contains('expanded');
     const sub = btn.nextElementSibling;
     document.querySelectorAll('.nav-item.expanded').forEach(el => {
