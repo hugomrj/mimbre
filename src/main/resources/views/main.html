@@ -41,9 +41,9 @@
                 <i class="fas fa-chevron-down nav-chevron"></i>
             </button>
             <div class="nav-sub open">
-                <a href="#" class="nav-sub-item" hx-get="/ui/products/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Productos</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/productos/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Productos</span></a>
                 <a href="#" class="nav-sub-item" hx-get="/ui/categories/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Categorias</span></a>
-                <a href="#" class="nav-sub-item" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Proveedores</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/proveedores/table" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Proveedores</span></a>
             </div>
 
             <button class="nav-item" onclick="toggleSub(this)">

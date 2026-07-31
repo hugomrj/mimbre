@@ -1,10 +1,10 @@
 <div class="toolbar animate-fade-in delay-1">
     <div class="toolbar-filters">
-        <button class="filter-chip active" onclick="setFilter(this)">Todos <span class="count">{{ products.size() | default(0) }}</span></button>
+        <button class="filter-chip active" onclick="setFilter(this)">Todos <span class="count">{{ productos.size() | default(0) }}</span></button>
     </div>
     <div class="toolbar-right">
         <button class="btn-ghost" onclick="showToast('Exportando...')"><i class="fas fa-file-export"></i> Exportar</button>
-        <button class="btn-add" hx-get="/ui/products/form" hx-target="#id-main"><i class="fas fa-plus"></i> Nuevo producto</button>
+        <button class="btn-add" hx-get="/ui/productos/form" hx-target="#id-main"><i class="fas fa-plus"></i> Nuevo producto</button>
     </div>
 </div>
 
@@ -15,30 +15,30 @@
             <th>Producto</th>
             <th>Precio</th>
             <th>Stock</th>
-            <th>Categoria</th>
+            <th>Categoría</th>
             <th style="text-align:right">Acciones</th>
         </tr>
         </thead>
         <tbody>
-        {% for p in products %}
+        {% for p in productos %}
         <tr class="row-anim" style="animation-delay: 0.04s">
             <td>
                 <div class="product-info">
-                    <span class="product-name">{{ p.name }}</span>
+                    <span class="product-name">{{ p.nombre }}</span>
                     <span class="product-sku">{{ p.sku }}</span>
                 </div>
             </td>
-            <td><span class="price">₲ {{ p.price }}</span></td>
+            <td><span class="price">₲ {{ p.precio }}</span></td>
             <td>
                 <div class="stock-bar">
                     <span class="stock-num">{{ p.stock }}</span>
                 </div>
             </td>
-            <td style="color:var(--dark-text-muted)">{{ p.category }}</td>
+            <td style="color:var(--dark-text-muted)">{{ p.categoria }}</td>
             <td>
                 <div class="row-actions">
-                    <button class="row-action-btn" title="Editar" hx-get="/ui/products/form?id={{ p.id }}" hx-target="#id-main"><i class="fas fa-pen"></i></button>
-                    <button class="row-action-btn" title="Eliminar" hx-delete="/api/products/{{ p.id }}" hx-target="#id-main" hx-confirm="¿Eliminar producto?"><i class="fas fa-trash-alt"></i></button>
+                    <button class="row-action-btn" title="Editar" hx-get="/ui/productos/form?id={{ p.id }}" hx-target="#id-main"><i class="fas fa-pen"></i></button>
+                    <button class="row-action-btn" title="Eliminar" hx-delete="/api/productos/{{ p.id }}" hx-target="#id-main" hx-confirm="¿Eliminar producto?"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </td>
         </tr>
