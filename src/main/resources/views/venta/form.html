@@ -8,7 +8,7 @@
 
 <div class="table-card animate-fade-in delay-2" style="padding: 24px;">
 
-    <form hx-post="/ui/ventas/save" hx-target="#id-main" class="form-container" id="formVenta" onsubmit="return validarVenta()">
+    <form hx-post="/ui/ventas/save" hx-target="#id-main" class="form-container" id="formVenta" onsubmit="return VentaManager.validarVenta()">
 
         <!-- FILA 1: Cliente Autocompletar (4/6) + Condición (2/6) -->
         <div class="form-group col-4" style="position: relative;">
@@ -51,7 +51,7 @@
                 </div>
 
                 <div>
-                    <button type="button" class="btn-add" onclick="agregarItemDesdeSelect()"><i class="fas fa-plus"></i> Agregar</button>
+                    <button type="button" class="btn-add" onclick="VentaManager.agregarItemDesdeSelect()"><i class="fas fa-plus"></i> Agregar</button>
                 </div>
             </div>
         </div>
@@ -99,123 +99,9 @@
 
     </form>
 </div>
-
 <script>
-    var itemsVenta = [];
-
-    function seleccionarCliente(id, label) {
-        document.getElementById('selectCliente').value = id;
-        document.getElementById('buscarClienteInput').value = label;
-        document.getElementById('clienteResultados').innerHTML = '';
-    }
-
-    // Ocultar resultados si se hace clic fuera
-    document.addEventListener('click', function(e) {
-        var container = document.getElementById('clienteResultados');
-        var input = document.getElementById('buscarClienteInput');
-        if (container && input && !container.contains(e.target) && e.target !== input) {
-            container.innerHTML = '';
-        }
-    });
-
-    function agregarItemDesdeSelect() {
-        var sel = document.getElementById('selectProducto');
-        var cantInput = document.getElementById('inputCantidad');
-
-        if (!sel.value) {
-            showToast('Seleccione un producto primero');
-            return;
-        }
-
-        var opt = sel.options[sel.selectedIndex];
-        var id = parseInt(sel.value);
-        var nombre = opt.getAttribute('data-nombre');
-        var precio = parseFloat(opt.getAttribute('data-precio'));
-        var stock = parseInt(opt.getAttribute('data-stock'));
-        var cantidad = parseInt(cantInput.value) || 1;
-
-        if (cantidad <= 0) {
-            showToast('Ingrese una cantidad mayor a 0');
-            return;
-        }
-
-        if (cantidad > stock) {
-            showToast('Stock insuficiente. Disponible: ' + stock);
-            return;
-        }
-
-        var existente = itemsVenta.find(i => i.id === id);
-        if (existente) {
-            if (existente.cantidad + cantidad > stock) {
-                showToast('Supera el stock disponible (' + stock + ')');
-                return;
-            }
-            existente.cantidad += cantidad;
-            existente.subtotal = existente.cantidad * existente.precio;
-        } else {
-            itemsVenta.push({
-                id: id,
-                nombre: nombre,
-                precio: precio,
-                cantidad: cantidad,
-                subtotal: cantidad * precio
-            });
-        }
-
-        renderizarTablaItems();
-        cantInput.value = 1;
-        sel.value = "";
-    }
-
-    function eliminarItem(index) {
-        itemsVenta.splice(index, 1);
-        renderizarTablaItems();
-    }
-
-    function renderizarTablaItems() {
-        var tbody = document.getElementById('tbodyItemsVenta');
-        var inputsDiv = document.getElementById('inputsOcultosDetalle');
-        var totalLabel = document.getElementById('labelTotalVenta');
-
-        tbody.innerHTML = '';
-        inputsDiv.innerHTML = '';
-
-        if (itemsVenta.length === 0) {
-            tbody.innerHTML = '<tr id="rowVacia"><td colspan="5" style="text-align: center; padding: 24px; color: var(--dark-text-muted);">No se han agregado productos a la venta.</td></tr>';
-            totalLabel.textContent = '₲ 0';
-            return;
-        }
-
-        var total = 0;
-
-        itemsVenta.forEach(function(item, idx) {
-            total += item.subtotal;
-
-            var tr = document.createElement('tr');
-            tr.innerHTML = '<td><strong>' + item.nombre + '</strong></td>' +
-                '<td style="text-align: center;">' + item.cantidad + '</td>' +
-                '<td style="text-align: right;">₲ ' + item.precio.toLocaleString('es-PY') + '</td>' +
-                '<td style="text-align: right;"><strong>₲ ' + item.subtotal.toLocaleString('es-PY') + '</strong></td>' +
-                '<td style="text-align: center;"><button type="button" class="row-action-btn" onclick="eliminarItem(' + idx + ')"><i class="fas fa-trash-alt" style="color: #F43F5E;"></i></button></td>';
-            tbody.appendChild(tr);
-
-            inputsDiv.innerHTML += '<input type="hidden" name="productoId" value="' + item.id + '">' +
-                '<input type="hidden" name="cantidad" value="' + item.cantidad + '">' +
-                '<input type="hidden" name="precioUnitario" value="' + item.precio + '">';
-        });
-
-        totalLabel.textContent = '₲ ' + total.toLocaleString('es-PY');
-    }
-
-    function validarVenta() {
-        if (!document.getElementById('selectCliente').value) {
-            showToast('Seleccione un cliente válido de la lista');
-            return false;
-        }
-        if (itemsVenta.length === 0) {
-            showToast('Agregue al menos un producto a la venta');
-            return false;
-        }
-        return true;
+    // Reiniciar el estado del manager cuando se carga el formulario por HTMX
+    if (typeof VentaManager !== 'undefined') {
+        VentaManager.reset();
     }
 </script>
