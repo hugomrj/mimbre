@@ -6,20 +6,22 @@
     <meta name="theme-color" content="#090E1E"> <!-- Color de la barra del navegador en móvil -->
     <title>FARO - Dashboard</title>
 
-    <!-- 1. FUENTE INTER -->
-    <!-- Fuentes locales desactivadas por ahora, usando font-family por defecto -->
+    <!-- 1. FUENTE INTER (CRÍTICO: Tu CSS depende de esto) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Iconos -->
-    <link rel="stylesheet" href="/vendor/fontawesome/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Tus estilos personalizados -->
     <link rel="stylesheet" href="/css/main.css">
 
     <!-- HTMX -->
-    <script src="/vendor/htmx/htmx.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
     <!-- Chart.js -->
-    <script src="/vendor/chartjs/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Scripts de la aplicación -->
     <script src="/js/main.js"></script>
