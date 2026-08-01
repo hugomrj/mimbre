@@ -1,5 +1,7 @@
-package com.app.cliente;
+package com.app.cliente.controller;
 
+import com.app.cliente.dto.ClienteDto;
+import com.app.cliente.ClienteService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import jakarta.validation.Valid;

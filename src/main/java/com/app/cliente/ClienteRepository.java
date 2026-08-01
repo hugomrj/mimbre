@@ -1,5 +1,6 @@
 package com.app.cliente;
 
+import com.app.cliente.model.Cliente;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;

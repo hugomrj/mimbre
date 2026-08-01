@@ -1,0 +1,12 @@
+<div class="cliente-dropdown-list">
+{% for prov in proveedores %}
+<div class="cliente-dropdown-item" onclick="CompraManager.seleccionarProveedor({{ prov.id }}, '{{ prov.nombre }}')">
+<div style="font-weight: 600; color: var(--dark-text);">{{ prov.nombre }}</div>
+<div style="font-size: 0.75rem; color: var(--dark-text-muted);">RUC: {{ prov.ruc }}</div>
+</div>
+{% else %}
+<div style="padding: 12px; font-size: 0.85rem; color: var(--dark-text-muted); text-align: center;">
+No se encontraron proveedores
+</div>
+{% endfor %}
+</div>

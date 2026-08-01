@@ -24,6 +24,7 @@
     <!-- Scripts de la aplicación -->
     <script src="/js/main.js"></script>
     <script src="/js/venta.js"></script>
+    <script src="/js/compra.js"></script>
 </head>
 
 
@@ -60,8 +61,9 @@
                 <i class="fas fa-chevron-down nav-chevron"></i>
             </button>
             <div class="nav-sub">
-                <a href="#" class="nav-sub-item" hx-get="/ui/ventas/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Ventas</span></a>
-                <a href="#" class="nav-sub-item" hx-get="/ui/clientes/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Clientes</span></a>
+                 <a href="#" class="nav-sub-item" hx-get="/ui/ventas/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Ventas</span></a>
+                 <a href="#" class="nav-sub-item" hx-get="/ui/compras/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Compras</span></a>
+                 <a href="#" class="nav-sub-item" hx-get="/ui/clientes/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Clientes</span></a>
             </div>
 
             <a href="#" class="nav-item" onclick="navTo(this, event)">

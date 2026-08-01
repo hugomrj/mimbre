@@ -1,5 +1,7 @@
 package com.app.cliente;
 
+import com.app.cliente.dto.ClienteDto;
+import com.app.cliente.model.Cliente;
 import com.app.exception.BusinessException;
 import com.app.venta.repository.VentaRepository;
 import io.micronaut.transaction.annotation.Transactional;

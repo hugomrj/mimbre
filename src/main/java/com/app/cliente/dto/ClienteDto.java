@@ -1,4 +1,4 @@
-package com.app.cliente;
+package com.app.cliente.dto;
 
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.constraints.Email;

@@ -1,5 +1,7 @@
 package com.app.proveedor;
 
+import com.app.compra.repository.CompraRepository;
+import com.app.exception.BusinessException;
 import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import java.util.List;
@@ -11,13 +13,25 @@ import java.util.stream.StreamSupport;
 public class ProveedorService {
 
     private final ProveedorRepository proveedorRepository;
+    private final CompraRepository compraRepository;
 
-    public ProveedorService(ProveedorRepository proveedorRepository) {
+    public ProveedorService(ProveedorRepository proveedorRepository, CompraRepository compraRepository) {
         this.proveedorRepository = proveedorRepository;
+        this.compraRepository = compraRepository;
     }
 
     public List<ProveedorDto> findAll() {
         return StreamSupport.stream(proveedorRepository.findAll().spliterator(), false)
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProveedorDto> buscar(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return findAll().stream().limit(10).collect(Collectors.toList());
+        }
+        String pattern = "%" + query.trim() + "%";
+        return proveedorRepository.buscar(pattern).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -47,6 +61,10 @@ public class ProveedorService {
     @Transactional
     public boolean delete(Long id) {
         if (proveedorRepository.existsById(id)) {
+            long countCompras = compraRepository.countByProveedorId(id);
+            if (countCompras > 0) {
+                throw new BusinessException("No se puede eliminar el proveedor '" + proveedorRepository.findById(id).map(Proveedor::getNombre).orElse("") + "' porque cuenta con " + countCompras + " compra(s) registrada(s).");
+            }
             proveedorRepository.deleteById(id);
             return true;
         }

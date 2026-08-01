@@ -16,6 +16,13 @@ public class ProveedorUiController {
         this.proveedorService = proveedorService;
     }
 
+    @View("proveedor/results")
+    @Get("/buscar-proveedor{?q}")
+    public Map<String, Object> buscarProveedor(@Nullable String q) {
+        return Map.of("proveedores", proveedorService.buscar(q));
+    }
+
+
     @View("proveedor/table")
     @Get("/list")
     public Map<String, Object> list() {

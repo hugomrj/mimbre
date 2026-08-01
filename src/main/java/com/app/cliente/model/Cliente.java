@@ -1,4 +1,4 @@
-package com.app.cliente;
+package com.app.cliente.model;
 
 import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;

@@ -1,0 +1,119 @@
+<div class="toolbar animate-fade-in delay-1">
+<div class="toolbar-left">
+<h2 style="font-size: 1.25rem; font-weight: 600;">
+    Nueva Compra / Factura de Entrada
+</h2>
+</div>
+</div>
+
+
+<div class="table-card animate-fade-in delay-2" style="padding: 24px;">
+
+<form hx-post="/ui/compras/save" hx-target="#id-main" class="form-container" id="formCompra">
+
+<!-- FILA 1: Proveedor Autocompletar (4/6) + Condición (2/6) -->
+<div class="form-group col-4" style="position: relative;">
+<label class="form-label" for="buscarProveedorInput">Proveedor</label>
+<input type="text" id="buscarProveedorInput" name="q" placeholder="Escriba para buscar por Nombre o RUC..." required class="form-control" autocomplete="off"
+       hx-get="/ui/proveedores/buscar-proveedor" hx-trigger="keyup changed delay:300ms, focus" hx-target="#proveedorResultados"
+       oninput="document.getElementById('selectProveedor').value=''">
+<input type="hidden" id="selectProveedor" name="proveedorId" required>
+<div id="proveedorResultados"></div>
+</div>
+
+<div class="form-group col-2">
+<label class="form-label" for="selectCondicion">Condición de Compra</label>
+<select id="selectCondicion" name="condicion" class="form-control">
+<option value="Contado" selected>Contado</option>
+<option value="Crédito">Crédito</option>
+</select>
+</div>
+
+<!-- SECCIÓN: Encabezado de Productos y Botón Modal -->
+<div class="form-group col-full" style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 4px;">
+<label class="form-label" style="font-weight: 600; font-size: 1rem; color: var(--primary); margin: 0;">
+<i class="fas fa-boxes-stacked"></i> Detalle de Productos
+</label>
+<button type="button" class="btn-add" onclick="CompraManager.abrirModalProducto()">
+<i class="fas fa-cart-plus"></i> Agregar Producto
+</button>
+</div>
+
+<!-- TABLA DE DETALLE DE LA COMPRA -->
+<div class="form-group col-full" style="margin-top: 4px;">
+<table class="data-table" id="tablaItemsCompra">
+<thead>
+<tr>
+<th>Producto</th>
+<th style="width: 120px; text-align: center;">Cantidad</th>
+<th style="width: 150px; text-align: right;">Precio Costo</th>
+<th style="width: 150px; text-align: right;">Subtotal</th>
+<th style="width: 60px; text-align: center;">Acción</th>
+</tr>
+</thead>
+<tbody id="tbodyItemsCompra">
+<tr id="rowVacia">
+<td colspan="5" style="text-align: center; padding: 24px; color: var(--dark-text-muted);">
+No se han agregado productos a la compra.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- CONTENEDOR OCULTO PARA FORM INPUTS -->
+<div id="inputsOcultosDetalle"></div>
+
+<!-- TOTAL GENERAL -->
+<div class="form-group col-full" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--dark-card-border); padding-top: 16px; margin-top: 8px;">
+<div style="font-size: 1.1rem; color: var(--dark-text-muted);">
+Total de la Compra:
+</div>
+<div style="font-size: 1.75rem; font-weight: 700; color: var(--primary);" id="labelTotalCompra">
+₲ 0
+</div>
+</div>
+
+<!-- FILA DE ACCIONES -->
+<div class="form-actions">
+<button type="submit" class="btn-add"><i class="fas fa-check"></i> Confirmar Compra</button>
+<button type="button" class="btn-ghost" hx-get="/ui/compras/list" hx-target="#id-main">Cancelar</button>
+</div>
+
+</form>
+</div>
+
+<!-- MODAL BÚSQUEDA Y SELECCIÓN DE PRODUCTO -->
+<div id="modalProductoCompra" class="modal-overlay">
+<div class="modal-container">
+<div class="modal-header">
+<div class="modal-title">
+<i class="fas fa-search" style="color: var(--primary);"></i> Buscar y Agregar Producto
+</div>
+<button type="button" class="modal-close-btn" onclick="CompraManager.cerrarModalProducto()">
+<i class="fas fa-times"></i>
+</button>
+</div>
+<div class="modal-body">
+<div style="position: relative;">
+<label class="form-label" for="buscarProductoInputCompra">Buscar Producto</label>
+<input type="text" id="buscarProductoInputCompra" placeholder="Escriba Nombre o SKU..." class="form-control" autocomplete="off"
+       hx-get="/ui/compras/buscar-producto" hx-trigger="keyup changed delay:300ms, focus" hx-target="#productoResultadosCompra">
+<div id="productoResultadosCompra"></div>
+</div>
+
+<div>
+<label class="form-label" for="inputCantidadCompra">Cantidad</label>
+<input type="number" id="inputCantidadCompra" value="1" min="1" class="form-control">
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn-ghost" onclick="CompraManager.agregarItemDesdeInput(false)">
+<i class="fas fa-check"></i> Agregar y Cerrar
+</button>
+<button type="button" class="btn-add" onclick="CompraManager.agregarItemDesdeInput(true)">
+<i class="fas fa-plus-circle"></i> Agregar y Continuar
+</button>
+</div>
+</div>
+</div>

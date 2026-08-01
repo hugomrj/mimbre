@@ -1,0 +1,75 @@
+<div class="toolbar animate-fade-in delay-1">
+<div class="toolbar-left">
+<h2 style="font-size: 1.25rem; font-weight: 600;">
+Detalle de Factura de Compra: {{ compra.numeroFactura }}
+</h2>
+</div>
+<div class="toolbar-right">
+<button class="btn-ghost" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button>
+<button class="btn-ghost" hx-get="/ui/compras/list" hx-target="#id-main"><i class="fas fa-arrow-left"></i> Volver a Compras</button>
+</div>
+</div>
+
+<div class="table-card animate-fade-in delay-2" style="padding: 28px;">
+{% if compra.estado == 'ANULADA' %}
+<div style="background: rgba(244,63,94,0.12); border: 1px solid rgba(244,63,94,0.3); border-radius: 12px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; color: #F43F5E;">
+<i class="fas fa-exclamation-triangle" style="font-size: 1.5rem;"></i>
+<div>
+<strong style="font-size: 1rem;">FACTURA ANULADA</strong>
+<div style="font-size: 0.85rem; color: var(--dark-text-muted); margin-top: 2px;">
+Esta compra fue anulada el {{ compra.fechaAnulacion | date("dd/MM/yyyy HH:mm") }}. El stock de los productos fue Devuelto al inventario.
+</div>
+</div>
+</div>
+{% endif %}
+
+<!-- Encabezado Factura -->
+<div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--dark-card-border); padding-bottom: 20px; margin-bottom: 24px;">
+<div>
+<h3 style="font-size: 1.1rem; color: var(--dark-text); margin-bottom: 6px;">Factura {{ compra.numeroFactura }}</h3>
+<p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Proveedor:</strong> {{ compra.proveedorNombre }}</p>
+<p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Condición:</strong> {{ compra.condicion }}</p>
+</div>
+<div style="text-align: right;">
+<p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Fecha Emisión:</strong> {{ compra.fecha | date("dd/MM/yyyy HH:mm") }}</p>
+<p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Estado:</strong>
+{% if compra.estado == 'COMPLETADA' %}
+<span style="color: #22C55E; font-weight: 600;">Completada</span>
+{% else %}
+<span style="color: #F43F5E; font-weight: 600;">Anulada</span>
+{% endif %}
+</p>
+{% if compra.estado == 'ANULADA' %}
+<p style="color: var(--dark-text-muted); font-size: 0.85rem; margin-top: 4px;"><strong>Anulada el:</strong> {{ compra.fechaAnulacion | date("dd/MM/yyyy HH:mm") }}</p>
+{% endif %}
+</div>
+</div>
+
+<!-- Tabla Ítems -->
+<table class="data-table" style="margin-bottom: 24px;">
+<thead>
+<tr>
+<th>Producto</th>
+<th style="text-align: center;">Cantidad</th>
+<th style="text-align: right;">Precio Costo</th>
+<th style="text-align: right;">Subtotal</th>
+</tr>
+</thead>
+<tbody>
+{% for d in compra.detalles %}
+<tr>
+<td><strong>{{ d.productoNombre }}</strong></td>
+<td style="text-align: center;">{{ d.cantidad }}</td>
+<td style="text-align: right;">₲ {{ d.precioCosto }}</td>
+<td style="text-align: right;"><strong>₲ {{ d.subtotal }}</strong></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<!-- Resumen Total -->
+<div style="display: flex; justify-content: flex-end; align-items: center; gap: 16px; font-size: 1.25rem;">
+<span style="color: var(--dark-text-muted);">Total de la Compra:</span>
+<strong style="color: var(--primary); font-size: 1.5rem;">₲ {{ compra.montoTotal }}</strong>
+</div>
+</div>

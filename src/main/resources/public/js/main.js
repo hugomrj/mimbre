@@ -13,8 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Aquí puedes agregar inicializaciones para otros módulos en el futuro.
-        // if (evt.target.querySelector('#formCotizacion')) { ... }
+        // 1.b. Inicialización para el Formulario de Compras
+        if (evt.target.querySelector('#formCompra')) {
+            if (typeof window.CompraManager !== 'undefined') {
+                window.CompraManager.reset();
+            }
+        }
     });
 
     // Clic fuera del contenedor del modal de eliminación para cerrarlo
@@ -147,6 +151,30 @@ function abrirModalAnularVenta(nroFactura, urlAnular) {
             titulo.innerHTML = `<i class="fas fa-ban"></i> ¿Anular Venta / Factura?`;
         }
         texto.innerHTML = `¿Está seguro de anular la factura <strong>${nroFactura}</strong>? Se repondrá automáticamente el stock de los productos.`;
+        
+        btnConfirmar.innerHTML = `<i class="fas fa-ban"></i> Confirmar y Anular`;
+        btnConfirmar.setAttribute('hx-post', urlAnular);
+        btnConfirmar.setAttribute('hx-target', '#id-main');
+        
+        if (typeof htmx !== 'undefined') {
+            htmx.process(btnConfirmar);
+        }
+
+        modal.classList.add('active');
+    }
+}
+
+function abrirModalAnularCompra(nroFactura, urlAnular) {
+    const modal = document.getElementById('modalConfirmarEliminacion');
+    const titulo = modal ? modal.querySelector('.modal-title') : null;
+    const texto = document.getElementById('modalConfirmarTexto');
+    const btnConfirmar = document.getElementById('btnConfirmarEliminar');
+
+    if (modal && texto && btnConfirmar) {
+        if (titulo) {
+            titulo.innerHTML = `<i class="fas fa-ban"></i> ¿Anular Compra / Factura?`;
+        }
+        texto.innerHTML = `¿Está seguro de anular la compra <strong>${nroFactura}</strong>? El stock de los productos sera devuelto al inventario.`;
         
         btnConfirmar.innerHTML = `<i class="fas fa-ban"></i> Confirmar y Anular`;
         btnConfirmar.setAttribute('hx-post', urlAnular);
