@@ -3,30 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#090E1E"> <!-- Color de la barra del navegador en móvil -->
-    <title>FARO - Dashboard</title>
-
-    <!-- 1. FUENTE INTER -->
-    <!-- Fuentes locales desactivadas por ahora, usando font-family por defecto -->
+    <meta name="theme-color" content="#090E1E">
+    <title>Mimbre - Dashboard</title>
 
     <!-- Iconos -->
     <link rel="stylesheet" href="/vendor/fontawesome/all.min.css">
-
     <!-- Tus estilos personalizados -->
     <link rel="stylesheet" href="/css/main.css">
-
     <!-- HTMX -->
     <script src="/vendor/htmx/htmx.min.js"></script>
-
     <!-- Chart.js -->
     <script src="/vendor/chartjs/chart.min.js"></script>
-
     <!-- Scripts de la aplicación -->
     <script src="/js/main.js"></script>
     <script src="/js/venta.js"></script>
     <script src="/js/compra.js"></script>
 </head>
-
 
 <body data-theme="dark">
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
@@ -35,7 +27,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <div class="sidebar-brand-icon"><i class="fas fa-lightbulb"></i></div>
-            <span class="sidebar-brand-text">FARO</span>
+            <span class="sidebar-brand-text">MIMBRE</span>
         </div>
 
         <nav class="sidebar-nav">
@@ -61,9 +53,9 @@
                 <i class="fas fa-chevron-down nav-chevron"></i>
             </button>
             <div class="nav-sub">
-                 <a href="#" class="nav-sub-item" hx-get="/ui/ventas/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Ventas</span></a>
-                 <a href="#" class="nav-sub-item" hx-get="/ui/compras/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Compras</span></a>
-                 <a href="#" class="nav-sub-item" hx-get="/ui/clientes/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Clientes</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/ventas/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Ventas</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/compras/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Compras</span></a>
+                <a href="#" class="nav-sub-item" hx-get="/ui/clientes/list" hx-target="#id-main" onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Clientes</span></a>
             </div>
 
             <a href="#" class="nav-item" onclick="navTo(this, event)">
@@ -72,17 +64,13 @@
             </a>
         </nav>
 
+        <!-- SIDEBAR FOOTER: "A" a la izquierda, Luna a la derecha -->
         <div class="sidebar-footer">
             <div class="sidebar-user">
                 <div class="sidebar-user-avatar">A</div>
-                <div class="sidebar-user-info">
-                    <div class="sidebar-user-name">Admin</div>
-                    <div class="sidebar-user-email">admin@faro.com</div>
-                </div>
-                <div class="sidebar-footer-actions">
-                    <button class="sidebar-icon-btn" onclick="toggleTheme()" title="Cambiar tema"><i class="fas fa-moon" id="theme-icon"></i></button>
-                    <button class="sidebar-icon-btn" onclick="showToast('Sesion cerrada')" title="Cerrar sesion"><i class="fas fa-sign-out-alt"></i></button>
-                </div>
+                <button class="sidebar-icon-btn" onclick="toggleTheme()" title="Cambiar tema" style="width: 36px; height: 36px; font-size: 1rem;">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
             </div>
         </div>
     </aside>
@@ -91,28 +79,28 @@
         <header class="navbar">
             <div class="navbar-left">
                 <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-                <h1 class="navbar-title" id="navbarTitle">Productos</h1>
+                <h1 class="navbar-title" id="navbarTitle">Inicio</h1>
             </div>
+
             <div class="navbar-actions">
                 <div class="navbar-search">
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Buscar...">
                 </div>
 
-                <!--
-                <button class="navbar-btn" onclick="showToast('Notificaciones')">
-                    <i class="fas fa-bell"></i><span class="badge">3</span>
+                <!-- Botón de Configuración (Color) -->
+                <button class="navbar-btn" onclick="openSettingsModal()" title="Personalizar color">
+                    <i class="fas fa-palette"></i>
                 </button>
-                -->
 
-                <button class="navbar-btn"><i class="fas fa-cog"></i></button>
+                <!-- Avatar decorativo en el Navbar -->
                 <div class="navbar-avatar">A</div>
             </div>
         </header>
 
         <main class="app-main" style="flex: 1; padding: 24px; overflow-y: auto;">
             <div id="id-main" class="container-fluid" hx-get="/ui/dashboard" hx-trigger="load">
-                <!-- HTMX cargará la tabla o formulario aquí automáticamente -->
+                <!-- HTMX cargará el contenido aquí automáticamente -->
             </div>
         </main>
     </div>
@@ -137,12 +125,38 @@
             </p>
         </div>
         <div class="modal-footer" style="border-top: 1px solid var(--dark-card-border); padding-top: 16px;">
-            <button type="button" class="btn-ghost" onclick="cerrarModalEliminacion()">
-                Cancelar
-            </button>
-            <button type="button" class="btn-add" id="btnConfirmarEliminar" style="background: #F43F5E; border-color: #F43F5E;" onclick="cerrarModalEliminacion()">
+            <button type="button" class="btn-ghost" onclick="cerrarModalEliminacion()">Cancelar</button>
+            <button type="button" class="btn-add" id="btnConfirmarEliminar" onclick="cerrarModalEliminacion()">
                 <i class="fas fa-trash-alt"></i> Confirmar y Eliminar
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE CONFIGURACIÓN (SOLO COLOR) -->
+<div class="modal-overlay" id="modalConfiguracion" onclick="if(event.target===this) closeSettingsModal()">
+    <div class="modal-container" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3 class="modal-title"><i class="fas fa-palette"></i> Color Primario</h3>
+            <button class="modal-close-btn" onclick="closeSettingsModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Elige el color de acento de la aplicación</label>
+                <div id="colorPresetsContainer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+                    <!-- Los botones de colores se inyectan aquí automáticamente por JS -->
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label style="font-size: 0.85rem; color: var(--dark-text-muted);">Personalizado:</label>
+                    <input type="color" id="primaryColorPicker"
+                           style="width: 40px; height: 35px; border: none; background: transparent; cursor: pointer; border-radius: 8px;"
+                           onchange="applyPrimaryColor(this.value)">
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-ghost" onclick="closeSettingsModal()">Cerrar</button>
         </div>
     </div>
 </div>
@@ -163,10 +177,9 @@
         setTimeout(() => ripple.remove(), 600);
     }
 
-    // Usar event delegation para HTMX
-    document.body.addEventListener('click', function(e) { 
-        if(e.target.closest('.nav-item, .nav-sub-item, .sidebar-icon-btn, .btn-add, .btn-ghost')) {
-            createWaveRipple(e, e.target.closest('.nav-item, .nav-sub-item, .sidebar-icon-btn, .btn-add, .btn-ghost'));
+    document.body.addEventListener('click', function(e) {
+        if(e.target.closest('.nav-item, .nav-sub-item, .sidebar-icon-btn, .btn-add, .btn-ghost, .navbar-btn')) {
+            createWaveRipple(e, e.target.closest('.nav-item, .nav-sub-item, .sidebar-icon-btn, .btn-add, .btn-ghost, .navbar-btn'));
         }
     });
 

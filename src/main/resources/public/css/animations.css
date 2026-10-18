@@ -1,0 +1,51 @@
+@keyframes wave-ripple-anim {
+    0% { transform: scale(0); opacity: 0.7; }
+    100% { transform: scale(4); opacity: 0; }
+}
+
+.wave-ripple {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary) 35%, transparent) 0%, color-mix(in srgb, var(--primary) 10%, transparent) 50%, transparent 70%);
+    transform: scale(0); pointer-events: none; animation: wave-ripple-anim 0.6s ease-out forwards;
+}
+.nav-sub-item .wave-ripple, .sidebar-icon-btn .wave-ripple {
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary) 30%, transparent) 0%, transparent 70%);
+}
+
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeInUp 0.5s ease forwards; }
+.delay-1 { animation-delay: 0.08s; opacity: 0; }
+.delay-2 { animation-delay: 0.14s; opacity: 0; }
+.delay-3 { animation-delay: 0.20s; opacity: 0; }
+
+@keyframes rowIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+.row-anim { animation: rowIn 0.35s ease forwards; opacity: 0; }
+
+.sidebar-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px); z-index: 99; opacity: 0; transition: opacity 0.25s ease;
+}
+.sidebar-overlay.visible { opacity: 1; }
+
+@media (max-width: 1100px) { .data-table { display: block; overflow-x: auto; } }
+
+@media (max-width: 768px) {
+    .app-layout { padding: 8px; gap: 8px; }
+    .sidebar { transform: translateX(-100%); left: 8px; top: 8px; bottom: 8px; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay { display: block; }
+    .menu-toggle { display: flex; }
+    .content-area { margin-left: 0; }
+    .app-main, .main { padding: 16px; border-radius: 16px; }
+    .navbar-search input { width: 140px; }
+    .navbar-search input:focus { width: 180px; }
+    .toolbar { flex-direction: column; align-items: stretch; }
+    .toolbar-filters { justify-content: flex-start; }
+    .toolbar-right { width: 100%; }
+    .btn-ghost, .btn-add { flex: 1; justify-content: center; }
+    .pagination-card { flex-direction: column; gap: 12px; }
+    .form-container { grid-template-columns: 1fr; max-width: 100%; }
+    .form-group.col-2, .form-group.col-3, .form-group.col-4, .form-group.col-5, .form-group.col-full { grid-column: span 1; }
+    .form-actions { flex-direction: column; }
+    .form-actions .btn-add, .form-actions .btn-ghost { width: 100%; justify-content: center; }
+}
