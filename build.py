@@ -18,14 +18,20 @@ def run(command):
 def main():
     system = platform.system()
 
+    # Seleccionar Maven según el sistema operativo
     if system == "Windows":
-        maven = "mvn"
+        maven = "mvn.cmd"
     else:
         maven = "./mvnw"
         Path("mvnw").chmod(0o755)
 
     # Compilar Micronaut
-    run([maven, "clean", "package", "-DskipTests"])
+    run([
+        maven,
+        "clean",
+        "package",
+        "-DskipTests"
+    ])
 
     # Limpiar distribución anterior
     release_dir = Path("release")
@@ -44,16 +50,30 @@ def main():
         "--dest", "release",
     ]
 
+    # Opciones específicas de Windows
     if system == "Windows":
         command.extend([
             "--java-options",
             "-Dorg.eclipse.swt.browser.DefaultType=edge"
         ])
 
+    # Generar ejecutable
     run(command)
 
-    print(f"Compilación finalizada para {system}")
-    print(f"Distribución disponible en: release/{PROJECT_NAME}")
+    print("\n===================================")
+    print("COMPILACIÓN FINALIZADA")
+    print("===================================")
+    print(f"Sistema: {system}")
+    print(f"Distribución: release/{PROJECT_NAME}")
+
+    if system == "Windows":
+        print("Ejecutable: release/Desk/Desk.exe")
+
+    elif system == "Linux":
+        print("Ejecutable: release/Desk/bin/Desk")
+
+    elif system == "Darwin":
+        print("Aplicación: release/Desk.app")
 
 
 if __name__ == "__main__":
