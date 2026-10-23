@@ -16,11 +16,13 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            platform: Windows
+            platform: windows
+
           - os: ubuntu-latest
-            platform: Linux
+            platform: linux
+
           - os: macos-latest
-            platform: macOS
+            platform: macos
 
     runs-on: ${{ matrix.os }}
 
@@ -38,7 +40,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.12'
 
       - name: Setup Maven
         uses: stCarolas/setup-maven@v5
@@ -48,40 +50,48 @@ jobs:
       - name: Build application
         run: python build.py
 
+      # WINDOWS
       - name: Package Windows
         if: runner.os == 'Windows'
         shell: pwsh
-        run: Compress-Archive -Path release/Desk -DestinationPath Desk-Windows.zip
+        run: |
+          Compress-Archive -Path release/Mimbre -DestinationPath mimbre-windows.zip
 
+      # LINUX
       - name: Package Linux
         if: runner.os == 'Linux'
-        run: tar -czf Desk-Linux.tar.gz -C release Desk
+        run: |
+          tar -czf mimbre-linux.tar.gz -C release Mimbre
 
+      # MACOS
       - name: Package macOS
         if: runner.os == 'macOS'
-        run: zip -r Desk-macOS.zip Desk
-        working-directory: release
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent release/Mimbre.app mimbre-macos.zip
 
+      # SUBIR WINDOWS
       - name: Upload Windows
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v4
         with:
-          name: Desk-Windows
-          path: Desk-Windows.zip
+          name: mimbre-windows
+          path: mimbre-windows.zip
 
+      # SUBIR LINUX
       - name: Upload Linux
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v4
         with:
-          name: Desk-Linux
-          path: Desk-Linux.tar.gz
+          name: mimbre-linux
+          path: mimbre-linux.tar.gz
 
+      # SUBIR MACOS
       - name: Upload macOS
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
-          name: Desk-macOS
-          path: release/Desk-macOS.zip
+          name: mimbre-macos
+          path: mimbre-macos.zip
 
   release:
     needs: build

@@ -5,7 +5,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-PROJECT_NAME = "Desk"
+PROJECT_NAME = "Mimbre"
 JAR_NAME = "mimbre-0.1.jar"
 MAIN_CLASS = "com.app.Application"
 
@@ -18,7 +18,7 @@ def run(command):
 def main():
     system = platform.system()
 
-    # Seleccionar Maven según el sistema operativo
+    # Seleccionar Maven
     if system == "Windows":
         maven = "mvn.cmd"
     else:
@@ -39,7 +39,7 @@ def main():
     if release_dir.exists():
         shutil.rmtree(release_dir)
 
-    # Crear aplicación con Java incluido
+    # Empaquetar aplicación con Java incluido
     command = [
         "jpackage",
         "--name", PROJECT_NAME,
@@ -50,30 +50,27 @@ def main():
         "--dest", "release",
     ]
 
-    # Opciones específicas de Windows
     if system == "Windows":
         command.extend([
             "--java-options",
             "-Dorg.eclipse.swt.browser.DefaultType=edge"
         ])
 
-    # Generar ejecutable
     run(command)
 
     print("\n===================================")
     print("COMPILACIÓN FINALIZADA")
     print("===================================")
     print(f"Sistema: {system}")
-    print(f"Distribución: release/{PROJECT_NAME}")
 
     if system == "Windows":
-        print("Ejecutable: release/Desk/Desk.exe")
+        print("Ejecutable: release/Mimbre/Mimbre.exe")
 
     elif system == "Linux":
-        print("Ejecutable: release/Desk/bin/Desk")
+        print("Ejecutable: release/Mimbre/bin/Mimbre")
 
     elif system == "Darwin":
-        print("Aplicación: release/Desk.app")
+        print("Aplicación: release/Mimbre.app")
 
 
 if __name__ == "__main__":
