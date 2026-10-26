@@ -1,3 +1,4 @@
+/* src/main/resources/public/css/animations.css */
 @keyframes wave-ripple-anim {
     0% { transform: scale(0); opacity: 0.7; }
     100% { transform: scale(4); opacity: 0; }

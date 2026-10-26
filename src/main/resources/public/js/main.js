@@ -20,6 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ✅ FIX 2: cerrar el modal de confirmación SOLO cuando la petición termina
+    // (éxito, error de negocio o error de servidor) — nunca antes.
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        if (evt.detail.elt && evt.detail.elt.id === 'btnConfirmarEliminar') {
+            cerrarModalEliminacion();
+        }
+    });
+
     // Clic fuera del contenedor de los modales para cerrarlos
     document.addEventListener('click', function(e) {
         const modalElim = document.getElementById('modalConfirmarEliminacion');
@@ -119,7 +127,7 @@ function navTo(el, e) {
     // Agregar active al elemento clickeado
     el.classList.add('active');
 
-    // ✨ NUEVO: Si es un sub-item, también marcar su padre como activo
+    // ✨ Si es un sub-item, también marcar su padre como activo
     if (el.classList.contains('nav-sub-item')) {
         const navSub = el.closest('.nav-sub');
         if (navSub) {
@@ -179,55 +187,94 @@ function showToast(msg, type = 'info') {
 // =========================================================
 // MODAL GLOBAL DE CONFIRMACIÓN DE ELIMINACIÓN Y ANULACIÓN
 // =========================================================
+
+// ✅ FIX 1: Helper compartido que reemplaza el setAttribute() duplicado
+// en las 3 funciones. Configura el botón de confirmar y evita doble submit.
+function configurarBotonConfirmar(btnConfirmar, url) {
+    btnConfirmar.removeAttribute('disabled');
+    btnConfirmar.setAttribute('hx-post', url);
+    btnConfirmar.setAttribute('hx-target', '#id-main');
+    btnConfirmar.setAttribute('hx-disabled-elt', 'this');   // ⛔ doble click
+    if (typeof htmx !== 'undefined') htmx.process(btnConfirmar);
+}
+
+// ✅ FIX 1: reemplaza texto.innerHTML con interpolación (XSS) por textContent + nodo <strong>.
+// El nombre/numero ahora se escapa automáticamente.
+function setTextoConfirmacion(prefijo, valor, sufijo) {
+    const texto = document.getElementById('modalConfirmarTexto');
+    if (!texto) return;
+    texto.textContent = '';                          // limpia
+    const strong = document.createElement('strong');
+    strong.textContent = valor;                      // escapa por construcción
+    texto.append(prefijo, strong, sufijo);
+}
+
 function abrirModalEliminacion(nombreRegistro, urlDelete) {
     const modal = document.getElementById('modalConfirmarEliminacion');
     const titulo = modal ? modal.querySelector('.modal-title') : null;
-    const texto = document.getElementById('modalConfirmarTexto');
     const btnConfirmar = document.getElementById('btnConfirmarEliminar');
-    if (modal && texto && btnConfirmar) {
-        if (titulo) titulo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ¿Confirmar Eliminación?`;
-        texto.innerHTML = `¿Está seguro de que desea eliminar <strong>${nombreRegistro}</strong>? Esta acción no se puede deshacer.`;
-        btnConfirmar.innerHTML = `<i class="fas fa-trash-alt"></i> Confirmar y Eliminar`;
-        btnConfirmar.setAttribute('hx-post', urlDelete);
-        btnConfirmar.setAttribute('hx-target', '#id-main');
-        if (typeof htmx !== 'undefined') htmx.process(btnConfirmar);
-        modal.classList.add('active');
-    }
+    if (!modal || !btnConfirmar) return;
+
+    if (titulo) titulo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ¿Confirmar Eliminación?`;
+
+    setTextoConfirmacion(
+        '¿Está seguro de que desea eliminar ',
+        nombreRegistro,
+        '? Esta acción no se puede deshacer.'
+    );
+
+    btnConfirmar.innerHTML = `<i class="fas fa-trash-alt"></i> Confirmar y Eliminar`;
+    configurarBotonConfirmar(btnConfirmar, urlDelete);
+    modal.classList.add('active');
 }
 
 function abrirModalAnularVenta(nroFactura, urlAnular) {
     const modal = document.getElementById('modalConfirmarEliminacion');
     const titulo = modal ? modal.querySelector('.modal-title') : null;
-    const texto = document.getElementById('modalConfirmarTexto');
     const btnConfirmar = document.getElementById('btnConfirmarEliminar');
-    if (modal && texto && btnConfirmar) {
-        if (titulo) titulo.innerHTML = `<i class="fas fa-ban"></i> ¿Anular Venta / Factura?`;
-        texto.innerHTML = `¿Está seguro de anular la factura <strong>${nroFactura}</strong>? Se repondrá automáticamente el stock de los productos.`;
-        btnConfirmar.innerHTML = `<i class="fas fa-ban"></i> Confirmar y Anular`;
-        btnConfirmar.setAttribute('hx-post', urlAnular);
-        btnConfirmar.setAttribute('hx-target', '#id-main');
-        if (typeof htmx !== 'undefined') htmx.process(btnConfirmar);
-        modal.classList.add('active');
-    }
+    if (!modal || !btnConfirmar) return;
+
+    if (titulo) titulo.innerHTML = `<i class="fas fa-ban"></i> ¿Anular Venta / Factura?`;
+
+    setTextoConfirmacion(
+        '¿Está seguro de anular la factura ',
+        nroFactura,
+        '? Se repondrá automáticamente el stock de los productos.'
+    );
+
+    btnConfirmar.innerHTML = `<i class="fas fa-ban"></i> Confirmar y Anular`;
+    configurarBotonConfirmar(btnConfirmar, urlAnular);
+    modal.classList.add('active');
 }
 
 function abrirModalAnularCompra(nroFactura, urlAnular) {
     const modal = document.getElementById('modalConfirmarEliminacion');
     const titulo = modal ? modal.querySelector('.modal-title') : null;
-    const texto = document.getElementById('modalConfirmarTexto');
     const btnConfirmar = document.getElementById('btnConfirmarEliminar');
-    if (modal && texto && btnConfirmar) {
-        if (titulo) titulo.innerHTML = `<i class="fas fa-ban"></i> ¿Anular Compra / Factura?`;
-        texto.innerHTML = `¿Está seguro de anular la compra <strong>${nroFactura}</strong>? El stock de los productos sera devuelto al inventario.`;
-        btnConfirmar.innerHTML = `<i class="fas fa-ban"></i> Confirmar y Anular`;
-        btnConfirmar.setAttribute('hx-post', urlAnular);
-        btnConfirmar.setAttribute('hx-target', '#id-main');
-        if (typeof htmx !== 'undefined') htmx.process(btnConfirmar);
-        modal.classList.add('active');
-    }
+    if (!modal || !btnConfirmar) return;
+
+    if (titulo) titulo.innerHTML = `<i class="fas fa-ban"></i> ¿Anular Compra / Factura?`;
+
+    setTextoConfirmacion(
+        '¿Está seguro de anular la compra ',
+        nroFactura,
+        '? El stock de los productos será devuelto al inventario.'
+    );
+
+    btnConfirmar.innerHTML = `<i class="fas fa-ban"></i> Confirmar y Anular`;
+    configurarBotonConfirmar(btnConfirmar, urlAnular);
+    modal.classList.add('active');
 }
 
+// ✅ FIX 2: al cerrar, limpia el botón para no arrastrar URL/estado viejo
 function cerrarModalEliminacion() {
     const modal = document.getElementById('modalConfirmarEliminacion');
     if (modal) modal.classList.remove('active');
+
+    const btn = document.getElementById('btnConfirmarEliminar');
+    if (btn) {
+        btn.removeAttribute('disabled');
+        btn.removeAttribute('hx-post');
+        btn.removeAttribute('hx-disabled-elt');
+    }
 }

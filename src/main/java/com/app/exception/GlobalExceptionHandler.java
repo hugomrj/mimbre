@@ -80,6 +80,10 @@ public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpR
 
     private String sanitize(String input) {
         if (input == null) return "";
-        return input.replace("\"", "'").replace("\n", " ");
+        return input
+                .replace("\\", "\\\\")   // 1º backslash (crítico para JSON válido)
+                .replace("\"", "'")       // comillas → simples
+                .replace("\n", " ")
+                .replace("\r", " ");
     }
 }

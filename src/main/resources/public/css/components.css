@@ -1,8 +1,11 @@
+/* src/main/resources/public/css/components.css */
 .app-main, .main {
-    flex: 1; padding: 24px; overflow-y: auto; background: var(--dark-card);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--dark-card-border); border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    background: transparent;
+    border: none;
+    box-shadow: none;
     transition: background 0.3s ease;
 }
 
@@ -21,7 +24,6 @@
 .filter-chip .count { font-size: 11px; padding: 1px 6px; border-radius: 50px; background: rgba(148, 163, 184, 0.1); }
 .filter-chip.active .count { background: color-mix(in srgb, var(--primary) 20%, transparent); }
 
-/* ✨ BOTÓN GHOST CORREGIDO: Ahora el icono y el texto cambian al color primario */
 .btn-ghost {
     display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
     border-radius: 14px; border: 1px solid var(--dark-card-border);
@@ -46,17 +48,25 @@
 .btn-add .wave-ripple { background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%); }
 .btn-add:hover { transform: translateY(-2px); box-shadow: 0 6px 24px color-mix(in srgb, var(--primary) 40%, transparent); }
 
+/* ✅ FIX: Tarjetas más sutiles, con menos saturación y sombra suave */
 .table-card {
-    background: var(--dark-card); backdrop-filter: blur(20px) saturate(1.6);
-    -webkit-backdrop-filter: blur(20px) saturate(1.6); border: 1px solid var(--dark-card-border);
-    border-radius: 24px; overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    background: var(--dark-card);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    border: 1px solid var(--dark-card-border);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 .data-table { width: 100%; border-collapse: collapse; }
 .data-table thead th {
     padding: 16px 24px; text-align: left; font-size: 0.75rem; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.5px; color: var(--dark-text-muted);
     border-bottom: 1px solid var(--dark-card-border); background: rgba(148, 163, 184, 0.05);
+}
+/* ✅ FIX: Cabecera integrada al Material You */
+[data-theme="light"] .data-table thead th {
+    background: transparent;
 }
 .data-table tbody tr { transition: background 0.2s ease; border-bottom: 1px solid var(--dark-card-border); }
 .data-table tbody tr:hover { background: var(--dark-row-hover); }
@@ -76,14 +86,23 @@
 .stock-bar-fill.low { background: #F43F5E; }
 .stock-num { font-size: 0.75rem; color: var(--dark-text-muted); min-width: 24px; }
 
-.status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; }
-.status-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
-.status-active { background: rgba(34, 197, 94, 0.1); color: #166534; }
-.status-active::before { background: #22C55E; box-shadow: 0 0 6px rgba(34, 197, 94, 0.4); }
-.status-low { background: rgba(245, 158, 11, 0.1); color: #92400E; }
-.status-low::before { background: #F59E0B; box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
-.status-out { background: rgba(244, 63, 94, 0.1); color: #9F1239; }
-.status-out::before { background: #F43F5E; box-shadow: 0 0 6px rgba(244, 63, 94, 0.4); }
+.status-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 50px;
+    font-size: 0.75rem; font-weight: 600;
+}
+.status-badge::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+}
+
+.status-active { background: var(--state-success-bg); color: var(--state-success-text); }
+.status-active::before { background: var(--state-success-dot); box-shadow: 0 0 6px var(--state-success-dot); }
+
+.status-low { background: var(--state-warning-bg); color: var(--state-warning-text); }
+.status-low::before { background: var(--state-warning-dot); box-shadow: 0 0 6px var(--state-warning-dot); }
+
+.status-out { background: var(--state-danger-bg); color: var(--state-danger-text); }
+.status-out::before { background: var(--state-danger-dot); box-shadow: 0 0 6px var(--state-danger-dot); }
 
 .row-actions { display: flex; gap: 4px; justify-content: flex-end; }
 .row-action-btn {
@@ -93,11 +112,12 @@
 }
 .row-action-btn:hover { color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, transparent); }
 
+/* ✅ FIX: Paginación con sombras más sutiles también */
 .pagination-card {
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
     margin-top: 16px; padding: 14px 24px; background: var(--dark-card);
     backdrop-filter: blur(20px); border: 1px solid var(--dark-card-border);
-    border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    border-radius: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 .pagination-info { font-size: 0.875rem; color: var(--dark-text-muted); }
 .pagination-info span { color: var(--dark-text); font-weight: 600; }
@@ -116,7 +136,8 @@
 .page-size-select select {
     padding: 6px 10px; border-radius: 10px; border: 1px solid var(--dark-card-border);
     background: var(--dark-input-bg); color: var(--dark-text); font-size: 0.875rem;
-    font-family: 'Inter', sans-serif; outline: none; cursor: pointer; transition: border-color 0.2s ease;
+    font-family: 'Outfit', sans-serif;
+    outline: none; cursor: pointer; transition: border-color 0.2s ease;
 }
 .page-size-select select:focus { border-color: var(--primary); }
 
@@ -131,10 +152,24 @@
 .form-control {
     width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--dark-card-border);
     background: var(--dark-input-bg); color: var(--dark-text); font-size: 0.875rem;
-    font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: 'Outfit', sans-serif;
+    outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent); }
 .form-control::placeholder { color: var(--dark-text-muted); opacity: 0.6; }
+
+/* ✅ MATERIAL YOU: Inputs con borde tonal y fondo hundido */
+[data-theme="light"] .form-control {
+    border: 1px solid color-mix(in srgb, var(--primary) 15%, transparent);
+    background: var(--dark-input-bg);
+    box-shadow: none; /* Quitamos el relieve agresivo */
+}
+[data-theme="light"] .form-control:focus {
+    background: #FFFFFF; /* Al hacer clic, brilla en blanco */
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
 select.form-control {
     cursor: pointer; appearance: none; -webkit-appearance: none; -moz-appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
@@ -152,7 +187,7 @@ input[type="number"], .form-control[type="number"] { -moz-appearance: textfield;
 
 .cliente-dropdown-list {
     position: absolute; top: 100%; left: 0; right: 0; z-index: 1000;
-    background: #0E1828; border: 1px solid var(--dark-card-border);
+    background: var(--dark-card); border: 1px solid var(--dark-card-border);
     border-radius: 12px; margin-top: 4px; max-height: 220px; overflow-y: auto;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
@@ -175,10 +210,8 @@ input[type="number"], .form-control[type="number"] { -moz-appearance: textfield;
     transform: scale(0.95); transition: transform 0.25s ease; display: flex; flex-direction: column; overflow: visible;
 }
 [data-theme="light"] .modal-container {
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(24px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    background: var(--modal-bg) !important;
+    border: 1px solid var(--dark-card-border) !important;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08) !important;
 }
 .modal-overlay.active .modal-container { transform: scale(1); }
@@ -198,7 +231,8 @@ input[type="number"], .form-control[type="number"] { -moz-appearance: textfield;
 
 .toast {
     padding: 12px 24px; color: #ffffff; border: none; border-radius: 12px; font-size: 14px;
-    font-family: 'Inter', sans-serif; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    font-family: 'Outfit', sans-serif;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     transform: translateX(120%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
     opacity: 0; font-weight: 500; display: flex; align-items: center; gap: 12px; z-index: 9999;
 }

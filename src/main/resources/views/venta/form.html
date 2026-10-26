@@ -106,12 +106,13 @@
                 <input type="number" id="inputCantidad" value="1" min="1" class="form-control">
             </div>
         </div>
+        <!-- ✅ FIX: jerarquía de botones — primario (Agregar y Cerrar) a la derecha, secundario (Continuar) a la izquierda -->
         <div class="modal-footer">
-            <button type="button" class="btn-ghost" onclick="VentaManager.agregarItemDesdeInput(false)">
-                <i class="fas fa-check"></i> Agregar y Cerrar
-            </button>
-            <button type="button" class="btn-add" onclick="VentaManager.agregarItemDesdeInput(true)">
+            <button type="button" class="btn-ghost" onclick="VentaManager.agregarItemDesdeInput(true)">
                 <i class="fas fa-plus-circle"></i> Agregar y Continuar
+            </button>
+            <button type="button" class="btn-add" onclick="VentaManager.agregarItemDesdeInput(false)">
+                <i class="fas fa-check"></i> Agregar y Cerrar
             </button>
         </div>
     </div>
