@@ -1,89 +1,73 @@
 /* src/main/resources/public/css/variables.css */
+
+/* =========================================
+   1. VARIABLES FIJAS (Textos y Estados)
+   ========================================= */
 :root {
     color-scheme: dark;
 
-    /* TEMA OSCURO (Base) */
-    --brand-primary: #06B6D4;
-    --brand-accent: #0EA5E9;
-    --dark-bg: #090E1E;
-    --dark-sidebar: #0E1828;
-    --dark-navbar: rgba(17, 24, 39, 0.6);
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --text-inverse: #FFFFFF;
 
-    --dark-card: rgba(255, 255, 255, 0.02);
-    --dark-card-border: rgba(255, 255, 255, 0.06);
-    --dark-text: #F0F9FF;
-    --dark-text-secondary: color-mix(in srgb, var(--primary) 60%, var(--dark-text));
-
-    --dark-text-muted: #94A3B8;
-    --dark-nav-item: rgba(255, 255, 255, 0.6);
-
-    --dark-nav-active-bg: color-mix(in srgb, var(--primary) 15%, transparent);
-    --dark-nav-active-text: color-mix(in srgb, var(--primary) 30%, var(--dark-text));
-
-    --dark-nav-sub: rgba(255, 255, 255, 0.4);
-    --dark-row-hover: rgba(255, 255, 255, 0.03);
-    --dark-input-bg: rgba(255, 255, 255, 0.03);
-    --modal-bg: #0F172A;
-    --primary: var(--brand-primary);
-
-    /* Estado semántico (dark) */
-    --state-success-text: #4ADE80;
     --state-success-bg: rgba(34, 197, 94, 0.15);
-    --state-success-dot: #22C55E;
-
-    --state-warning-text: #FBBF24;
+    --state-success-text: #22C55E;
     --state-warning-bg: rgba(245, 158, 11, 0.15);
-    --state-warning-dot: #F59E0B;
-
-    --state-danger-text: #F87171;
+    --state-warning-text: #F59E0B;
     --state-danger-bg: rgba(244, 63, 94, 0.15);
-    --state-danger-dot: #F43F5E;
+    --state-danger-text: #F43F5E;
 }
 
+/* =========================================
+   2. VARIABLES DINÁMICAS (MODO OSCURO)
+   ========================================= */
+body {
+    --primary: #06B6D4;
 
-[data-theme="light"] {
+    --bg-app: color-mix(in srgb, var(--primary) 10%, #000000);
+    --bg-surface: transparent;
+    --bg-surface-hover: color-mix(in srgb, var(--primary) 25%, #000000);
+
+    /* ✅ Ajuste: Línea sutil al 18% */
+    --border-sutil: color-mix(in srgb, var(--primary) 18%, transparent);
+    --border-line: color-mix(in srgb, var(--primary) 45%, rgba(255, 255, 255, 0.1));
+    --border-focus: var(--primary);
+}
+
+/* =========================================
+   3. LAS 8 PALETAS
+   ========================================= */
+[data-palette="cyan"] { --primary: #06B6D4; }
+[data-palette="indigo"] { --primary: #6366F1; }
+[data-palette="emerald"] { --primary: #10B981; }
+[data-palette="sunset"] { --primary: #F43F5E; }
+[data-palette="violet"] { --primary: #8B5CF6; }
+[data-palette="amber"] { --primary: #F59E0B; }
+[data-palette="blue"] { --primary: #3B82F6; }
+[data-palette="slate"] { --primary: #64748B; }
+
+
+
+
+
+/* =========================================
+   4. VARIABLES DINÁMICAS (MODO CLARO)
+   ========================================= */
+body[data-theme="light"] {
     color-scheme: light;
 
-    /* ✅ MATERIAL YOU: Fondo con micro-tinte del primario */
-    --dark-bg: color-mix(in srgb, var(--primary) 8%, #FFFFFF);
+    /* ✅ FONDO BLANCO SUAVE: Base casi blanca (#F8FAFC) + solo un 4% del color */
+    --bg-app: color-mix(in srgb, var(--primary) 4%, #F8FAFC);
 
-    /* ✅ MATERIAL YOU: Tarjeta sólida, más clara que el fondo */
-    --dark-card: color-mix(in srgb, var(--primary) 3%, #FFFFFF);
+    --bg-surface: transparent;
+    --bg-surface-hover: color-mix(in srgb, var(--primary) 8%, #F8FAFC);
 
-    /* ✅ Borde sutil derivado del primario */
-    --dark-card-border: color-mix(in srgb, var(--primary) 10%, rgba(0, 0, 0, 0.05));
+    /* ✅ Bordes un poquito más marcados para que resalten sobre el fondo blanco */
+    --border-sutil: color-mix(in srgb, var(--primary) 20%, rgba(0, 0, 0, 0.08));
+    --border-line: color-mix(in srgb, var(--primary) 35%, rgba(0, 0, 0, 0.15));
+    --border-focus: var(--primary);
 
-    --dark-sidebar: color-mix(in srgb, var(--primary) 4%, #FFFFFF);
-    --dark-navbar: color-mix(in srgb, var(--primary) 4%, #FFFFFF);
-
-    --dark-text: #0F172A;
-    --dark-text-secondary: color-mix(in srgb, var(--primary) 60%, var(--dark-text));
-    --dark-text-muted: #64748B;
-
-    --dark-nav-item: #475569;
-    --dark-nav-active-bg: color-mix(in srgb, var(--primary) 12%, transparent);
-    --dark-nav-active-text: color-mix(in srgb, var(--primary) 80%, #000000);
-    --dark-nav-sub: #64748B;
-    --dark-row-hover: color-mix(in srgb, var(--primary) 6%, transparent);
-
-    /* ✅ MATERIAL YOU: Input más oscuro que la tarjeta (efecto hundido) */
-    --dark-input-bg: color-mix(in srgb, var(--primary) 7%, #FFFFFF);
-
-    --modal-bg: color-mix(in srgb, var(--primary) 5%, #FFFFFF);
-    --glass-blur: 20px;
-    --glass-saturate: 200%;
-    --glass-shadow: 0 8px 32px color-mix(in srgb, var(--primary) 8%, rgba(0, 0, 0, 0.05));
-
-    /* Estado semántico (light) */
-    --state-success-text: #166534;
-    --state-success-bg: rgba(34, 197, 94, 0.12);
-    --state-success-dot: #22C55E;
-
-    --state-warning-text: #92400E;
-    --state-warning-bg: rgba(245, 158, 11, 0.12);
-    --state-warning-dot: #F59E0B;
-
-    --state-danger-text: #9F1239;
-    --state-danger-bg: rgba(244, 63, 94, 0.12);
-    --state-danger-dot: #F43F5E;
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --text-inverse: #FFFFFF;
 }

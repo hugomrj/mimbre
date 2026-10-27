@@ -1,13 +1,13 @@
 // main.js - Lógica global de la aplicación y manejadores de eventos HTMX
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Cargar preferencias guardadas de Tema y Color
+    // 1. Cargar preferencias guardadas de Tema y Paleta
     const savedTheme = localStorage.getItem('mimbre-theme') || 'dark';
-    const savedColor = localStorage.getItem('mimbre-primary-color') || '#06B6D4';
+    // ✅ CAMBIO: Ahora guardamos y leemos la paleta, no un color hex
+    const savedPalette = localStorage.getItem('mimbre-palette') || 'cyan';
 
     applyTheme(savedTheme, false);
-    applyPrimaryColor(savedColor, false);
-    renderColorPresets();
+    applyPalette(savedPalette, false);
 
     // Escuchar el evento de HTMX que se dispara después de que el nuevo contenido
     // se ha inyectado en el DOM y las transiciones han terminado.
@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ✅ FIX 2: cerrar el modal de confirmación SOLO cuando la petición termina
-    // (éxito, error de negocio o error de servidor) — nunca antes.
     document.body.addEventListener('htmx:afterRequest', function(evt) {
         if (evt.detail.elt && evt.detail.elt.id === 'btnConfirmarEliminar') {
             cerrarModalEliminacion();
@@ -47,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // =========================================================
-// FUNCIONES DE TEMA Y COLOR PRIMARIO (CON PERSISTENCIA)
+// FUNCIONES DE TEMA Y PALETAS (CON PERSISTENCIA)
 // =========================================================
 function applyTheme(theme, save = true) {
     document.body.setAttribute('data-theme', theme);
@@ -64,15 +63,22 @@ function toggleTheme() {
     applyTheme(newTheme);
 }
 
-function applyPrimaryColor(color, save = true) {
-    // Cambia la variable CSS global instantáneamente
-    document.documentElement.style.setProperty('--primary', color);
+// ✅ NUEVA FUNCIÓN: Aplica la paleta y actualiza la UI
+function applyPalette(paletteName, save = true) {
+    // 1. Cambia el atributo en el body (el CSS hace la magia)
+    document.body.setAttribute('data-palette', paletteName);
 
-    // Sincroniza el input de color del modal si existe
-    const colorInput = document.getElementById('primaryColorPicker');
-    if (colorInput) colorInput.value = color;
+    // 2. Actualiza el estado visual de las tarjetas en el modal
+    document.querySelectorAll('.palette-item').forEach(card => {
+        if (card.getAttribute('data-palette') === paletteName) {
+            card.classList.add('active');
+        } else {
+            card.classList.remove('active');
+        }
+    });
 
-    if (save) localStorage.setItem('mimbre-primary-color', color);
+    // 3. Guarda en localStorage
+    if (save) localStorage.setItem('mimbre-palette', paletteName);
 }
 
 function openSettingsModal() {
@@ -83,20 +89,6 @@ function openSettingsModal() {
 function closeSettingsModal() {
     const modal = document.getElementById('modalConfiguracion');
     if (modal) modal.classList.remove('active');
-}
-
-// Colores predefinidos para el selector rápido
-const presetColors = ['#06B6D4', '#0EA5E9', '#8B5CF6', '#EC4899', '#10B981', '#F59E0B', '#EF4444', '#6366F1'];
-
-function renderColorPresets() {
-    const container = document.getElementById('colorPresetsContainer');
-    if (!container) return;
-
-    container.innerHTML = presetColors.map(color => `
-        <button class="color-preset-btn" style="background-color: ${color};"
-                onclick="applyPrimaryColor('${color}')" title="${color}">
-        </button>
-    `).join('');
 }
 
 // =========================================================
@@ -189,7 +181,6 @@ function showToast(msg, type = 'info') {
 // =========================================================
 
 // ✅ FIX 1: Helper compartido que reemplaza el setAttribute() duplicado
-// en las 3 funciones. Configura el botón de confirmar y evita doble submit.
 function configurarBotonConfirmar(btnConfirmar, url) {
     btnConfirmar.removeAttribute('disabled');
     btnConfirmar.setAttribute('hx-post', url);
@@ -199,7 +190,6 @@ function configurarBotonConfirmar(btnConfirmar, url) {
 }
 
 // ✅ FIX 1: reemplaza texto.innerHTML con interpolación (XSS) por textContent + nodo <strong>.
-// El nombre/numero ahora se escapa automáticamente.
 function setTextoConfirmacion(prefijo, valor, sufijo) {
     const texto = document.getElementById('modalConfirmarTexto');
     if (!texto) return;

@@ -1,4 +1,7 @@
 /* src/main/resources/public/css/main.css */
+
+/*      Barely-there UI     */
+
 @import 'variables.css';
 @import 'base.css';
 @import 'layout.css';

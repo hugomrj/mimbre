@@ -4,15 +4,32 @@
     100% { transform: scale(4); opacity: 0; }
 }
 
+/* Efecto base para fondos transparentes (Menú, Ghost buttons, Iconos, Filtros) */
 .wave-ripple {
     position: absolute; border-radius: 50%;
     background: radial-gradient(circle, color-mix(in srgb, var(--primary) 35%, transparent) 0%, color-mix(in srgb, var(--primary) 10%, transparent) 50%, transparent 70%);
     transform: scale(0); pointer-events: none; animation: wave-ripple-anim 0.6s ease-out forwards;
 }
-.nav-sub-item .wave-ripple, .sidebar-icon-btn .wave-ripple {
-    background: radial-gradient(circle, color-mix(in srgb, var(--primary) 30%, transparent) 0%, transparent 70%);
+
+/* ✅ NUEVO: Efecto para los botones con fondo sólido (Primario) */
+/* Como el botón es del color primario, el ripple debe ser blanco para notarse */
+.btn-primary .wave-ripple,
+.btn-add .wave-ripple {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
 }
 
+/* Efecto más sutil para submenús e iconos laterales */
+.nav-sub-item .wave-ripple,
+.sidebar-icon-btn .wave-ripple,
+.navbar-btn .wave-ripple,
+.row-action-btn .wave-ripple {
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary) 25%, transparent) 0%, transparent 70%);
+}
+
+
+/* =========================================
+   ANIMACIONES DE ENTRADA (FadeIn / RowIn)
+   ========================================= */
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 .animate-fade-in { animation: fadeInUp 0.5s ease forwards; }
 .delay-1 { animation-delay: 0.08s; opacity: 0; }
@@ -22,12 +39,18 @@
 @keyframes rowIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
 .row-anim { animation: rowIn 0.35s ease forwards; opacity: 0; }
 
+/* =========================================
+   OVERLAY DEL SIDEBAR (Móvil)
+   ========================================= */
 .sidebar-overlay {
     display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px); z-index: 99; opacity: 0; transition: opacity 0.25s ease;
 }
 .sidebar-overlay.visible { opacity: 1; }
 
+/* =========================================
+   RESPONSIVE (Tablets y Móviles)
+   ========================================= */
 @media (max-width: 1100px) { .data-table { display: block; overflow-x: auto; } }
 
 @media (max-width: 768px) {

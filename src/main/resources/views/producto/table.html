@@ -4,7 +4,8 @@
     </div>
     <div class="toolbar-right">
         <button class="btn-ghost" onclick="showToast('Exportando...')"><i class="fas fa-file-export"></i> Exportar</button>
-        <button class="btn-add" hx-get="/ui/productos/form" hx-target="#id-main"><i class="fas fa-plus"></i> Nuevo producto</button>
+        <!-- ✅ Cambiado btn-add por btn-primary -->
+        <button class="btn-primary" hx-get="/ui/productos/form" hx-target="#id-main"><i class="fas fa-plus"></i> Nuevo producto</button>
     </div>
 </div>
 
@@ -30,11 +31,10 @@
             </td>
             <td><span class="price">₲ {{ p.precio }}</span></td>
             <td>
-                <div class="stock-bar">
-                    <span class="stock-num">{{ p.stock }}</span>
-                </div>
+                <span class="stock-num">{{ p.stock }}</span>
             </td>
-            <td style="color:var(--dark-text-muted)">{{ p.categoria }}</td>
+            <!-- ✅ Quitamos el style inline, ahora hereda el color del texto principal -->
+            <td>{{ p.categoria }}</td>
             <td>
                 <div class="row-actions">
                     <button class="row-action-btn" title="Editar" hx-get="/ui/productos/form?id={{ p.id }}" hx-target="#id-main"><i class="fas fa-pen"></i></button>
@@ -44,7 +44,8 @@
         </tr>
         {% else %}
         <tr>
-            <td colspan="5" style="text-align: center; padding: 32px; color: var(--dark-text-muted);">No hay productos registrados.</td>
+            <!-- ✅ Quitamos el style inline de la fila vacía -->
+            <td colspan="5" style="text-align: center; padding: 32px; color: var(--text-muted);">No hay productos registrados.</td>
         </tr>
         {% endfor %}
         </tbody>

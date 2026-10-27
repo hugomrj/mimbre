@@ -6,21 +6,16 @@
     <meta name="theme-color" content="#090E1E">
     <title>Mimbre - Dashboard</title>
 
-    <!-- Iconos -->
     <link rel="stylesheet" href="/vendor/fontawesome/all.min.css">
-    <!-- Tus estilos personalizados -->
     <link rel="stylesheet" href="/css/main.css">
-    <!-- HTMX -->
     <script src="/vendor/htmx/htmx.min.js"></script>
-    <!-- Chart.js -->
     <script src="/vendor/chartjs/chart.min.js"></script>
-    <!-- Scripts de la aplicación -->
     <script src="/js/main.js"></script>
     <script src="/js/venta.js"></script>
     <script src="/js/compra.js"></script>
 </head>
 
-<body data-theme="dark">
+<body data-theme="dark" data-palette="cyan">
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
 <div class="app-layout">
@@ -64,11 +59,10 @@
             </a>
         </nav>
 
-        <!-- SIDEBAR FOOTER: "A" a la izquierda, Luna a la derecha -->
         <div class="sidebar-footer">
             <div class="sidebar-user">
                 <div class="sidebar-user-avatar">A</div>
-                <button class="sidebar-icon-btn" onclick="toggleTheme()" title="Cambiar tema" style="width: 36px; height: 36px; font-size: 1rem;">
+                <button class="sidebar-icon-btn" onclick="toggleTheme()" title="Cambiar tema">
                     <i class="fas fa-moon" id="theme-icon"></i>
                 </button>
             </div>
@@ -88,71 +82,92 @@
                     <input type="text" placeholder="Buscar...">
                 </div>
 
-                <!-- Botón de Configuración (Color) -->
-                <button class="navbar-btn" onclick="openSettingsModal()" title="Personalizar color">
+                <button class="navbar-btn" onclick="openSettingsModal()" title="Personalizar paleta">
                     <i class="fas fa-palette"></i>
                 </button>
 
-                <!-- Avatar decorativo en el Navbar -->
                 <div class="navbar-avatar">A</div>
             </div>
         </header>
 
-        <main class="app-main" style="flex: 1; padding: 24px; overflow-y: auto;">
+        <main class="app-main">
             <div id="id-main" class="container-fluid" hx-get="/ui/dashboard" hx-trigger="load">
-                <!-- HTMX cargará el contenido aquí automáticamente -->
+                <!-- HTMX carga aquí -->
             </div>
         </main>
     </div>
 </div>
 
-<div id="toastContainer" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;"></div>
+<div id="toastContainer" class="toast-container"></div>
 
-<!-- MODAL GLOBAL DE CONFIRMACIÓN DE ELIMINACIÓN -->
+<!-- MODAL DE CONFIRMACIÓN -->
 <div id="modalConfirmarEliminacion" class="modal-overlay">
     <div class="modal-container" style="max-width: 440px;">
-        <div class="modal-header" style="border-bottom: none; padding-bottom: 0;">
-            <div class="modal-title" style="color: #F43F5E;">
+        <div class="modal-header">
+            <div class="modal-title" style="color: var(--state-danger-text);">
                 <i class="fas fa-exclamation-triangle"></i> ¿Confirmar Eliminación?
             </div>
             <button type="button" class="modal-close-btn" onclick="cerrarModalEliminacion()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="modal-body" style="padding-top: 12px; padding-bottom: 20px;">
-            <p id="modalConfirmarTexto" style="color: var(--dark-text); font-size: 0.95rem; margin: 0; line-height: 1.5;">
+        <div class="modal-body">
+            <p id="modalConfirmarTexto" style="color: var(--text-main); margin: 0;">
                 ¿Está seguro de que desea eliminar este registro? Esta acción no se puede deshacer.
             </p>
         </div>
-        <div class="modal-footer" style="border-top: 1px solid var(--dark-card-border); padding-top: 16px;">
+        <div class="modal-footer">
             <button type="button" class="btn-ghost" onclick="cerrarModalEliminacion()">Cancelar</button>
-            <button type="button" class="btn-add" id="btnConfirmarEliminar" onclick="cerrarModalEliminacion()">
+            <button type="button" class="btn-primary" id="btnConfirmarEliminar">
                 <i class="fas fa-trash-alt"></i> Confirmar y Eliminar
             </button>
         </div>
     </div>
 </div>
 
-<!-- MODAL DE CONFIGURACIÓN (SOLO COLOR) -->
+<!-- MODAL DE PALETAS -->
 <div class="modal-overlay" id="modalConfiguracion" onclick="if(event.target===this) closeSettingsModal()">
-    <div class="modal-container" style="max-width: 400px;">
+    <div class="modal-container" style="max-width: 480px;">
         <div class="modal-header">
-            <h3 class="modal-title"><i class="fas fa-palette"></i> Color Primario</h3>
+            <h3 class="modal-title"><i class="fas fa-palette"></i> Paleta de Colores</h3>
             <button class="modal-close-btn" onclick="closeSettingsModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">Elige el color de acento de la aplicación</label>
-                <div id="colorPresetsContainer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
-                    <!-- Los botones de colores se inyectan aquí automáticamente por JS -->
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <label style="font-size: 0.85rem; color: var(--dark-text-muted);">Personalizado:</label>
-                    <input type="color" id="primaryColorPicker"
-                           style="width: 40px; height: 35px; border: none; background: transparent; cursor: pointer; border-radius: 8px;"
-                           onchange="applyPrimaryColor(this.value)">
-                </div>
+            <label class="form-label">Elige el estilo visual para tu sistema</label>
 
+            <div class="palette-grid">
+                <button class="palette-item" data-palette="cyan" onclick="applyPalette('cyan')">
+                    <span class="palette-circle" style="background: #06B6D4;"></span>
+                    <span class="palette-label">Cyan</span>
+                </button>
+                <button class="palette-item" data-palette="indigo" onclick="applyPalette('indigo')">
+                    <span class="palette-circle" style="background: #6366F1;"></span>
+                    <span class="palette-label">Indigo</span>
+                </button>
+                <button class="palette-item" data-palette="emerald" onclick="applyPalette('emerald')">
+                    <span class="palette-circle" style="background: #10B981;"></span>
+                    <span class="palette-label">Emerald</span>
+                </button>
+                <button class="palette-item" data-palette="sunset" onclick="applyPalette('sunset')">
+                    <span class="palette-circle" style="background: #F43F5E;"></span>
+                    <span class="palette-label">Sunset</span>
+                </button>
+                <button class="palette-item" data-palette="violet" onclick="applyPalette('violet')">
+                    <span class="palette-circle" style="background: #8B5CF6;"></span>
+                    <span class="palette-label">Violet</span>
+                </button>
+                <button class="palette-item" data-palette="amber" onclick="applyPalette('amber')">
+                    <span class="palette-circle" style="background: #F59E0B;"></span>
+                    <span class="palette-label">Amber</span>
+                </button>
+                <button class="palette-item" data-palette="blue" onclick="applyPalette('blue')">
+                    <span class="palette-circle" style="background: #3B82F6;"></span>
+                    <span class="palette-label">Blue</span>
+                </button>
+                <button class="palette-item" data-palette="slate" onclick="applyPalette('slate')">
+                    <span class="palette-circle" style="background: #64748B;"></span>
+                    <span class="palette-label">Slate</span>
+                </button>
             </div>
         </div>
         <div class="modal-footer">
@@ -178,8 +193,12 @@
     }
 
     document.body.addEventListener('click', function(e) {
-        if(e.target.closest('.nav-item, .nav-sub-item, .sidebar-icon-btn, .btn-add, .btn-ghost, .navbar-btn')) {
-            createWaveRipple(e, e.target.closest('.nav-item, .nav-sub-item, .sidebar-icon-btn, .btn-add, .btn-ghost, .navbar-btn'));
+        // ✅ Agregamos los filtros y las acciones de la tabla
+        const selector = '.nav-item, .nav-sub-item, .sidebar-icon-btn, .btn-primary, .btn-add, .btn-ghost, .navbar-btn, .filter-chip, .row-action-btn';
+        const target = e.target.closest(selector);
+
+        if (target) {
+            createWaveRipple(e, target);
         }
     });
 
