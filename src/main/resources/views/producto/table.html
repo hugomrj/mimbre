@@ -1,3 +1,6 @@
+{% extends "layout.html" %}
+
+{% block content %}
 <!-- ✅ Título dinámico en el navbar -->
 <h1 class="navbar-title" id="navbarTitle" hx-swap-oob="true">Productos</h1>
 
@@ -6,24 +9,10 @@
         <button class="filter-chip active" onclick="setFilter(this)">Todos <span class="count">{{ totalElements | default(0) }}</span></button>
     </div>
     <div class="toolbar-right">
-
-        <!-- ✅ MOVIDO ACÁ: Selector de registros por página -->
-        <div class="page-size-select">
-            <label>Mostrar</label>
-            <select hx-get="{{ baseUrl }}"
-                    hx-target="#id-main"
-                    hx-vals='{"page": 0}'
-                    hx-include="this"
-                    name="size">
-                <option value="5" {% if size == 5 %}selected{% endif %}>5</option>
-                <option value="10" {% if size == 10 %}selected{% endif %}>10</option>
-                <option value="25" {% if size == 25 %}selected{% endif %}>25</option>
-                <option value="50" {% if size == 50 %}selected{% endif %}>50</option>
-            </select>
-        </div>
-
+        {% include "/fragments/page-size-select.html" %}
         <button class="btn-ghost" onclick="showToast('Exportando...')"><i class="fas fa-file-export"></i> Exportar</button>
-        <button class="btn-primary" hx-get="/ui/productos/form" hx-target="#id-main"><i class="fas fa-plus"></i> Nuevo producto</button>
+        <!-- ✅ Agregado hx-select para que no se duplique el layout -->
+        <button class="btn-primary" hx-get="/ui/productos/form" hx-target="#id-main" hx-select="#id-main"><i class="fas fa-plus"></i> Nuevo producto</button>
     </div>
 </div>
 
@@ -54,7 +43,8 @@
             <td>{{ p.categoria }}</td>
             <td>
                 <div class="row-actions">
-                    <button class="row-action-btn" title="Editar" hx-get="/ui/productos/form?id={{ p.id }}" hx-target="#id-main"><i class="fas fa-pen"></i></button>
+                    <!-- ✅ Agregado hx-select para que no se duplique el layout -->
+                    <button class="row-action-btn" title="Editar" hx-get="/ui/productos/form?id={{ p.id }}" hx-target="#id-main" hx-select="#id-main"><i class="fas fa-pen"></i></button>
                     <button class="row-action-btn" title="Eliminar" onclick="abrirModalEliminacion('{{ p.nombre }}', '/ui/productos/delete/{{ p.id }}')"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </td>
@@ -68,12 +58,8 @@
     </table>
 </div>
 
-<!-- ✅ Paginación (Solo navegación, sin selector) -->
-{% include "fragments/pagination.html" %}
+{% include "/fragments/pagination.html" %}
 
-{% if mensaje %}
-<script>if (typeof showToast === 'function') showToast("{{ mensaje }}", "success");</script>
-{% endif %}
-{% if error %}
-<script>if (typeof showToast === 'function') showToast("{{ error }}", "error");</script>
-{% endif %}
+{% if mensaje %}<script>if (typeof showToast === 'function') showToast("{{ mensaje }}", "success");</script>{% endif %}
+{% if error %}<script>if (typeof showToast === 'function') showToast("{{ error }}", "error");</script>{% endif %}
+{% endblock %}

@@ -1,7 +1,13 @@
-package com.app.producto_categoria;
+package com.app.producto_categoria.service;
 
 import com.app.exception.BusinessException;
 import com.app.producto.repository.ProductoRepository;
+import com.app.producto_categoria.dto.ProductoCategoriaDto;
+import com.app.producto_categoria.repository.ProductoCategoriaRepository;
+import com.app.producto_categoria.model.ProductoCategoria;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
+import io.micronaut.data.model.Sort;
 import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import java.util.List;
@@ -25,6 +31,13 @@ public class ProductoCategoriaService {
         return StreamSupport.stream(productoCategoriaRepository.findAll().spliterator(), false)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    // ✅ NUEVO MÉTODO CON PAGINACIÓN
+    public Page<ProductoCategoriaDto> findPage(int page, int size) {
+        Pageable pageable = Pageable.from(page, size, Sort.of(Sort.Order.desc("id")));
+        Page<ProductoCategoria> pagina = productoCategoriaRepository.findAll(pageable);
+        return pagina.map(this::mapToDto);
     }
 
     public Optional<ProductoCategoriaDto> findById(Long id) {

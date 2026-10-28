@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090E1E">
+    <title>Mimbre</title>
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="/vendor/fontawesome/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+
+    <!-- Librerías externas -->
+    <script src="/vendor/htmx/htmx.min.js"></script>
+    <script src="/vendor/chartjs/chart.min.js"></script>
+
+    <!-- ✅ 1. UI: Componentes visuales (Toasts, Modales, Ripple, Sidebar) -->
+    <script src="/js/ui.js"></script>
+
+    <!-- ✅ 2. Lógica de Dominio (Carritos de Venta y Compra) -->
+    <script src="/js/venta.js"></script>
+    <script src="/js/compra.js"></script>
+
+    <!-- ✅ 3. Core: Lógica global (Tema, Paleta, Navegación) -->
+    <script src="/js/main.js"></script>
+
+    <!-- ✅ 4. Bootstrap: Arranque de la app (SIEMPRE AL FINAL) -->
+    <script src="/js/app.js"></script>
+</head>
+
+<body data-theme="dark" data-palette="cyan">
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-icon"><i class="fas fa-lightbulb"></i></div>
+            <span class="sidebar-brand-text">MIMBRE</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- Inicio -->
+            <a href="/ui/dashboard" class="nav-item"
+               hx-get="/ui/dashboard" hx-target="#id-main" hx-select="#id-main" hx-push-url="true"
+               onclick="navTo(this, event)">
+                <i class="fas fa-th-large nav-icon"></i>
+                <span class="nav-label">Inicio</span>
+            </a>
+
+            <!-- Inventario -->
+            <button class="nav-item expanded" onclick="toggleSub(this)">
+                <i class="fas fa-box nav-icon"></i>
+                <span class="nav-label">Inventario</span>
+                <i class="fas fa-chevron-down nav-chevron"></i>
+            </button>
+            <div class="nav-sub open">
+                <a href="/ui/productos/list" class="nav-sub-item"
+                   hx-get="/ui/productos/list" hx-target="#id-main" hx-select="#id-main" hx-push-url="true"
+                   onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Productos</span></a>
+                <a href="/ui/categorias/list" class="nav-sub-item"
+                   hx-get="/ui/categorias/list" hx-target="#id-main" hx-select="#id-main" hx-push-url="true"
+                   onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Categorias</span></a>
+                <a href="/ui/proveedores/list" class="nav-sub-item"
+                   hx-get="/ui/proveedores/list" hx-target="#id-main" hx-select="#id-main" hx-push-url="true"
+                   onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Proveedores</span></a>
+            </div>
+
+            <!-- Comercial -->
+            <button class="nav-item" onclick="toggleSub(this)">
+                <i class="fas fa-store nav-icon"></i>
+                <span class="nav-label">Comercial</span>
+                <i class="fas fa-chevron-down nav-chevron"></i>
+            </button>
+            <div class="nav-sub">
+                <a href="/ui/ventas/list" class="nav-sub-item"
+                   hx-get="/ui/ventas/list" hx-target="#id-main" hx-select="#id-main" hx-push-url="true"
+                   onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Ventas</span></a>
+                <a href="/ui/compras/list" class="nav-sub-item"
+                   hx-get="/ui/compras/list" hx-target="#id-main" hx-select="#id-main" hx-push-url="true"
+                   onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Compras</span></a>
+                <a href="/ui/clientes/list" class="nav-sub-item"
+                   hx-get="/ui/clientes/list" hx-target="#id-main" hx-select="#id-main" hx-push-url="true"
+                   onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Clientes</span></a>
+            </div>
+
+            <!-- Reportes -->
+            <a href="#" class="nav-item" onclick="navTo(this, event)">
+                <i class="fas fa-chart-bar nav-icon"></i>
+                <span class="nav-label">Reportes</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar">A</div>
+                <button class="sidebar-icon-btn" onclick="toggleTheme()" title="Cambiar tema">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="content-area">
+        <header class="navbar">
+            <div class="navbar-left">
+                <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <h1 class="navbar-title" id="navbarTitle">{% block navbar_title %}Inicio{% endblock %}</h1>
+            </div>
+
+            <div class="navbar-actions">
+                <div class="navbar-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+                <button class="navbar-btn" onclick="openSettingsModal()" title="Personalizar paleta">
+                    <i class="fas fa-palette"></i>
+                </button>
+                <div class="navbar-avatar">A</div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- ✅ AQUÍ VA EL CONTENIDO DINÁMICO DE CADA VISTA -->
+            <div id="id-main" class="container-fluid">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+</div>
+
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- ✅ Fragmentos de Modales -->
+{% include "/fragments/modal-confirmacion.html" %}
+{% include "/fragments/modal-paleta.html" %}
+
+</body>
+</html>

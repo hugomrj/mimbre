@@ -1,3 +1,4 @@
+<!-- views/producto/results.html -->
 <div class="cliente-dropdown-list">
     {% for prod in productos %}
     <div class="cliente-dropdown-item" onclick="VentaManager.seleccionarProducto({{ prod.id }}, '{{ prod.nombre }}', {{ prod.precio }}, {{ prod.stock }})">

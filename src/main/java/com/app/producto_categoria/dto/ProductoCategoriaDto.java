@@ -1,4 +1,4 @@
-package com.app.producto_categoria;
+package com.app.producto_categoria.dto;
 
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.constraints.NotBlank;

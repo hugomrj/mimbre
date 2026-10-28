@@ -3,7 +3,7 @@ package com.app.producto.controller;
 import com.app.producto.dto.ProductoDto;
 import com.app.producto.dto.ProductoFormDto;
 import com.app.producto.service.ProductoService;
-import com.app.producto_categoria.ProductoCategoriaService;
+import com.app.producto_categoria.service.ProductoCategoriaService;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.model.Page;
 import io.micronaut.http.MediaType;
@@ -38,7 +38,7 @@ public class ProductoUiController {
         Map<String, Object> model = new HashMap<>();
         model.put("categorias", productoCategoriaService.findAll());
         if (id != null) {
-            productoService.findById(id).ifPresent(producto -> model.put("producto", producto));
+            productoService.findById(id).ifPresent(p -> model.put("producto", p));
         }
         return model;
     }
@@ -84,11 +84,9 @@ public class ProductoUiController {
     private Map<String, Object> performDelete(Long id) {
         try {
             boolean eliminado = productoService.delete(id);
-            if (eliminado) {
-                return buildTableModel(0, 10, "Producto eliminado correctamente.", null);
-            } else {
-                return buildTableModel(0, 10, null, "No se encontró el producto a eliminar.");
-            }
+            return eliminado
+                    ? buildTableModel(0, 10, "Producto eliminado correctamente.", null)
+                    : buildTableModel(0, 10, null, "No se encontró el producto a eliminar.");
         } catch (Exception e) {
             return buildTableModel(0, 10, null,
                     e.getMessage() != null ? e.getMessage() : "No se puede eliminar el producto porque está asociado a ventas u otros registros.");

@@ -1,16 +1,19 @@
 <!-- src/main/resources/views/dashboard.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- ✅ Título dinámico para el navbar -->
+<div style="display: none;">
+    <h1 class="navbar-title" id="navbarTitle" hx-swap-oob="true">Inicio</h1>
+</div>
+
 <!-- TARJETAS DE KPIs -->
 <div class="kpi-grid">
-
     <!-- KPI 1: Ventas del Mes -->
     <div class="kpi-card">
         <div class="kpi-header">
-            <div class="kpi-icon kpi-icon-primary">
-                <i class="fas fa-wallet"></i>
-            </div>
-            <span class="kpi-badge kpi-badge-primary">
-                Mes Actual
-            </span>
+            <div class="kpi-icon kpi-icon-primary"><i class="fas fa-wallet"></i></div>
+            <span class="kpi-badge kpi-badge-primary">Mes Actual</span>
         </div>
         <div class="kpi-value" id="kpiVentasMes">₲ 0</div>
         <div class="kpi-label">Ventas del Mes</div>
@@ -19,12 +22,8 @@
     <!-- KPI 2: Facturas Emitidas -->
     <div class="kpi-card">
         <div class="kpi-header">
-            <div class="kpi-icon kpi-icon-warning">
-                <i class="fas fa-file-invoice-dollar"></i>
-            </div>
-            <span class="kpi-badge kpi-badge-warning">
-                Completadas
-            </span>
+            <div class="kpi-icon kpi-icon-warning"><i class="fas fa-file-invoice-dollar"></i></div>
+            <span class="kpi-badge kpi-badge-warning">Completadas</span>
         </div>
         <div class="kpi-value" id="kpiFacturas">0</div>
         <div class="kpi-label">Facturas Emitidas</div>
@@ -33,12 +32,8 @@
     <!-- KPI 3: Productos en Catálogo -->
     <div class="kpi-card">
         <div class="kpi-header">
-            <div class="kpi-icon kpi-icon-success">
-                <i class="fas fa-boxes-stacked"></i>
-            </div>
-            <span class="kpi-badge kpi-badge-success">
-                Catálogo
-            </span>
+            <div class="kpi-icon kpi-icon-success"><i class="fas fa-boxes-stacked"></i></div>
+            <span class="kpi-badge kpi-badge-success">Catálogo</span>
         </div>
         <div class="kpi-value" id="kpiProductos">0</div>
         <div class="kpi-label">Productos Registrados</div>
@@ -47,12 +42,8 @@
     <!-- KPI 4: Clientes -->
     <div class="kpi-card">
         <div class="kpi-header">
-            <div class="kpi-icon kpi-icon-secondary">
-                <i class="fas fa-users"></i>
-            </div>
-            <span class="kpi-badge kpi-badge-secondary">
-                Registrados
-            </span>
+            <div class="kpi-icon kpi-icon-secondary"><i class="fas fa-users"></i></div>
+            <span class="kpi-badge kpi-badge-secondary">Registrados</span>
         </div>
         <div class="kpi-value" id="kpiClientes">0</div>
         <div class="kpi-label">Clientes Registrados</div>
@@ -60,14 +51,14 @@
 </div>
 
 <!-- SECCIÓN: GRÁFICO DE SERIES -->
-<div class="table-card" style="padding: 24px;">
+<!-- ✅ Agregamos overflow: visible para que no se corten los tooltips del gráfico -->
+<div class="table-card" style="padding: 24px; overflow: visible;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin: 0;">
             <i class="fas fa-chart-bar" style="color: var(--primary); margin-right: 8px;"></i> Resumen de Actividad (Simulador)
         </h3>
     </div>
 
-    <!-- Contenedor del Gráfico -->
     <div style="position: relative; height: 320px; width: 100%;">
         <canvas id="dashboardChart"></canvas>
     </div>
@@ -96,26 +87,26 @@
         const canvas = document.getElementById('dashboardChart');
         if (!canvas) return;
 
-        // ✅ Extraer los 5 colores definidos en el CSS
+        // Extraer los 5 colores del CSS
         const style = getComputedStyle(document.body);
         const chartColors = [
-            style.getPropertyValue('--chart-1').trim(), // Oscuro
-            style.getPropertyValue('--chart-2').trim(), // Medio Oscuro
-            style.getPropertyValue('--chart-3').trim(), // Primario (Centro)
-            style.getPropertyValue('--chart-4').trim(), // Medio Claro
-            style.getPropertyValue('--chart-5').trim()  // Claro
+            style.getPropertyValue('--chart-1').trim(),
+            style.getPropertyValue('--chart-2').trim(),
+            style.getPropertyValue('--chart-3').trim(),
+            style.getPropertyValue('--chart-4').trim(),
+            style.getPropertyValue('--chart-5').trim()
         ];
 
-        // Extraer colores de texto para el gráfico
         const textColor = style.getPropertyValue('--text-main').trim();
-        const gridColor = style.getPropertyValue('--border-sutil').trim();
+        // ✅ Corrección: Usamos --border-line
+        const gridColor = style.getPropertyValue('--border-line').trim();
 
-        // Evitar que se dupliquen gráficos si HTMX recarga la vista
+        // Evitar que se dupliquen gráficos
         if (window.dashboardChartInstance) {
             window.dashboardChartInstance.destroy();
         }
 
-        // ✅ Datos reducidos a 5 para coincidir con los 5 colores
+        // Datos de prueba
         const rawData = [
             { label: 'Ventas', value: 80 },
             { label: 'Compras', value: 65 },
@@ -124,13 +115,10 @@
             { label: 'Proveedores', value: 30 }
         ];
 
-        // ✅ Ordenar de MAYOR a MENOR
         rawData.sort((a, b) => b.value - a.value);
-
         const sortedLabels = rawData.map(item => item.label);
         const sortedData = rawData.map(item => item.value);
 
-        // Configuración del Gráfico
         const ctx = canvas.getContext('2d');
         window.dashboardChartInstance = new Chart(ctx, {
             type: 'bar',
@@ -139,7 +127,7 @@
                 datasets: [{
                     label: 'Simulación',
                     data: sortedData,
-                    backgroundColor: chartColors, // Aplica los 5 colores en orden
+                    backgroundColor: chartColors,
                     borderRadius: 6,
                     borderSkipped: false
                 }]
@@ -162,14 +150,17 @@
                 scales: {
                     x: {
                         grid: { display: false },
-                        ticks: { color: style.getPropertyValue('--text-muted').trim(), font: { family: 'Outfit' } }
+                        // ✅ Corrección: Fuente Inter en lugar de Outfit
+                        ticks: { color: style.getPropertyValue('--text-muted').trim(), font: { family: 'Inter' } }
                     },
                     y: {
                         grid: { color: gridColor, drawBorder: false },
-                        ticks: { color: style.getPropertyValue('--text-muted').trim(), font: { family: 'Outfit' } }
+                        // ✅ Corrección: Fuente Inter
+                        ticks: { color: style.getPropertyValue('--text-muted').trim(), font: { family: 'Inter' } }
                     }
                 }
             }
         });
     })();
 </script>
+{% endblock %}

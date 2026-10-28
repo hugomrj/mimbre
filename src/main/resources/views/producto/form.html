@@ -1,25 +1,23 @@
-<div class="toolbar">
-    <div class="toolbar-left">
-        <h2 style="font-size: 1.25rem; font-weight: 600;">
-            {% if producto.id %}Editar Producto{% else %}Nuevo Producto{% endif %}
-        </h2>
-    </div>
-</div>
+{% extends "layout.html" %}
 
+{% block content %}
+<!-- ✅ Título dinámico en el navbar -->
+<h1 class="navbar-title" id="navbarTitle" hx-swap-oob="true">
+    {% if producto.id %}Editar Producto{% else %}Nuevo Producto{% endif %}
+</h1>
 
-<form hx-post="/ui/productos/save" hx-target="#id-main" class="form-container">
+<!-- ✅ Agregado hx-select para que al guardar no se duplique el layout -->
+<form hx-post="/ui/productos/save" hx-target="#id-main" hx-select="#id-main" class="form-container animate-fade-in delay-1">
 
     {% if producto.id %}
     <input type="hidden" name="id" value="{{ producto.id }}">
     {% endif %}
 
-    <!-- FILA 1: Nombre ocupa todo el ancho (6/6) -->
     <div class="form-group col-full">
         <label class="form-label" for="prodNombre">Nombre del producto</label>
         <input type="text" id="prodNombre" name="nombre" value="{{ producto.nombre }}" required class="form-control">
     </div>
 
-    <!-- FILA 2: SKU (2/6) + Categoría (4/6) = 6 columnas completas -->
     <div class="form-group col-2">
         <label class="form-label" for="prodSku">SKU / Código</label>
         <input type="text" id="prodSku" name="sku" value="{{ producto.sku }}" required class="form-control">
@@ -35,7 +33,6 @@
         </select>
     </div>
 
-    <!-- FILA 3: Precio (2/6) + Stock (2/6) -->
     <div class="form-group col-2">
         <label class="form-label" for="prodPrecio">Precio</label>
         <input type="number" id="prodPrecio" step="0.01" name="precio" value="{{ producto.precio }}" required class="form-control">
@@ -46,11 +43,11 @@
         <input type="number" id="prodStock" name="stock" value="{{ producto.stock }}" required class="form-control">
     </div>
 
-    <!-- FILA 4: Botones de acción -->
     <div class="form-actions">
-        <button type="submit" class="btn-add">Guardar Producto</button>
-        <button type="button" class="btn-ghost" hx-get="/ui/productos/list" hx-target="#id-main">Cancelar</button>
+        <button type="submit" class="btn-primary">Guardar Producto</button>
+        <!-- ✅ Agregado hx-select para volver a la tabla sin duplicar -->
+        <button type="button" class="btn-ghost" hx-get="/ui/productos/list" hx-target="#id-main" hx-select="#id-main">Cancelar</button>
     </div>
 
 </form>
-
+{% endblock %}

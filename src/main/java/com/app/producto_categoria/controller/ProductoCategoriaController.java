@@ -1,5 +1,7 @@
-package com.app.producto_categoria;
+package com.app.producto_categoria.controller;
 
+import com.app.producto_categoria.dto.ProductoCategoriaDto;
+import com.app.producto_categoria.service.ProductoCategoriaService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import jakarta.validation.Valid;

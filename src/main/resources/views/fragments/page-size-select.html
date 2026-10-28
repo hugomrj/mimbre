@@ -1,0 +1,27 @@
+<div class="page-size-select">
+    <label>Mostrar</label>
+    <div class="page-size-dropdown">
+        <button type="button" class="page-size-toggle" onclick="togglePageSizeDropdown(event)">
+            <span>{{ size }}</span>
+            <i class="fas fa-chevron-down" style="font-size: 0.6rem; opacity: 0.6;"></i>
+        </button>
+        <div class="page-size-menu" id="pageSizeMenu">
+            <button class="page-size-option {% if size == 5 %}active{% endif %}"
+                    hx-get="{{ baseUrl }}" hx-target="#id-main"
+                    hx-vals='{"page": 0, "size": 5}'
+                    onclick="closePageSizeDropdown()">5</button>
+            <button class="page-size-option {% if size == 10 %}active{% endif %}"
+                    hx-get="{{ baseUrl }}" hx-target="#id-main"
+                    hx-vals='{"page": 0, "size": 10}'
+                    onclick="closePageSizeDropdown()">10</button>
+            <button class="page-size-option {% if size == 25 %}active{% endif %}"
+                    hx-get="{{ baseUrl }}" hx-target="#id-main"
+                    hx-vals='{"page": 0, "size": 25}'
+                    onclick="closePageSizeDropdown()">25</button>
+            <button class="page-size-option {% if size == 50 %}active{% endif %}"
+                    hx-get="{{ baseUrl }}" hx-target="#id-main"
+                    hx-vals='{"page": 0, "size": 50}'
+                    onclick="closePageSizeDropdown()">50</button>
+        </div>
+    </div>
+</div>

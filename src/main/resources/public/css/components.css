@@ -112,7 +112,7 @@ font-size: 0.9rem; color: var(--text-main); }
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Un poco menos de espacio, ahora que el label es más sutil */
+    gap: 8px;
 }
 .form-group.col-2 { grid-column: span 2; }
 .form-group.col-3 { grid-column: span 3; }
@@ -120,15 +120,16 @@ font-size: 0.9rem; color: var(--text-main); }
 .form-group.col-5 { grid-column: span 5; }
 .form-group.col-full { grid-column: 1 / -1; }
 
-/* ✅ Label unificado con el estilo de la cabecera de la tabla */
+/* ✅ Label unificado con la cabecera de la tabla */
 .form-label {
-    font-size: 0.7rem;      /* Más chico que el de la tabla (0.75rem) */
-    font-weight: 600;       /* Mismo peso que la cabecera */
+    font-size: 0.7rem;
+    font-weight: 600;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
+/* Inputs de texto, email, number, etc. */
 .form-control {
     width: 100%;
     padding: 8px 0;
@@ -138,7 +139,7 @@ font-size: 0.9rem; color: var(--text-main); }
     background: transparent;
     color: var(--text-main);
     font-size: 0.95rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: inherit; /* ✅ Hereda Inter del body */
     outline: none;
     transition: border-color 0.2s ease;
 }
@@ -149,6 +150,45 @@ font-size: 0.9rem; color: var(--text-main); }
 
 .form-control::placeholder { color: transparent; }
 
+/* =========================================
+   ✅ SELECTS (Estilo consistente con los inputs)
+   ========================================= */
+select.form-control {
+    cursor: pointer;
+    color-scheme: dark; /* ✅ Fuerza menú oscuro nativo */
+    padding-right: 24px; /* Espacio para la flecha */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0 center;
+}
+
+[data-theme="light"] select.form-control {
+    color-scheme: light;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+select.form-control:focus {
+    border-bottom: 2px solid var(--border-focus);
+}
+
+/* ✅ Opciones del menú (para que se vean bien en Chrome/Edge) */
+select.form-control option {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    padding: 8px;
+}
+
+[data-theme="light"] select.form-control option {
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+}
+
+/* =========================================
+   ACCIONES
+   ========================================= */
 .form-actions {
     grid-column: 1 / -1;
     display: flex;
@@ -156,7 +196,6 @@ font-size: 0.9rem; color: var(--text-main); }
     margin-top: 16px;
     padding-top: 24px;
 }
-
 
 
 
@@ -220,7 +259,7 @@ font-size: 0.9rem; color: var(--text-main); }
     width: 32px; height: 32px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     font-size: 1rem; background: transparent;
-    color: var(--primary); border: 1px solid var(--border-line);
+    color: var(--primary);
 }
 .kpi-value { font-size: 2rem; font-weight: 700; color: var(--text-main); letter-spacing: -1px; }
 .kpi-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
@@ -317,4 +356,117 @@ font-size: 0.9rem; color: var(--text-main); }
 }
 .page-size-select select:focus {
     border-color: var(--border-focus);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================
+   SELECTOR DE CANTIDAD DE REGISTROS POR PÁGINA
+   (Usado en el toolbar de las tablas)
+   ========================================= */
+.page-size-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-right: 12px;
+}
+
+.page-size-dropdown {
+    position: relative;
+}
+
+/* Botón que muestra el número actual */
+.page-size-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 64px;
+    padding: 6px 10px 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-line);
+    background: transparent;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.page-size-toggle:hover {
+    border-color: var(--text-muted);
+    background: var(--bg-surface-hover);
+}
+
+.page-size-toggle:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+/* Menú desplegable con las opciones (5, 10, 25, 50) */
+.page-size-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 70px;
+    padding: 4px;
+    background: var(--bg-app);
+    border: 1px solid var(--border-line);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    z-index: 200;
+}
+
+.page-size-menu.open {
+    display: block;
+    animation: dropdownFadeIn 0.15s ease;
+}
+
+@keyframes dropdownFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cada opción del menú (5, 10, 25, 50) */
+.page-size-option {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.page-size-option:hover {
+    background: var(--bg-surface-hover);
+}
+
+.page-size-option.active {
+    color: var(--primary);
+    font-weight: 600;
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
 }

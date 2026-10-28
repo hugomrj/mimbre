@@ -86,8 +86,18 @@
 }
 .sidebar-icon-btn:hover { color: var(--text-main); }
 
+
 /* ✅ CONTENT AREA Y NAVBAR */
-.content-area { flex: 1; margin-left: 256px; display: flex; flex-direction: column; gap: 24px; }
+.content-area {
+    flex: 1;
+    margin-left: 256px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 1400px;   /* ✅ Limita el ancho máximo */
+    margin-right: auto;  /* ✅ Empuja el contenido a la izquierda si sobra espacio */
+}
+
 
 .navbar {
     height: 48px; background: transparent;

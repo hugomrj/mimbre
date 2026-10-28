@@ -1,0 +1,24 @@
+<!-- src/main/resources/views/fragments/modal-confirmacion.html -->
+<div id="modalConfirmarEliminacion" class="modal-overlay">
+    <div class="modal-container" style="max-width: 440px;">
+        <div class="modal-header">
+            <div class="modal-title" style="color: var(--state-danger-text);">
+                <i class="fas fa-exclamation-triangle"></i> ¿Confirmar Eliminación?
+            </div>
+            <button type="button" class="modal-close-btn" onclick="cerrarModalEliminacion()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p id="modalConfirmarTexto" style="color: var(--text-main); margin: 0;">
+                ¿Está seguro de que desea eliminar este registro? Esta acción no se puede deshacer.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-ghost" onclick="cerrarModalEliminacion()">Cancelar</button>
+            <button type="button" class="btn-primary" id="btnConfirmarEliminar">
+                <i class="fas fa-trash-alt"></i> Confirmar y Eliminar
+            </button>
+        </div>
+    </div>
+</div>

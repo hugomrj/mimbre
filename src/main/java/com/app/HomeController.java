@@ -8,11 +8,9 @@ import java.util.Map;
 @Controller("/")
 public class HomeController {
 
-    @View("main") // Buscará src/main/resources/views/main.html
+    @View("dashboard") // ✅ Ahora apunta al dashboard
     @Get("/")
     public Map<String, Object> index() {
-        return Map.of(
-                "titulo", "FARO - Dashboard Principal"
-        );
+        return Map.of(); // Ya no necesitamos el título "FARO", el layout lo maneja
     }
 }

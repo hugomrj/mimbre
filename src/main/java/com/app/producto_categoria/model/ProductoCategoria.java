@@ -1,4 +1,4 @@
-package com.app.producto_categoria;
+package com.app.producto_categoria.model;
 
 import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
