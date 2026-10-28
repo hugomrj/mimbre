@@ -1,15 +1,33 @@
-<div class="toolbar animate-fade-in delay-1">
+<!-- ✅ Título dinámico en el navbar -->
+<h1 class="navbar-title" id="navbarTitle" hx-swap-oob="true">Productos</h1>
+
+<div class="toolbar">
     <div class="toolbar-filters">
-        <button class="filter-chip active" onclick="setFilter(this)">Todos <span class="count">{{ productos.size() | default(0) }}</span></button>
+        <button class="filter-chip active" onclick="setFilter(this)">Todos <span class="count">{{ totalElements | default(0) }}</span></button>
     </div>
     <div class="toolbar-right">
+
+        <!-- ✅ MOVIDO ACÁ: Selector de registros por página -->
+        <div class="page-size-select">
+            <label>Mostrar</label>
+            <select hx-get="{{ baseUrl }}"
+                    hx-target="#id-main"
+                    hx-vals='{"page": 0}'
+                    hx-include="this"
+                    name="size">
+                <option value="5" {% if size == 5 %}selected{% endif %}>5</option>
+                <option value="10" {% if size == 10 %}selected{% endif %}>10</option>
+                <option value="25" {% if size == 25 %}selected{% endif %}>25</option>
+                <option value="50" {% if size == 50 %}selected{% endif %}>50</option>
+            </select>
+        </div>
+
         <button class="btn-ghost" onclick="showToast('Exportando...')"><i class="fas fa-file-export"></i> Exportar</button>
-        <!-- ✅ Cambiado btn-add por btn-primary -->
         <button class="btn-primary" hx-get="/ui/productos/form" hx-target="#id-main"><i class="fas fa-plus"></i> Nuevo producto</button>
     </div>
 </div>
 
-<div class="table-card animate-fade-in delay-2">
+<div class="table-card">
     <table class="data-table">
         <thead>
         <tr>
@@ -33,7 +51,6 @@
             <td>
                 <span class="stock-num">{{ p.stock }}</span>
             </td>
-            <!-- ✅ Quitamos el style inline, ahora hereda el color del texto principal -->
             <td>{{ p.categoria }}</td>
             <td>
                 <div class="row-actions">
@@ -44,13 +61,15 @@
         </tr>
         {% else %}
         <tr>
-            <!-- ✅ Quitamos el style inline de la fila vacía -->
             <td colspan="5" style="text-align: center; padding: 32px; color: var(--text-muted);">No hay productos registrados.</td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
 </div>
+
+<!-- ✅ Paginación (Solo navegación, sin selector) -->
+{% include "fragments/pagination.html" %}
 
 {% if mensaje %}
 <script>if (typeof showToast === 'function') showToast("{{ mensaje }}", "success");</script>

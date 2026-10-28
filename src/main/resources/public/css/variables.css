@@ -1,15 +1,11 @@
 /* src/main/resources/public/css/variables.css */
 
-/* =========================================
-   1. VARIABLES FIJAS (Textos y Estados)
-   ========================================= */
+/* ... (las variables fijas de textos y estados quedan igual) ... */
 :root {
     color-scheme: dark;
-
     --text-main: #F8FAFC;
     --text-muted: #94A3B8;
     --text-inverse: #FFFFFF;
-
     --state-success-bg: rgba(34, 197, 94, 0.15);
     --state-success-text: #22C55E;
     --state-warning-bg: rgba(245, 158, 11, 0.15);
@@ -18,56 +14,50 @@
     --state-danger-text: #F43F5E;
 }
 
-/* =========================================
-   2. VARIABLES DINÁMICAS (MODO OSCURO)
-   ========================================= */
 body {
-    --primary: #06B6D4;
+    --primary: #0891B2;
 
-    --bg-app: color-mix(in srgb, var(--primary) 10%, #000000);
+    /* ✅ FONDO MÁS ACLARADO: Gris Carbón en vez de Negro Puro */
+    --bg-app: #18181B;              /* Un gris oscuro pero amigable */
     --bg-surface: transparent;
-    --bg-surface-hover: color-mix(in srgb, var(--primary) 25%, #000000);
+    --bg-surface-hover: #27272A;
 
-    /* ✅ Ajuste: Línea sutil al 18% */
-    --border-sutil: color-mix(in srgb, var(--primary) 18%, transparent);
-    --border-line: color-mix(in srgb, var(--primary) 45%, rgba(255, 255, 255, 0.1));
+    /* ✅ Borde un poquito más visible para el modo oscuro */
+    --border-line: color-mix(in srgb, var(--primary) 35%, rgba(255, 255, 255, 0.12));
     --border-focus: var(--primary);
+
+    --text-primary: color-mix(in srgb, var(--primary) 70%, #FFFFFF);
+
+    /* Gráficos */
+    --chart-1: color-mix(in srgb, var(--primary) 50%, #000000);
+    --chart-2: color-mix(in srgb, var(--primary) 75%, #000000);
+    --chart-3: var(--primary);
+    --chart-4: color-mix(in srgb, var(--primary) 75%, #FFFFFF);
+    --chart-5: color-mix(in srgb, var(--primary) 50%, #FFFFFF);
 }
 
-/* =========================================
-   3. LAS 8 PALETAS
-   ========================================= */
-[data-palette="cyan"] { --primary: #06B6D4; }
-[data-palette="indigo"] { --primary: #6366F1; }
-[data-palette="emerald"] { --primary: #10B981; }
-[data-palette="sunset"] { --primary: #F43F5E; }
-[data-palette="violet"] { --primary: #8B5CF6; }
-[data-palette="amber"] { --primary: #F59E0B; }
-[data-palette="blue"] { --primary: #3B82F6; }
-[data-palette="slate"] { --primary: #64748B; }
+/* LAS PALETAS (Sin cambios) */
+[data-palette="cyan"]    { --primary: #0891B2; }
+[data-palette="emerald"] { --primary: #059669; }
+[data-palette="orange"]  { --primary: #EA580C; }
+[data-palette="sunset"]  { --primary: #E11D48; }
+[data-palette="violet"]  { --primary: #7C3AED; }
 
-
-
-
-
-/* =========================================
-   4. VARIABLES DINÁMICAS (MODO CLARO)
-   ========================================= */
+/* MODO CLARO (Sin cambios) */
 body[data-theme="light"] {
     color-scheme: light;
-
-    /* ✅ FONDO BLANCO SUAVE: Base casi blanca (#F8FAFC) + solo un 4% del color */
-    --bg-app: color-mix(in srgb, var(--primary) 4%, #F8FAFC);
-
+    --bg-app: #F4F4F5;
     --bg-surface: transparent;
-    --bg-surface-hover: color-mix(in srgb, var(--primary) 8%, #F8FAFC);
-
-    /* ✅ Bordes un poquito más marcados para que resalten sobre el fondo blanco */
-    --border-sutil: color-mix(in srgb, var(--primary) 20%, rgba(0, 0, 0, 0.08));
-    --border-line: color-mix(in srgb, var(--primary) 35%, rgba(0, 0, 0, 0.15));
+    --bg-surface-hover: #E4E4E7;
+    --border-line: color-mix(in srgb, var(--primary) 25%, rgba(0, 0, 0, 0.1));
     --border-focus: var(--primary);
-
     --text-main: #0F172A;
     --text-muted: #64748B;
     --text-inverse: #FFFFFF;
+    --text-primary: color-mix(in srgb, var(--primary) 75%, #000000);
+    --chart-1: color-mix(in srgb, var(--primary) 50%, #000000);
+    --chart-2: color-mix(in srgb, var(--primary) 75%, #000000);
+    --chart-3: var(--primary);
+    --chart-4: color-mix(in srgb, var(--primary) 75%, #FFFFFF);
+    --chart-5: color-mix(in srgb, var(--primary) 50%, #FFFFFF);
 }

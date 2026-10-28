@@ -53,7 +53,6 @@
             <groupId>io.micronaut.views</groupId>
             <artifactId>micronaut-views-pebble</artifactId>
         </dependency>
-    
         <dependency>
             <groupId>io.micronaut.data</groupId>
             <artifactId>micronaut-data-jdbc</artifactId>
@@ -105,6 +104,7 @@
                 </executions>
             </plugin>
 
+            <!-- ✅ RESTAURAMOS EL COMPILADOR, PERO SIN VERSIONES FIJAS -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -113,14 +113,11 @@
                         <path>
                             <groupId>io.micronaut</groupId>
                             <artifactId>micronaut-http-validation</artifactId>
-                            <version>${micronaut.core.version}</version>
                         </path>
                         <path>
                             <groupId>io.micronaut.serde</groupId>
                             <artifactId>micronaut-serde-processor</artifactId>
-                            <version>${micronaut.serialization.version}</version>
                         </path>
-                    
                         <path>
                             <groupId>io.micronaut.data</groupId>
                             <artifactId>micronaut-data-processor</artifactId>

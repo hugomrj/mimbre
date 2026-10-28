@@ -1,4 +1,4 @@
-<div class="toolbar animate-fade-in delay-1">
+<div class="toolbar">
     <div class="toolbar-filters">
         <button class="filter-chip {% if estadoFiltro == 'TODAS' or not estadoFiltro %}active{% endif %}" hx-get="/ui/compras/list" hx-target="#id-main">
             Todas <span class="count">{{ compras.size() | default(0) }}</span>
@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<div class="table-card animate-fade-in delay-2">
+<div class="table-card">
     <table class="data-table">
         <thead>
         <tr>

@@ -125,7 +125,7 @@
     </div>
 </div>
 
-<!-- MODAL DE PALETAS -->
+<!-- MODAL DE PALETAS (Con la estructura corregida) -->
 <div class="modal-overlay" id="modalConfiguracion" onclick="if(event.target===this) closeSettingsModal()">
     <div class="modal-container" style="max-width: 480px;">
         <div class="modal-header">
@@ -136,37 +136,34 @@
             <label class="form-label">Elige el estilo visual para tu sistema</label>
 
             <div class="palette-grid">
+                <!-- Cyan -->
                 <button class="palette-item" data-palette="cyan" onclick="applyPalette('cyan')">
                     <span class="palette-circle" style="background: #06B6D4;"></span>
                     <span class="palette-label">Cyan</span>
                 </button>
-                <button class="palette-item" data-palette="indigo" onclick="applyPalette('indigo')">
-                    <span class="palette-circle" style="background: #6366F1;"></span>
-                    <span class="palette-label">Indigo</span>
-                </button>
+
+                <!-- Emerald -->
                 <button class="palette-item" data-palette="emerald" onclick="applyPalette('emerald')">
                     <span class="palette-circle" style="background: #10B981;"></span>
                     <span class="palette-label">Emerald</span>
                 </button>
+
+                <!-- Orange -->
+                <button class="palette-item" data-palette="orange" onclick="applyPalette('orange')">
+                    <span class="palette-circle" style="background: #F97316;"></span>
+                    <span class="palette-label">Orange</span>
+                </button>
+
+                <!-- Sunset -->
                 <button class="palette-item" data-palette="sunset" onclick="applyPalette('sunset')">
                     <span class="palette-circle" style="background: #F43F5E;"></span>
                     <span class="palette-label">Sunset</span>
                 </button>
+
+                <!-- Violet -->
                 <button class="palette-item" data-palette="violet" onclick="applyPalette('violet')">
                     <span class="palette-circle" style="background: #8B5CF6;"></span>
                     <span class="palette-label">Violet</span>
-                </button>
-                <button class="palette-item" data-palette="amber" onclick="applyPalette('amber')">
-                    <span class="palette-circle" style="background: #F59E0B;"></span>
-                    <span class="palette-label">Amber</span>
-                </button>
-                <button class="palette-item" data-palette="blue" onclick="applyPalette('blue')">
-                    <span class="palette-circle" style="background: #3B82F6;"></span>
-                    <span class="palette-label">Blue</span>
-                </button>
-                <button class="palette-item" data-palette="slate" onclick="applyPalette('slate')">
-                    <span class="palette-circle" style="background: #64748B;"></span>
-                    <span class="palette-label">Slate</span>
                 </button>
             </div>
         </div>
@@ -193,10 +190,8 @@
     }
 
     document.body.addEventListener('click', function(e) {
-        // ✅ Agregamos los filtros y las acciones de la tabla
         const selector = '.nav-item, .nav-sub-item, .sidebar-icon-btn, .btn-primary, .btn-add, .btn-ghost, .navbar-btn, .filter-chip, .row-action-btn';
         const target = e.target.closest(selector);
-
         if (target) {
             createWaveRipple(e, target);
         }

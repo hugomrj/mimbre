@@ -1,4 +1,4 @@
-<div class="toolbar animate-fade-in delay-1">
+<div class="toolbar">
     <div class="toolbar-left">
         <h2 style="font-size: 1.25rem; font-weight: 600;">
             {% if proveedor.id %}Editar Proveedor{% else %}Nuevo Proveedor{% endif %}
@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<div class="table-card animate-fade-in delay-2" style="padding: 24px;">
+<div class="table-card">
 
     <form hx-post="/ui/proveedores/save" hx-target="#id-main" class="form-container">
 

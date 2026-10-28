@@ -1,0 +1,49 @@
+<div class="pagination-card">
+    <!-- ✅ PRIMERO: Los números de página -->
+    <div class="pagination">
+        <!-- Anterior -->
+        {% if currentPage > 0 %}
+        <button class="page-btn" hx-get="{{ baseUrl }}?page={{ currentPage - 1 }}&size={{ size }}" hx-target="#id-main">
+            <i class="fas fa-chevron-left" style="font-size: 0.7rem;"></i>
+        </button>
+        {% else %}
+        <button class="page-btn" disabled><i class="fas fa-chevron-left" style="font-size: 0.7rem;"></i></button>
+        {% endif %}
+
+        {% set startPage = currentPage - 2 %}
+        {% if startPage < 0 %}{% set startPage = 0 %}{% endif %}
+        {% set endPage = currentPage + 2 %}
+        {% if endPage >= totalPages %}{% set endPage = totalPages - 1 %}{% endif %}
+
+        {% if startPage > 0 %}
+        <button class="page-btn" hx-get="{{ baseUrl }}?page=0&size={{ size }}" hx-target="#id-main">1</button>
+        {% if startPage > 1 %}<span style="color: var(--text-muted); font-size: 0.8rem; padding: 0 4px;">...</span>{% endif %}
+        {% endif %}
+
+        {% for i in range(startPage, endPage + 1) %}
+        <button class="page-btn {% if i == currentPage %}active{% endif %}"
+                hx-get="{{ baseUrl }}?page={{ i }}&size={{ size }}" hx-target="#id-main">
+            {{ i + 1 }}
+        </button>
+        {% endfor %}
+
+        {% if endPage < totalPages - 1 %}
+        {% if endPage < totalPages - 2 %}<span style="color: var(--text-muted); font-size: 0.8rem; padding: 0 4px;">...</span>{% endif %}
+        <button class="page-btn" hx-get="{{ baseUrl }}?page={{ totalPages - 1 }}&size={{ size }}" hx-target="#id-main">{{ totalPages }}</button>
+        {% endif %}
+
+        <!-- Siguiente -->
+        {% if currentPage < totalPages - 1 %}
+        <button class="page-btn" hx-get="{{ baseUrl }}?page={{ currentPage + 1 }}&size={{ size }}" hx-target="#id-main">
+            <i class="fas fa-chevron-right" style="font-size: 0.7rem;"></i>
+        </button>
+        {% else %}
+        <button class="page-btn" disabled><i class="fas fa-chevron-right" style="font-size: 0.7rem;"></i></button>
+        {% endif %}
+    </div>
+
+    <!-- ✅ SEGUNDO: El mensaje de información -->
+    <div class="pagination-info">
+        <span>{{ startItem }}</span>-<span>{{ endItem }}</span> de <span>{{ totalElements }}</span>
+    </div>
+</div>

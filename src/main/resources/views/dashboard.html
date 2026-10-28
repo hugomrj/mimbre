@@ -1,6 +1,6 @@
 <!-- src/main/resources/views/dashboard.html -->
 <!-- TARJETAS DE KPIs -->
-<div class="kpi-grid animate-fade-in delay-1">
+<div class="kpi-grid">
 
     <!-- KPI 1: Ventas del Mes -->
     <div class="kpi-card">
@@ -9,7 +9,7 @@
                 <i class="fas fa-wallet"></i>
             </div>
             <span class="kpi-badge kpi-badge-primary">
-                <i class="fas fa-calendar-alt"></i> Mes Actual
+                Mes Actual
             </span>
         </div>
         <div class="kpi-value" id="kpiVentasMes">₲ 0</div>
@@ -59,45 +59,27 @@
     </div>
 </div>
 
-<!-- SECCIÓN: PRODUCTOS QUE REQUIEREN RECOMPRA -->
-<div class="table-card animate-fade-in delay-2" style="padding: 20px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+<!-- SECCIÓN: GRÁFICO DE SERIES -->
+<div class="table-card" style="padding: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin: 0;">
-            <i class="fas fa-boxes" style="color: var(--state-danger-text); margin-right: 8px;"></i> PRODUCTOS PRÓXIMOS A AGOTARSE
+            <i class="fas fa-chart-bar" style="color: var(--primary); margin-right: 8px;"></i> Resumen de Actividad (Simulador)
         </h3>
-        <button class="btn-ghost" hx-get="/ui/productos/list" hx-target="#id-main">
-            Ir a Inventario <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>
-        </button>
     </div>
 
-    <table class="data-table">
-        <thead>
-        <tr>
-            <th>Producto</th>
-            <th>SKU</th>
-            <th>Categoría</th>
-            <th style="text-align: right;">Precio Unitario</th>
-            <th style="text-align: center;">Stock Actual</th>
-            <th style="text-align: center;">Estado</th>
-        </tr>
-        </thead>
-        <tbody id="tbodyBajoStock">
-        <tr>
-            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">
-                Cargando datos de inventario...
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <!-- Contenedor del Gráfico -->
+    <div style="position: relative; height: 320px; width: 100%;">
+        <canvas id="dashboardChart"></canvas>
+    </div>
 </div>
 
-<!-- INICIALIZACIÓN VÍA FETCH A REST API -->
+<!-- INICIALIZACIÓN VÍA FETCH Y CHART.JS -->
 <script>
     (function loadDashboardData() {
+        // 1. Obtener los KPIs de la API
         fetch('/api/dashboard')
             .then(res => res.json())
             .then(data => {
-                // 1. Actualizar KPIs
                 const kpiVentas = document.getElementById('kpiVentasMes');
                 const kpiFacturas = document.getElementById('kpiFacturas');
                 const kpiProductos = document.getElementById('kpiProductos');
@@ -107,41 +89,87 @@
                 if (kpiFacturas) kpiFacturas.textContent = data.facturasEmitidasCount || 0;
                 if (kpiProductos) kpiProductos.textContent = data.totalProductosCount || 0;
                 if (kpiClientes) kpiClientes.textContent = data.totalClientesCount || 0;
-
-                // 2. Renderizar Tabla de Stock Bajo
-                const tbody = document.getElementById('tbodyBajoStock');
-                if (tbody) {
-                    tbody.innerHTML = '';
-                    const lista = data.productosBajoStockList || [];
-                    if (lista.length === 0) {
-                        tbody.innerHTML = `
-                            <tr>
-                                <td colspan="6" style="text-align: center; color: var(--state-success-text); padding: 24px; font-weight: 500;">
-                                    <i class="fas fa-check-circle" style="margin-right: 8px;"></i> Todos los productos tienen suficiente nivel de stock.
-                                </td>
-                            </tr>`;
-                    } else {
-                        lista.forEach(prod => {
-                            const tr = document.createElement('tr');
-                            tr.innerHTML = `
-                                <td><strong>${prod.nombre || ''}</strong></td>
-                                <td><code>${prod.sku || ''}</code></td>
-                                <td>${prod.categoria || 'General'}</td>
-                                <td style="text-align: right; font-weight: 600;">₲ ${(prod.precio || 0).toLocaleString('es-PY')}</td>
-                                <td style="text-align: center; font-weight: 700; color: var(--state-danger-text);">
-                                    ${prod.stock || 0} un.
-                                </td>
-                                <td style="text-align: center;">
-                                    <span class="status-badge" style="background: var(--state-danger-bg); color: var(--state-danger-text); padding: 4px 10px; border-radius: 50px; font-weight: 600; font-size: 0.75rem;">
-                                        Recomprar
-                                    </span>
-                                </td>
-                            `;
-                            tbody.appendChild(tr);
-                        });
-                    }
-                }
             })
             .catch(err => console.error('Error al cargar datos del dashboard:', err));
+
+        // 2. Renderizar el Gráfico de Series
+        const canvas = document.getElementById('dashboardChart');
+        if (!canvas) return;
+
+        // ✅ Extraer los 5 colores definidos en el CSS
+        const style = getComputedStyle(document.body);
+        const chartColors = [
+            style.getPropertyValue('--chart-1').trim(), // Oscuro
+            style.getPropertyValue('--chart-2').trim(), // Medio Oscuro
+            style.getPropertyValue('--chart-3').trim(), // Primario (Centro)
+            style.getPropertyValue('--chart-4').trim(), // Medio Claro
+            style.getPropertyValue('--chart-5').trim()  // Claro
+        ];
+
+        // Extraer colores de texto para el gráfico
+        const textColor = style.getPropertyValue('--text-main').trim();
+        const gridColor = style.getPropertyValue('--border-sutil').trim();
+
+        // Evitar que se dupliquen gráficos si HTMX recarga la vista
+        if (window.dashboardChartInstance) {
+            window.dashboardChartInstance.destroy();
+        }
+
+        // ✅ Datos reducidos a 5 para coincidir con los 5 colores
+        const rawData = [
+            { label: 'Ventas', value: 80 },
+            { label: 'Compras', value: 65 },
+            { label: 'Inventario', value: 55 },
+            { label: 'Clientes', value: 45 },
+            { label: 'Proveedores', value: 30 }
+        ];
+
+        // ✅ Ordenar de MAYOR a MENOR
+        rawData.sort((a, b) => b.value - a.value);
+
+        const sortedLabels = rawData.map(item => item.label);
+        const sortedData = rawData.map(item => item.value);
+
+        // Configuración del Gráfico
+        const ctx = canvas.getContext('2d');
+        window.dashboardChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: sortedLabels,
+                datasets: [{
+                    label: 'Simulación',
+                    data: sortedData,
+                    backgroundColor: chartColors, // Aplica los 5 colores en orden
+                    borderRadius: 6,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: style.getPropertyValue('--bg-app').trim(),
+                        titleColor: textColor,
+                        bodyColor: textColor,
+                        borderColor: gridColor,
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: true
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: style.getPropertyValue('--text-muted').trim(), font: { family: 'Outfit' } }
+                    },
+                    y: {
+                        grid: { color: gridColor, drawBorder: false },
+                        ticks: { color: style.getPropertyValue('--text-muted').trim(), font: { family: 'Outfit' } }
+                    }
+                }
+            }
+        });
     })();
 </script>

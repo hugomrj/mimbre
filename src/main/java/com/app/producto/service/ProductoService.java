@@ -6,6 +6,9 @@ import com.app.producto.dto.ProductoFormDto;
 import com.app.producto.repository.ProductoRepository;
 import com.app.producto.model.Producto;
 import com.app.venta.repository.VentaDetalleRepository;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
+import io.micronaut.data.model.Sort;
 import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 
@@ -30,6 +33,13 @@ public class ProductoService {
         return StreamSupport.stream(productoRepository.findAll().spliterator(), false)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    // ✅ NUEVO MÉTODO CON PAGINACIÓN
+    public Page<ProductoDto> findPage(int page, int size) {
+        Pageable pageable = Pageable.from(page, size, Sort.of(Sort.Order.desc("id")));
+        Page<Producto> pagina = productoRepository.findAll(pageable);
+        return pagina.map(this::mapToDto);
     }
 
     public List<ProductoDto> buscar(String query) {

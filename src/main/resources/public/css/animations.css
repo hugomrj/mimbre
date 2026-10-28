@@ -67,7 +67,7 @@
     .toolbar-filters { justify-content: flex-start; }
     .toolbar-right { width: 100%; }
     .btn-ghost, .btn-add { flex: 1; justify-content: center; }
-    .pagination-card { flex-direction: column; gap: 12px; }
+
     .form-container { grid-template-columns: 1fr; max-width: 100%; }
     .form-group.col-2, .form-group.col-3, .form-group.col-4, .form-group.col-5, .form-group.col-full { grid-column: span 1; }
     .form-actions { flex-direction: column; }

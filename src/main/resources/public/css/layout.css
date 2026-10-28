@@ -1,13 +1,13 @@
 /* src/main/resources/public/css/layout.css */
 .app-layout { display: flex; min-height: 100vh; padding: 12px; gap: 16px; position: relative; z-index: 1; }
 
-/* ✅ SIDEBAR: Sin fondo, usa el borde SUTIL */
+/* ✅ SIDEBAR: Sin fondo, usa border-line */
 .sidebar {
     width: 240px;
     background: transparent;
     display: flex; flex-direction: column;
     position: fixed; left: 12px; top: 12px; bottom: 12px; z-index: 100;
-    border-right: 1px solid var(--border-sutil); /* ✅ CAMBIO: borde sutil */
+    border-right: 1px solid var(--border-line); /* ✅ Cambiado a border-line */
     padding-right: 16px;
     transition: transform 0.25s ease;
 }
@@ -30,12 +30,22 @@
     background: none; width: 100%; text-align: left; transition: all 0.2s ease; position: relative;
 }
 .nav-item:hover { background: var(--bg-surface-hover); color: var(--text-main); }
-.nav-item.active { color: var(--primary); font-weight: 600; background: transparent; }
+
+/* ✅ PADRE ACTIVO: Usa text-primary */
+.nav-item.active {
+    color: var(--text-primary);
+    font-weight: 600;
+    background: transparent;
+}
 .nav-item.active::before {
     content: ""; position: absolute; left: -16px; top: 20%; bottom: 20%; width: 2px;
     background: var(--primary); border-radius: 0 4px 4px 0;
 }
-.nav-item.active .nav-icon, .nav-item.active i { color: var(--primary) !important; }
+.nav-item.active .nav-icon,
+.nav-item.active i {
+    color: var(--text-primary) !important;
+}
+
 .nav-icon { width: 20px; text-align: center; font-size: 1rem; flex-shrink: 0; transition: color 0.2s ease; }
 .nav-label { flex: 1; white-space: nowrap; }
 .nav-chevron { font-size: 10px; opacity: 0.4; transition: transform 0.25s ease; flex-shrink: 0; }
@@ -50,17 +60,22 @@
     background: none; width: 100%; text-align: left; transition: all 0.2s ease;
 }
 .nav-sub-item:hover { color: var(--text-main); }
-.nav-sub-item.active { color: var(--primary); font-weight: 500; }
+
+/* ✅ HIJO ACTIVO: Usa text-primary */
+.nav-sub-item.active {
+    color: var(--text-primary);
+    font-weight: 500;
+}
 .nav-sub-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.4; flex-shrink: 0; transition: all 0.2s ease; }
 .nav-sub-item.active .nav-sub-dot { opacity: 1; background: var(--primary); box-shadow: 0 0 6px var(--primary); }
 
-/* ✅ FOOTER: Usa el borde SUTIL */
-.sidebar-footer { padding: 16px 0; border-top: 1px solid var(--border-sutil); flex-shrink: 0; }
+/* ✅ FOOTER: Usa border-line */
+.sidebar-footer { padding: 16px 0; flex-shrink: 0; }
 
 .sidebar-user { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 10px; }
 .sidebar-user-avatar {
     width: 32px; height: 32px; border-radius: 50%; background: var(--bg-surface-hover);
-    border: 1px solid var(--border-sutil); /* ✅ CAMBIO: borde sutil */
+    border: 1px solid var(--border-line); /* ✅ Cambiado a border-line */
     display: flex; align-items: center; justify-content: center;
     color: var(--text-main); font-weight: 600; font-size: 0.8rem; flex-shrink: 0; transition: all 0.2s ease;
 }
@@ -71,7 +86,7 @@
 }
 .sidebar-icon-btn:hover { color: var(--text-main); }
 
-/* ✅ CONTENT AREA Y NAVBAR SIN CAJAS */
+/* ✅ CONTENT AREA Y NAVBAR */
 .content-area { flex: 1; margin-left: 256px; display: flex; flex-direction: column; gap: 24px; }
 
 .navbar {
@@ -97,7 +112,7 @@
 }
 .navbar-search input:focus {
     background: var(--bg-app);
-    border: 1px solid var(--border-focus); /* ✅ CAMBIO: borde de enfoque brillante */
+    border: 1px solid var(--border-focus);
     width: 240px;
 }
 .navbar-search input::placeholder { color: var(--text-muted); }

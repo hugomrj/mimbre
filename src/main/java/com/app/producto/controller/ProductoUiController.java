@@ -5,6 +5,7 @@ import com.app.producto.dto.ProductoFormDto;
 import com.app.producto.service.ProductoService;
 import com.app.producto_categoria.ProductoCategoriaService;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.model.Page;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.views.View;
@@ -25,9 +26,10 @@ public class ProductoUiController {
     }
 
     @View("producto/table")
-    @Get("/list")
-    public Map<String, Object> list() {
-        return Map.of("productos", productoService.findAll());
+    @Get("/list{?page,size}")
+    public Map<String, Object> list(@Nullable @QueryValue("page") Integer page,
+                                    @Nullable @QueryValue("size") Integer size) {
+        return buildTableModel(page, size, null, null);
     }
 
     @View("producto/form")
@@ -50,13 +52,15 @@ public class ProductoUiController {
     @View("producto/table")
     @Post(uri = "/save", consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public Map<String, Object> save(@Valid @Body ProductoFormDto formDto) {
+        String mensaje;
         if (formDto.getId() != null) {
             productoService.update(formDto.getId(), formDto);
-            return Map.of("productos", productoService.findAll(), "mensaje", "Producto actualizado correctamente.");
+            mensaje = "Producto actualizado correctamente.";
         } else {
             productoService.save(formDto);
-            return Map.of("productos", productoService.findAll(), "mensaje", "Producto creado correctamente.");
+            mensaje = "Producto creado correctamente.";
         }
+        return buildTableModel(0, 10, mensaje, null);
     }
 
     @View("producto/table")
@@ -81,12 +85,38 @@ public class ProductoUiController {
         try {
             boolean eliminado = productoService.delete(id);
             if (eliminado) {
-                return Map.of("productos", productoService.findAll(), "mensaje", "Producto eliminado correctamente.");
+                return buildTableModel(0, 10, "Producto eliminado correctamente.", null);
             } else {
-                return Map.of("productos", productoService.findAll(), "error", "No se encontró el producto a eliminar.");
+                return buildTableModel(0, 10, null, "No se encontró el producto a eliminar.");
             }
         } catch (Exception e) {
-            return Map.of("productos", productoService.findAll(), "error", e.getMessage() != null ? e.getMessage() : "No se puede eliminar el producto porque está asociado a ventas u otros registros.");
+            return buildTableModel(0, 10, null,
+                    e.getMessage() != null ? e.getMessage() : "No se puede eliminar el producto porque está asociado a ventas u otros registros.");
         }
+    }
+
+    private Map<String, Object> buildTableModel(Integer page, Integer size, String mensaje, String error) {
+        int pageNum = (page != null && page >= 0) ? page : 0;
+        int sizeNum = (size != null && size > 0) ? size : 10;
+
+        Page<ProductoDto> pagina = productoService.findPage(pageNum, sizeNum);
+        long totalElements = pagina.getTotalSize();
+        int startItem = totalElements == 0 ? 0 : (pagina.getPageNumber() * pagina.getSize() + 1);
+        int endItem = (int) Math.min((long) (pagina.getPageNumber() + 1) * pagina.getSize(), totalElements);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("productos", pagina.getContent());
+        model.put("currentPage", pagina.getPageNumber());
+        model.put("totalPages", pagina.getTotalPages());
+        model.put("totalElements", totalElements);
+        model.put("size", pagina.getSize());
+        model.put("startItem", startItem);
+        model.put("endItem", endItem);
+        model.put("baseUrl", "/ui/productos/list");
+
+        if (mensaje != null) model.put("mensaje", mensaje);
+        if (error != null) model.put("error", error);
+
+        return model;
     }
 }

@@ -5,7 +5,7 @@
    TARJETAS Y TABLAS
    ========================================= */
 .kpi-card {
-    border: 1px solid var(--border-sutil); /* ✅ Borde sutil para KPIs */
+    border: 1px solid var(--border-line); /* ✅ Ahora usa border-line */
     border-radius: 12px;
     box-shadow: none;
     padding: 24px;
@@ -18,23 +18,28 @@
     margin-bottom: 32px;
     padding: 0;
     overflow: hidden;
+    border-radius: 12px;
 }
 
-/* ✅ DIVISORES DE LA TABLA (Ahora usan la misma línea sutil que la tarjeta) */
+/* ✅ DIVISORES DE LA TABLA */
 .data-table { width: 100%; border-collapse: collapse; }
 .data-table thead th {
-    padding: 16px 24px; text-align: left; font-size: 0.75rem; font-weight: 600;
+    padding: 16px 24px;
+     padding: 12px 24px;
+    text-align: left; font-size: 0.75rem; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted);
-    border-bottom: 1px solid var(--border-sutil); /* ✅ CAMBIO: Sutil en lugar de line */
-    background: transparent;
+    border-bottom: 1px solid var(--border-line); background: transparent;
 }
 .data-table tbody tr {
-    border-bottom: 1px solid var(--border-sutil); /* ✅ CAMBIO: Sutil en lugar de line */
+    border-bottom: 1px solid var(--border-line);
     transition: background 0.2s ease;
 }
 .data-table tbody tr:hover { background: var(--bg-surface-hover); }
 .data-table tbody tr:last-child { border-bottom: none; }
-.data-table tbody td { padding: 16px 24px; font-size: 0.9rem; color: var(--text-main); }
+.data-table tbody td {
+padding: 16px 24px;
+padding: 12px 24px;
+font-size: 0.9rem; color: var(--text-main); }
 
 /* Acciones de la tabla */
 .row-actions { display: flex; gap: 4px; justify-content: flex-end; }
@@ -53,12 +58,25 @@
 .toolbar-right { display: flex; align-items: center; gap: 12px; }
 
 .filter-chip {
-    display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
     border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer;
-    border: 1px solid transparent; background: transparent; color: var(--text-muted); transition: all 0.2s ease;
+    border: 1px solid transparent; background: transparent; color: var(--text-muted);
+    transition: all 0.2s ease;
 }
-.filter-chip:hover { background: var(--bg-surface-hover); color: var(--text-main); }
-.filter-chip.active { background: var(--bg-surface-hover); border-color: var(--border-line); color: var(--text-main); font-weight: 600; }
+/* Hover: Solo se ilumina un poco el texto y el fondo */
+.filter-chip:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-main);
+}
+
+/* ✅ ACTIVO: Usa el color primario (Fondo sutil, borde y texto) */
+.filter-chip.active {
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    border-color: color-mix(in srgb, var(--primary) 30%, transparent);
+    color: var(--primary);
+    font-weight: 600;
+}
+
 
 /* =========================================
    BOTONES
@@ -77,31 +95,72 @@
 }
 .btn-ghost:hover { color: var(--text-main); background: var(--bg-surface-hover); }
 
+
+
 /* =========================================
    FORMULARIOS
    ========================================= */
-.form-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; width: 100%; max-width: 1200px; margin: 0 auto; }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Un poco menos de espacio, ahora que el label es más sutil */
+}
 .form-group.col-2 { grid-column: span 2; }
 .form-group.col-3 { grid-column: span 3; }
 .form-group.col-4 { grid-column: span 4; }
 .form-group.col-5 { grid-column: span 5; }
 .form-group.col-full { grid-column: 1 / -1; }
-.form-label { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); }
 
-/* ✅ INPUTS: Usan border-line (la que se ve) y focus al hacer clic */
+/* ✅ Label unificado con el estilo de la cabecera de la tabla */
+.form-label {
+    font-size: 0.7rem;      /* Más chico que el de la tabla (0.75rem) */
+    font-weight: 600;       /* Mismo peso que la cabecera */
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .form-control {
-    width: 100%; padding: 10px 0; border-radius: 0;
-    border: none; border-bottom: 1px solid var(--border-line);
+    width: 100%;
+    padding: 8px 0;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid var(--border-line);
     background: transparent;
-    color: var(--text-main); font-size: 0.95rem;
-    font-family: 'Outfit', sans-serif; outline: none;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    font-family: 'Outfit', sans-serif;
+    outline: none;
     transition: border-color 0.2s ease;
 }
-.form-control:focus { border-bottom-color: var(--border-focus); }
+
+.form-control:focus {
+    border-bottom: 2px solid var(--border-focus);
+}
+
 .form-control::placeholder { color: transparent; }
 
-.form-actions { grid-column: 1 / -1; display: flex; gap: 12px; margin-top: 16px; padding-top: 0; border-top: none; }
+.form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 24px;
+}
+
+
+
+
+
 
 /* =========================================
    SELECTOR DE PALETAS
@@ -125,7 +184,7 @@
 }
 .modal-overlay.active { opacity: 1; visibility: visible; }
 .modal-container {
-    background: var(--bg-app); border: 1px solid var(--border-line); /* ✅ Usa border-line para resaltar el modal */
+    background: var(--bg-app); border: 1px solid var(--border-line);
     border-radius: 16px; width: 90%; max-width: 480px;
     transform: scale(0.95); transition: transform 0.25s ease; display: flex; flex-direction: column;
 }
@@ -161,7 +220,101 @@
     width: 32px; height: 32px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     font-size: 1rem; background: transparent;
-    color: var(--primary); border: 1px solid var(--border-sutil);
+    color: var(--primary); border: 1px solid var(--border-line);
 }
 .kpi-value { font-size: 2rem; font-weight: 700; color: var(--text-main); letter-spacing: -1px; }
 .kpi-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+
+
+
+
+
+/* =========================================
+   PAGINACIÓN (Minimalista y Sobria)
+   ========================================= */
+.pagination-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 24px;
+    padding: 16px 0;
+    background: transparent;
+
+}
+
+.pagination-info {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+.pagination-info span {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ✅ Botones cuadrados suaves, sin redondear */
+.page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 6px; /* ✅ Esquinas suaves */
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: var(--bg-surface-hover);
+    color: var(--text-main);
+}
+
+/* ✅ El activo NO tiene fondo, solo el color primario más fuerte */
+.page-btn.active {
+    color: var(--primary);
+    font-weight: 700;
+    /* Sin background */
+}
+
+.page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.page-size-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* ✅ Selector con esquinas suaves */
+.page-size-select select {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-line);
+    background: transparent;
+    color: var(--text-main);
+    font-size: 0.875rem;
+    font-family: 'Outfit', sans-serif;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+.page-size-select select:focus {
+    border-color: var(--border-focus);
+}
