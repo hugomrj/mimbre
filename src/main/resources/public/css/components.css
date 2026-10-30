@@ -235,17 +235,86 @@ select.form-control option {
 .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border-line); display: flex; justify-content: flex-end; gap: 12px; }
 
-#toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
-.toast {
-    padding: 12px 20px; color: var(--text-main); border-radius: 8px; font-size: 0.875rem; font-weight: 500;
-    background: var(--bg-app); border: 1px solid var(--border-line);
-    display: flex; align-items: center; gap: 12px;
-    transform: translateY(100%); transition: all 0.3s ease; opacity: 0;
+
+/* =========================================
+   TOASTS (Caja sólida + Ícono premium)
+   ========================================= */
+#toastContainer {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+    pointer-events: none;
 }
-.toast.info { border-left: 3px solid var(--primary); }
-.toast.success { border-left: 3px solid var(--state-success-text); }
-.toast.error { border-left: 3px solid var(--state-danger-text); }
-.toast.warning { border-left: 3px solid var(--state-warning-text); }
+
+.toast {
+    padding: 12px 20px 12px 12px; /* Menos padding a la izquierda porque el ícono ya tiene su espacio */
+     padding: 10px 18px 10px 10px;
+    color: var(--text-main);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    /* ✅ Fondo sólido y borde sutil (como te gustaba antes) */
+    background: var(--bg-app);
+    border: 1px solid var(--border-line);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+    /* Animación */
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+
+    min-width: 280px;
+    max-width: 380px;
+    white-space: normal;
+    word-wrap: break-word;
+    pointer-events: auto;
+}
+
+/* ✅ El ícono con el círculo tintado (del último diseño) */
+.toast i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;   /* ← antes 32px */
+    height: 24px;  /* ← antes 32px */
+    border-radius: 50%;
+    font-size: 0.75rem !important; /* ← ícono más chico */
+    flex-shrink: 0;
+}
+
+/* ✅ Colores semánticos para el ícono */
+.toast.info i {
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
+.toast.success i {
+    color: var(--state-success-text);
+    background: color-mix(in srgb, var(--state-success-text) 15%, transparent);
+}
+
+.toast.error i {
+    color: var(--state-danger-text);
+    background: color-mix(in srgb, var(--state-danger-text) 15%, transparent);
+}
+
+.toast.warning i {
+    color: var(--state-warning-text);
+    background: color-mix(in srgb, var(--state-warning-text) 15%, transparent);
+}
+
+
+
+
 
 /* =========================================
    KPIs

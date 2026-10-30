@@ -1,0 +1,157 @@
+/* ============================================================
+   Vanilla Select — Adaptado a Mimbre (Barely-there)
+   ============================================================ */
+
+.vanilla-select-wrapper {
+    --vs-bg:              transparent;
+    --vs-text:            var(--text-main);
+    --vs-placeholder:     var(--text-muted);
+    --vs-border:          var(--border-line);
+    --vs-border-hover:    var(--text-muted);
+    --vs-border-focus:    var(--border-focus);
+    --vs-border-radius:   0px;
+    --vs-option-hover-bg: var(--bg-surface-hover);
+    --vs-selected-bg:     color-mix(in srgb, var(--primary) 15%, transparent);
+    --vs-selected-text:   var(--primary);
+    --vs-shadow-focus:    none;
+    --vs-dropdown-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    --vs-height:          38px;
+    --vs-font-size:       0.95rem;
+    --vs-max-height:      240px;
+}
+
+.vanilla-select-wrapper {
+    position: relative;
+    width: 100%;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+/* Ocultamos el select original */
+.vanilla-select-wrapper select.vanilla-select-original {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+/* ✅ El control visual (igual a .form-control) */
+.vs-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: var(--vs-height);
+    padding: 8px 0;
+    font-size: var(--vs-font-size);
+    color: var(--vs-text);
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid var(--vs-border);
+    cursor: pointer;
+    transition: border-color .2s ease;
+    box-sizing: border-box;
+}
+
+.vs-control:hover {
+    border-bottom-color: var(--vs-border-hover);
+}
+
+.vanilla-select-wrapper.is-open .vs-control {
+    border-bottom: 2px solid var(--vs-border-focus);
+}
+
+.vs-control .vs-placeholder {
+    color: var(--vs-placeholder);
+}
+
+.vs-control .vs-arrow {
+    transition: transform .2s ease;
+    color: var(--vs-placeholder);
+    font-size: 10px;
+}
+.vanilla-select-wrapper.is-open .vs-arrow {
+    transform: rotate(180deg);
+}
+
+/* ✅ El menú desplegable (con fondo sólido para que no se vea la tabla detrás) */
+.vs-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background-color: var(--bg-app) !important;
+    border: 1px solid var(--border-line);
+    border-radius: 8px;
+    box-shadow: var(--vs-dropdown-shadow);
+    max-height: var(--vs-max-height);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.vanilla-select-wrapper.is-open .vs-dropdown {
+    display: block;
+    animation: vs-fade-in .15s ease-out;
+}
+
+@keyframes vs-fade-in {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Buscador interno */
+.vs-search {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border-line);
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-app);
+    z-index: 1;
+}
+
+.vs-search input {
+    width: 100%;
+    height: 32px;
+    padding: 0 10px;
+    border: 0;
+    outline: none;
+    border-radius: 6px;
+    font-size: calc(var(--vs-font-size) - 1px);
+    color: var(--vs-text);
+    background: var(--bg-surface-hover);
+}
+
+.vs-options { list-style: none; margin: 0; padding: 4px 0; }
+
+.vs-option {
+    padding: 9px 13px;
+    cursor: pointer;
+    font-size: calc(var(--vs-font-size) - 0.5px);
+    color: var(--vs-text);
+    transition: background-color .15s;
+}
+
+.vs-option:hover {
+    background-color: var(--vs-option-hover-bg);
+}
+
+.vs-option.is-selected {
+    background-color: var(--vs-selected-bg);
+    color: var(--vs-selected-text);
+    font-weight: 600;
+}
+
+.vs-option.is-hidden {
+    display: none;
+}
+
+.vs-no-results {
+    padding: 12px;
+    color: var(--vs-placeholder);
+    font-style: italic;
+    text-align: center;
+    font-size: calc(var(--vs-font-size) - 1px);
+}
