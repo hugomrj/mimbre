@@ -1,33 +1,35 @@
 {% extends "layout.html" %}
 
+{% block navbar_title %}
+{% if categoria.id %}Editar Categoría{% else %}Nueva Categoría{% endif %}
+{% endblock %}
+
 {% block content %}
-<!-- ✅ Título dinámico en el navbar -->
-<h1 class="navbar-title" id="navbarTitle" hx-swap-oob="true">
-    {% if categoria.id %}Editar Categoría{% else %}Nueva Categoría{% endif %}
-</h1>
+<div class="page-view page-view--medium">
 
-<!-- ✅ Formulario directo, sin table-card y con hx-select -->
-<form hx-post="/ui/categorias/save" hx-target="#id-main" hx-select="#id-main" class="form-container animate-fade-in delay-1">
+    <div data-page-title="{% if categoria.id %}Editar Categoría{% else %}Nueva Categoría{% endif %}" style="display: none;"></div>
 
-    {% if categoria.id %}
-    <input type="hidden" name="id" value="{{ categoria.id }}">
-    {% endif %}
+    <form hx-post="/ui/categorias/save" hx-target="#id-main" hx-select="#id-main" hx-push-url="/ui/categorias/list" class="form-container animate-fade-in delay-1">
 
-    <div class="form-group col-full">
-        <label class="form-label" for="catNombre">Nombre de la categoría</label>
-        <input type="text" id="catNombre" name="nombre" value="{{ categoria.nombre }}" required class="form-control">
-    </div>
+        {% if categoria.id %}
+        <input type="hidden" name="id" value="{{ categoria.id }}">
+        {% endif %}
 
-    <div class="form-group col-full">
-        <label class="form-label" for="catDesc">Descripción</label>
-        <input type="text" id="catDesc" name="descripcion" value="{{ categoria.descripcion }}" class="form-control">
-    </div>
+        <div class="form-group col-full">
+            <label class="form-label" for="catNombre">Nombre de la categoría</label>
+            <input type="text" id="catNombre" name="nombre" value="{{ categoria.nombre }}" required class="form-control">
+        </div>
 
-    <div class="form-actions">
-        <!-- ✅ Cambiado btn-add por btn-primary -->
-        <button type="submit" class="btn-primary">Guardar Categoría</button>
-        <button type="button" class="btn-ghost" hx-get="/ui/categorias/list" hx-target="#id-main" hx-select="#id-main">Cancelar</button>
-    </div>
+        <div class="form-group col-full">
+            <label class="form-label" for="catDesc">Descripción</label>
+            <input type="text" id="catDesc" name="descripcion" value="{{ categoria.descripcion }}" class="form-control">
+        </div>
 
-</form>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Guardar Categoría</button>
+            <button type="button" class="btn-ghost" hx-get="/ui/categorias/list" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">Cancelar</button>
+        </div>
+
+    </form>
+</div>
 {% endblock %}

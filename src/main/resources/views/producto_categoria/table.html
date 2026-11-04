@@ -1,55 +1,66 @@
 {% extends "layout.html" %}
 
+{% block navbar_title %}Categorías{% endblock %}
+
 {% block content %}
-<!-- ✅ Título dinámico en el navbar -->
-<h1 class="navbar-title" id="navbarTitle" hx-swap-oob="true">Categorías</h1>
+<div class="page-view page-view--medium">
 
-<div class="toolbar">
-    <div class="toolbar-filters">
-        <button class="filter-chip active" onclick="setFilter(this)">Todas <span class="count">{{ totalElements | default(0) }}</span></button>
+    <!-- ✅ Dato oculto para el título dinámico -->
+    <div data-page-title="Categorías" style="display: none;"></div>
+
+    <div class="toolbar">
+        <div class="toolbar-filters">
+            <button class="filter-chip active" onclick="setFilter(this)">Todas <span class="count">{{ totalElements | default(0) }}</span></button>
+        </div>
+        <div class="toolbar-right">
+            {% include "/fragments/page-size-select.html" %}
+            <button class="btn-ghost" onclick="showToast('Exportando...')"><i class="fas fa-file-export"></i> Exportar</button>
+            <!-- ✅ hx-push-url agregado -->
+            <button class="btn-primary" hx-get="/ui/categorias/form" hx-target="#id-main" hx-select="#id-main" hx-push-url="true"><i class="fas fa-plus"></i> Nueva categoría</button>
+        </div>
     </div>
-    <div class="toolbar-right">
-        {% include "/fragments/page-size-select.html" %}
-        <button class="btn-ghost" onclick="showToast('Exportando...')"><i class="fas fa-file-export"></i> Exportar</button>
-        <!-- ✅ hx-select para no duplicar layout -->
-        <button class="btn-primary" hx-get="/ui/categorias/form" hx-target="#id-main" hx-select="#id-main"><i class="fas fa-plus"></i> Nueva categoría</button>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th style="text-align:right">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for c in categorias %}
+            <tr class="row-anim" style="animation-delay: 0.04s">
+                <td>{{ c.id }}</td>
+                <td><strong>{{ c.nombre }}</strong></td>
+                <td>{{ c.descripcion }}</td>
+                <td>
+                    <div class="row-actions">
+                        <!-- ✅ hx-push-url agregado -->
+                        <button class="row-action-btn" title="Editar"
+                                hx-get="/ui/categorias/form?id={{ c.id }}"
+                                hx-target="#id-main"
+                                hx-select="#id-main"
+                                hx-push-url="true">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="row-action-btn" title="Eliminar" onclick="abrirModalEliminacion('{{ c.nombre }}', '/ui/categorias/delete/{{ c.id }}')"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 32px; color: var(--text-muted);">No hay categorías registradas.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-</div>
 
-<div class="table-card">
-    <table class="data-table">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th style="text-align:right">Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for c in categorias %}
-        <tr class="row-anim" style="animation-delay: 0.04s">
-            <td>{{ c.id }}</td>
-            <td><strong>{{ c.nombre }}</strong></td>
-            <td>{{ c.descripcion }}</td>
-            <td>
-                <div class="row-actions">
-                    <!-- ✅ hx-select en editar -->
-                    <button class="row-action-btn" title="Editar" hx-get="/ui/categorias/form?id={{ c.id }}" hx-target="#id-main" hx-select="#id-main"><i class="fas fa-pen"></i></button>
-                    <button class="row-action-btn" title="Eliminar" onclick="abrirModalEliminacion('{{ c.nombre }}', '/ui/categorias/delete/{{ c.id }}')"><i class="fas fa-trash-alt"></i></button>
-                </div>
-            </td>
-        </tr>
-        {% else %}
-        <tr>
-            <td colspan="4" style="text-align: center; padding: 32px; color: var(--text-muted);">No hay categorías registradas.</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% include "/fragments/pagination.html" %}
 </div>
-
-{% include "/fragments/pagination.html" %}
 
 {% if mensaje %}
 <script>if (typeof showToast === 'function') showToast("{{ mensaje }}", "success");</script>

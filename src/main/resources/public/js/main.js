@@ -43,7 +43,6 @@ function toggleSub(btn) {
     const isOpen = btn.classList.contains('expanded');
     const sub = btn.nextElementSibling;
 
-    // Cerrar otros submenús abiertos
     document.querySelectorAll('.nav-item.expanded').forEach(el => {
         if (el !== btn) {
             el.classList.remove('expanded');
@@ -57,18 +56,23 @@ function toggleSub(btn) {
 }
 
 function navTo(el, e) {
-    // Nota: Ya no hacemos e.preventDefault() porque HTMX maneja el link y la URL.
-    // Solo actualizamos el título del navbar de forma inmediata (fallback).
     const label = el.querySelector('.nav-label, span:last-child');
     if (label) {
         const titleElement = document.getElementById('navbarTitle');
         if (titleElement) titleElement.textContent = label.textContent;
     }
-
-    // Cerrar sidebar en móvil
     if (window.innerWidth <= 768 && typeof closeSidebar === 'function') {
         closeSidebar();
     }
+}
+
+// Compara href del menú con la URL actual (evita que "/" matchee todo)
+function pathMatches(currentPath, href) {
+    if (!href || href === '#') return false;
+    const cleanHref = href.split('?')[0];
+    const cleanPath = currentPath.split('?')[0];
+    if (cleanHref === '/') return cleanPath === '/';
+    return cleanPath === cleanHref || cleanPath.startsWith(cleanHref + '/');
 }
 
 // ✅ Sincroniza el menú con la URL actual (Soluciona el bug del F5)
@@ -76,20 +80,24 @@ function syncActiveMenuWithUrl() {
     const currentPath = window.location.pathname;
     const menuLinks = document.querySelectorAll('.nav-item, .nav-sub-item');
 
-    // Remover active de todos
+    // 1. Cerrar TODOS los submenús primero (esto es lo que faltaba)
+    document.querySelectorAll('.nav-sub').forEach(sub => sub.classList.remove('open'));
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('expanded'));
+
+    // 2. Remover 'active' de todos los links
     menuLinks.forEach(link => link.classList.remove('active'));
 
-    // Encontrar el link que coincide con la URL
+    // 3. Encontrar el link que coincide con la URL
     let activeLink = null;
     menuLinks.forEach(link => {
         const href = link.getAttribute('href');
-        if (href && href !== '#' && currentPath.startsWith(href)) {
+        if (pathMatches(currentPath, href)) {
             link.classList.add('active');
             activeLink = link;
         }
     });
 
-    // Si es un sub-item, marcar también el padre como activo
+    // 4. Si es un sub-item, abrir su padre
     if (activeLink && activeLink.classList.contains('nav-sub-item')) {
         const navSub = activeLink.closest('.nav-sub');
         if (navSub) {

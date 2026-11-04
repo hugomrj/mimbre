@@ -1,7 +1,7 @@
 package com.app;
 
 import com.app.cliente.model.Cliente;
-import com.app.cliente.ClienteRepository;
+import com.app.cliente.repository.ClienteRepository;
 import com.app.producto.model.Producto;
 import com.app.producto.repository.ProductoRepository;
 import com.app.producto_categoria.model.ProductoCategoria;

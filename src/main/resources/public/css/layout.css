@@ -87,6 +87,9 @@
 .sidebar-icon-btn:hover { color: var(--text-main); }
 
 
+
+
+
 /* ✅ CONTENT AREA Y NAVBAR */
 .content-area {
     flex: 1;
@@ -94,9 +97,21 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
-    max-width: 1400px;   /* ✅ Limita el ancho máximo */
-    margin-right: auto;  /* ✅ Empuja el contenido a la izquierda si sobra espacio */
+    /* ✅ Quitamos max-width y margin-right para que cada vista maneje su ancho */
 }
+
+/* ✅ Wrappers de ancho por vista (alineados a la izquierda) */
+.page-view {
+    width: 100%;
+    margin: 0; /* ✅ Antes: margin: 0 auto; — ahora se queda a la izquierda */
+    padding: 0 8px;
+}
+.page-view--narrow { max-width: 700px; }
+.page-view--medium { max-width: 950px; }
+.page-view--wide { max-width: 1200px; }
+.page-view--full { max-width: 1400px; }
+
+
 
 
 .navbar {

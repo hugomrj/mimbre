@@ -1,9 +1,13 @@
-package com.app.cliente;
+package com.app.cliente.service;
 
 import com.app.cliente.dto.ClienteDto;
 import com.app.cliente.model.Cliente;
+import com.app.cliente.repository.ClienteRepository;
 import com.app.exception.BusinessException;
 import com.app.venta.repository.VentaRepository;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
+import io.micronaut.data.model.Sort;
 import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 import java.util.List;
@@ -26,6 +30,13 @@ public class ClienteService {
         return StreamSupport.stream(clienteRepository.findAll().spliterator(), false)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    // ✅ NUEVO MÉTODO CON PAGINACIÓN
+    public Page<ClienteDto> findPage(int page, int size) {
+        Pageable pageable = Pageable.from(page, size, Sort.of(Sort.Order.desc("id")));
+        Page<Cliente> pagina = clienteRepository.findAll(pageable);
+        return pagina.map(this::mapToDto);
     }
 
     public List<ClienteDto> buscar(String query) {

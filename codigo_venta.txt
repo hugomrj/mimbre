@@ -343,7 +343,7 @@ ARCHIVO: src/main/java/com/app/venta/service/VentaService.java
 ================================================================================
 package com.app.venta.service;
 
-import com.app.cliente.ClienteRepository;
+import com.app.cliente.repository.ClienteRepository;
 import com.app.producto.model.Producto;
 import com.app.producto.repository.ProductoRepository;
 import com.app.venta.model.VentaDetalle;
@@ -588,7 +588,7 @@ ARCHIVO: src/main/java/com/app/venta/controller/VentaUiController.java
 ================================================================================
 package com.app.venta.controller;
 
-import com.app.cliente.ClienteService;
+import com.app.cliente.service.ClienteService;
 import com.app.producto.service.ProductoService;
 import com.app.venta.dto.VentaDetalleDto;
 import com.app.venta.dto.VentaDto;

@@ -1,20 +1,20 @@
-<div class="toolbar">
-    <div class="toolbar-left">
-        <h2 style="font-size: 1.25rem; font-weight: 600;">
-            {% if cliente.id %}Editar Cliente{% else %}Nuevo Cliente{% endif %}
-        </h2>
-    </div>
-</div>
+{% extends "layout.html" %}
 
-<div class="table-card">
+{% block navbar_title %}
+{% if cliente.id %}Editar Cliente{% else %}Nuevo Cliente{% endif %}
+{% endblock %}
 
-    <form hx-post="/ui/clientes/save" hx-target="#id-main" class="form-container">
+{% block content %}
+<div class="page-view page-view--medium">
+
+    <div data-page-title="{% if cliente.id %}Editar Cliente{% else %}Nuevo Cliente{% endif %}" style="display: none;"></div>
+
+    <form hx-post="/ui/clientes/save" hx-target="#id-main" hx-select="#id-main" hx-push-url="/ui/clientes/list" class="form-container animate-fade-in delay-1">
 
         {% if cliente.id %}
         <input type="hidden" name="id" value="{{ cliente.id }}">
         {% endif %}
 
-        <!-- FILA 1: Nombre (4/6) + RUC/Doc (2/6) -->
         <div class="form-group col-4">
             <label class="form-label" for="cliNombre">Nombre / Razón Social</label>
             <input type="text" id="cliNombre" name="nombre" value="{{ cliente.nombre }}" required class="form-control">
@@ -25,7 +25,6 @@
             <input type="text" id="cliRuc" name="rucDocumento" value="{{ cliente.rucDocumento }}" required class="form-control">
         </div>
 
-        <!-- FILA 2: Teléfono (3/6) + Email (3/6) -->
         <div class="form-group col-3">
             <label class="form-label" for="cliTelefono">Teléfono</label>
             <input type="text" id="cliTelefono" name="telefono" value="{{ cliente.telefono }}" required class="form-control">
@@ -36,17 +35,16 @@
             <input type="email" id="cliEmail" name="email" value="{{ cliente.email }}" required class="form-control">
         </div>
 
-        <!-- FILA 3: Dirección (6/6) -->
         <div class="form-group col-full">
             <label class="form-label" for="cliDireccion">Dirección</label>
             <input type="text" id="cliDireccion" name="direccion" value="{{ cliente.direccion }}" class="form-control">
         </div>
 
-        <!-- FILA 4: Botones -->
         <div class="form-actions">
-            <button type="submit" class="btn-add">Guardar Cliente</button>
-            <button type="button" class="btn-ghost" hx-get="/ui/clientes/list" hx-target="#id-main">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar Cliente</button>
+            <button type="button" class="btn-ghost" hx-get="/ui/clientes/list" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">Cancelar</button>
         </div>
 
     </form>
 </div>
+{% endblock %}

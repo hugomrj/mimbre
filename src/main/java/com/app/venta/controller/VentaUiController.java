@@ -1,6 +1,6 @@
 package com.app.venta.controller;
 
-import com.app.cliente.ClienteService;
+import com.app.cliente.service.ClienteService;
 import com.app.producto.service.ProductoService;
 import com.app.venta.dto.VentaDetalleDto;
 import com.app.venta.dto.VentaDto;

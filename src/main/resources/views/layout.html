@@ -51,12 +51,12 @@
             </a>
 
             <!-- Inventario -->
-            <button class="nav-item expanded" onclick="toggleSub(this)">
+            <button class="nav-item" onclick="toggleSub(this)">
                 <i class="fas fa-box nav-icon"></i>
                 <span class="nav-label">Inventario</span>
                 <i class="fas fa-chevron-down nav-chevron"></i>
             </button>
-            <div class="nav-sub open">
+            <div class="nav-sub">
                 <a href="/ui/productos/list" class="nav-sub-item"
                    hx-get="/ui/productos/list" hx-target="#id-main" hx-select="#id-main" hx-push-url="true"
                    onclick="navTo(this, event)"><span class="nav-sub-dot"></span><span>Productos</span></a>

@@ -1,6 +1,6 @@
 package com.app.utils;
 
-import com.app.cliente.ClienteService;
+import com.app.cliente.service.ClienteService;
 import com.app.cliente.dto.ClienteDto;
 import com.app.compra.dto.CompraDetalleDto;
 import com.app.compra.dto.CompraDto;

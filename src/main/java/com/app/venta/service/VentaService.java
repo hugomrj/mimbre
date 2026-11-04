@@ -1,6 +1,6 @@
 package com.app.venta.service;
 
-import com.app.cliente.ClienteRepository;
+import com.app.cliente.repository.ClienteRepository;
 import com.app.exception.BusinessException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.exception.StockInsuficienteException;

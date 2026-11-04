@@ -1,6 +1,6 @@
 package com.app.dashboard.controller;
 
-import com.app.cliente.ClienteService;
+import com.app.cliente.service.ClienteService;
 import com.app.dashboard.dto.DashboardDto;
 import com.app.producto.dto.ProductoDto;
 import com.app.producto.service.ProductoService;
