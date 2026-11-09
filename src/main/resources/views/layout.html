@@ -137,5 +137,17 @@
 {% include "/fragments/modal-confirmacion.html" %}
 {% include "/fragments/modal-paleta.html" %}
 
+<!-- ✅ EL SCRIPT QUE FALTABA (Magia para el título) -->
+<script>
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        let newTitle = evt.detail.target.querySelector('[data-page-title]');
+        if (newTitle) {
+            let titleText = newTitle.getAttribute('data-page-title');
+            document.getElementById('navbarTitle').innerText = titleText;
+            document.title = titleText + ' - Mimbre'; // También actualiza la pestaña del navegador
+        }
+    });
+</script>
+
 </body>
 </html>

@@ -5,8 +5,7 @@
 {% block content %}
 <div class="page-view page-view--wide">
 
-    <!-- ✅ Dato oculto: el JS lo lee en navegación SPA -->
-    <div data-page-title="Productos" style="display: none;"></div>
+    <div data-page-title="Productos"></div>
 
     <div class="toolbar">
         <div class="toolbar-filters">
@@ -15,7 +14,6 @@
         <div class="toolbar-right">
             {% include "/fragments/page-size-select.html" %}
             <button class="btn-ghost" onclick="showToast('Exportando...')"><i class="fas fa-file-export"></i> Exportar</button>
-            <!-- ✅ Agregado hx-push-url="true" -->
             <button class="btn-primary" hx-get="/ui/productos/form" hx-target="#id-main" hx-select="#id-main" hx-push-url="true"><i class="fas fa-plus"></i> Nuevo producto</button>
         </div>
     </div>
@@ -45,7 +43,6 @@
                 <td>{{ p.categoria }}</td>
                 <td>
                     <div class="row-actions">
-
                         <button class="row-action-btn" title="Editar"
                                 hx-get="/ui/productos/form?id={{ p.id }}"
                                 hx-target="#id-main"
@@ -58,7 +55,6 @@
                                 onclick="abrirModalEliminacion('{{ p.nombre }}', '/ui/productos/delete/{{ p.id }}')">
                             <i class="fas fa-trash-alt"></i>
                         </button>
-
                     </div>
                 </td>
             </tr>

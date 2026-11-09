@@ -1,10 +1,13 @@
 package com.app.proveedor;
 
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.model.Page;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.views.View;
+import jakarta.validation.Valid;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller("/ui/proveedores")
@@ -22,11 +25,11 @@ public class ProveedorUiController {
         return Map.of("proveedores", proveedorService.buscar(q));
     }
 
-
     @View("proveedor/table")
-    @Get("/list")
-    public Map<String, Object> list() {
-        return Map.of("proveedores", proveedorService.findAll());
+    @Get("/list{?page,size}")
+    public Map<String, Object> list(@Nullable @QueryValue("page") Integer page,
+                                    @Nullable @QueryValue("size") Integer size) {
+        return buildTableModel(page, size, null, null);
     }
 
     @View("proveedor/form")
@@ -42,14 +45,16 @@ public class ProveedorUiController {
 
     @View("proveedor/table")
     @Post(uri = "/save", consumes = MediaType.APPLICATION_FORM_URLENCODED)
-    public Map<String, Object> save(@Body ProveedorDto proveedorDto) {
+    public Map<String, Object> save(@Valid @Body ProveedorDto proveedorDto) {
+        String mensaje;
         if (proveedorDto.getId() != null) {
             proveedorService.update(proveedorDto.getId(), proveedorDto);
-            return Map.of("proveedores", proveedorService.findAll(), "mensaje", "Proveedor actualizado correctamente.");
+            mensaje = "Proveedor actualizado correctamente.";
         } else {
             proveedorService.save(proveedorDto);
-            return Map.of("proveedores", proveedorService.findAll(), "mensaje", "Proveedor registrado correctamente.");
+            mensaje = "Proveedor registrado correctamente.";
         }
+        return buildTableModel(0, 10, mensaje, null);
     }
 
     @View("proveedor/table")
@@ -74,12 +79,38 @@ public class ProveedorUiController {
         try {
             boolean eliminado = proveedorService.delete(id);
             if (eliminado) {
-                return Map.of("proveedores", proveedorService.findAll(), "mensaje", "Proveedor eliminado correctamente.");
+                return buildTableModel(0, 10, "Proveedor eliminado correctamente.", null);
             } else {
-                return Map.of("proveedores", proveedorService.findAll(), "error", "No se encontró el proveedor a eliminar.");
+                return buildTableModel(0, 10, null, "No se encontró el proveedor a eliminar.");
             }
         } catch (Exception e) {
-            return Map.of("proveedores", proveedorService.findAll(), "error", e.getMessage() != null ? e.getMessage() : "No se puede eliminar el proveedor porque está asociado a otros registros.");
+            return buildTableModel(0, 10, null,
+                    e.getMessage() != null ? e.getMessage() : "No se puede eliminar el proveedor porque está asociado a compras u otros registros.");
         }
+    }
+
+    private Map<String, Object> buildTableModel(Integer page, Integer size, String mensaje, String error) {
+        int pageNum = (page != null && page >= 0) ? page : 0;
+        int sizeNum = (size != null && size > 0) ? size : 10;
+
+        Page<ProveedorDto> pagina = proveedorService.findPage(pageNum, sizeNum);
+        long totalElements = pagina.getTotalSize();
+        int startItem = totalElements == 0 ? 0 : (pagina.getPageNumber() * pagina.getSize() + 1);
+        int endItem = (int) Math.min((long) (pagina.getPageNumber() + 1) * pagina.getSize(), totalElements);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("proveedores", pagina.getContent());
+        model.put("currentPage", pagina.getPageNumber());
+        model.put("totalPages", pagina.getTotalPages());
+        model.put("totalElements", totalElements);
+        model.put("size", pagina.getSize());
+        model.put("startItem", startItem);
+        model.put("endItem", endItem);
+        model.put("baseUrl", "/ui/proveedores/list");
+
+        if (mensaje != null) model.put("mensaje", mensaje);
+        if (error != null) model.put("error", error);
+
+        return model;
     }
 }

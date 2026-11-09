@@ -93,21 +93,30 @@ public class ProductoUiController {
         }
     }
 
+
+
+
+
     private Map<String, Object> buildTableModel(Integer page, Integer size, String mensaje, String error) {
         int pageNum = (page != null && page >= 0) ? page : 0;
         int sizeNum = (size != null && size > 0) ? size : 10;
 
         Page<ProductoDto> pagina = productoService.findPage(pageNum, sizeNum);
         long totalElements = pagina.getTotalSize();
-        int startItem = totalElements == 0 ? 0 : (pagina.getPageNumber() * pagina.getSize() + 1);
-        int endItem = (int) Math.min((long) (pagina.getPageNumber() + 1) * pagina.getSize(), totalElements);
+
+        // ✅ CÁLCULO MATEMÁTICO ESTRICTO
+        int totalPages = (int) Math.ceil((double) totalElements / sizeNum);
+        if (totalPages == 0) totalPages = 1;
+
+        int startItem = totalElements == 0 ? 0 : (pageNum * sizeNum) + 1;
+        int endItem = (int) Math.min((long) (pageNum + 1) * sizeNum, totalElements);
 
         Map<String, Object> model = new HashMap<>();
         model.put("productos", pagina.getContent());
-        model.put("currentPage", pagina.getPageNumber());
-        model.put("totalPages", pagina.getTotalPages());
+        model.put("currentPage", pageNum);
+        model.put("totalPages", totalPages); // ✅ Usar esta, NO pagina.getTotalPages()
         model.put("totalElements", totalElements);
-        model.put("size", pagina.getSize());
+        model.put("size", sizeNum);
         model.put("startItem", startItem);
         model.put("endItem", endItem);
         model.put("baseUrl", "/ui/productos/list");
@@ -117,4 +126,9 @@ public class ProductoUiController {
 
         return model;
     }
+
+
+
+
+
 }

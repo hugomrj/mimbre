@@ -2,8 +2,11 @@ package com.app.proveedor;
 
 import com.app.compra.repository.CompraRepository;
 import com.app.exception.BusinessException;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,6 +21,12 @@ public class ProveedorService {
     public ProveedorService(ProveedorRepository proveedorRepository, CompraRepository compraRepository) {
         this.proveedorRepository = proveedorRepository;
         this.compraRepository = compraRepository;
+    }
+
+    // ✅ NUEVO MÉTODO: Paginación nativa igual que en Cliente y Producto
+    public Page<ProveedorDto> findPage(int page, int size) {
+        Page<Proveedor> entityPage = proveedorRepository.findAll(Pageable.from(page, size));
+        return entityPage.map(this::mapToDto);
     }
 
     public List<ProveedorDto> findAll() {
