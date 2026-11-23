@@ -3,6 +3,7 @@ package com.app;
 import com.app.cliente.model.Cliente;
 import com.app.cliente.repository.ClienteRepository;
 import com.app.producto.model.Producto;
+import com.app.movimiento_stock.service.MovimientoStockService;
 import com.app.producto.repository.ProductoRepository;
 import com.app.producto_categoria.model.ProductoCategoria;
 import com.app.producto_categoria.repository.ProductoCategoriaRepository;
@@ -11,6 +12,9 @@ import com.app.proveedor.ProveedorRepository;
 import jakarta.inject.Singleton;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 
 @Singleton
 public class DemoDataSeeder {
@@ -19,29 +23,38 @@ public class DemoDataSeeder {
     private final ProductoRepository productoRepository;
     private final ProveedorRepository proveedorRepository;
     private final ProductoCategoriaRepository productoCategoriaRepository;
+    private final MovimientoStockService movimientoStockService;
 
     public DemoDataSeeder(ClienteRepository clienteRepository,
                           ProductoRepository productoRepository,
                           ProveedorRepository proveedorRepository,
-                          ProductoCategoriaRepository productoCategoriaRepository) {
+                          ProductoCategoriaRepository productoCategoriaRepository,
+                          MovimientoStockService movimientoStockService) {
         this.clienteRepository = clienteRepository;
         this.productoRepository = productoRepository;
         this.proveedorRepository = proveedorRepository;
         this.productoCategoriaRepository = productoCategoriaRepository;
+        this.movimientoStockService = movimientoStockService;
     }
 
     public void seed() {
+        Map<String, Long> catIds = new HashMap<>();
+
         if (productoCategoriaRepository.count() == 0) {
-            productoCategoriaRepository.save(new ProductoCategoria("Electrónica", "Dispositivos y gadgets electrónicos"));
-            productoCategoriaRepository.save(new ProductoCategoria("Ropa", "Vestimenta y prendas de vestir"));
-            productoCategoriaRepository.save(new ProductoCategoria("Hogar", "Artículos para el hogar y decoración"));
-            productoCategoriaRepository.save(new ProductoCategoria("Alimentos", "Productos alimenticios y bebidas"));
-            productoCategoriaRepository.save(new ProductoCategoria("Accesorios", "Accesorios variados"));
-            productoCategoriaRepository.save(new ProductoCategoria("Deportes", "Equipamiento y ropa deportiva"));
-            productoCategoriaRepository.save(new ProductoCategoria("Juguetes", "Juguetes y juegos para niños"));
-            productoCategoriaRepository.save(new ProductoCategoria("Libros", "Libros, revistas y material educativo"));
-            productoCategoriaRepository.save(new ProductoCategoria("Mascotas", "Alimentos y accesorios para mascotas"));
-            productoCategoriaRepository.save(new ProductoCategoria("Belleza", "Cuidado personal y cosméticos"));
+            catIds.put("Electrónica", productoCategoriaRepository.save(new ProductoCategoria("Electrónica", "Dispositivos y gadgets electrónicos")).getId());
+            catIds.put("Ropa", productoCategoriaRepository.save(new ProductoCategoria("Ropa", "Vestimenta y prendas de vestir")).getId());
+            catIds.put("Hogar", productoCategoriaRepository.save(new ProductoCategoria("Hogar", "Artículos para el hogar y decoración")).getId());
+            catIds.put("Alimentos", productoCategoriaRepository.save(new ProductoCategoria("Alimentos", "Productos alimenticios y bebidas")).getId());
+            catIds.put("Accesorios", productoCategoriaRepository.save(new ProductoCategoria("Accesorios", "Accesorios variados")).getId());
+            catIds.put("Deportes", productoCategoriaRepository.save(new ProductoCategoria("Deportes", "Equipamiento y ropa deportiva")).getId());
+            catIds.put("Juguetes", productoCategoriaRepository.save(new ProductoCategoria("Juguetes", "Juguetes y juegos para niños")).getId());
+            catIds.put("Libros", productoCategoriaRepository.save(new ProductoCategoria("Libros", "Libros, revistas y material educativo")).getId());
+            catIds.put("Mascotas", productoCategoriaRepository.save(new ProductoCategoria("Mascotas", "Alimentos y accesorios para mascotas")).getId());
+            catIds.put("Belleza", productoCategoriaRepository.save(new ProductoCategoria("Belleza", "Cuidado personal y cosméticos")).getId());
+        }
+
+        for (ProductoCategoria cat : productoCategoriaRepository.findAll()) {
+            catIds.put(cat.getNombre(), cat.getId());
         }
 
         if (proveedorRepository.count() == 0) {
@@ -77,73 +90,87 @@ public class DemoDataSeeder {
 
         if (productoRepository.count() == 0) {
             // --- Electrónica ---
-            productoRepository.save(new Producto("Laptop Pro 15", "LAP-001", new BigDecimal("12000000"), 15, "Electrónica"));
-            productoRepository.save(new Producto("Mouse Inalámbrico", "MOU-002", new BigDecimal("150000"), 45, "Electrónica"));
-            productoRepository.save(new Producto("Teclado Mecánico RGB", "TEC-003", new BigDecimal("450000"), 20, "Electrónica"));
-            productoRepository.save(new Producto("Monitor 4K 27\"", "MON-004", new BigDecimal("3500000"), 10, "Electrónica"));
-            productoRepository.save(new Producto("Auriculares Bluetooth", "AUD-005", new BigDecimal("350000"), 30, "Electrónica"));
-            productoRepository.save(new Producto("Disco SSD 1TB", "SSD-006", new BigDecimal("800000"), 25, "Electrónica"));
-            productoRepository.save(new Producto("Smartphone Galaxy S23", "SMA-007", new BigDecimal("5500000"), 8, "Electrónica"));
-            productoRepository.save(new Producto("Smart TV 55\"", "TVS-008", new BigDecimal("4200000"), 5, "Electrónica"));
-            productoRepository.save(new Producto("Tablet 10\"", "TAB-009", new BigDecimal("2500000"), 12, "Electrónica"));
-            productoRepository.save(new Producto("Cargador Rápido USB-C", "CAR-010", new BigDecimal("120000"), 50, "Electrónica"));
-            productoRepository.save(new Producto("Cámara Web HD", "CAM-011", new BigDecimal("280000"), 18, "Electrónica"));
+            guardarProducto(catIds, "Laptop Pro 15", "LAP-001", new BigDecimal("12000000"), 15, "Electrónica");
+            guardarProducto(catIds, "Mouse Inalámbrico", "MOU-002", new BigDecimal("150000"), 45, "Electrónica");
+            guardarProducto(catIds, "Teclado Mecánico RGB", "TEC-003", new BigDecimal("450000"), 20, "Electrónica");
+            guardarProducto(catIds, "Monitor 4K 27\"", "MON-004", new BigDecimal("3500000"), 10, "Electrónica");
+            guardarProducto(catIds, "Auriculares Bluetooth", "AUD-005", new BigDecimal("350000"), 30, "Electrónica");
+            guardarProducto(catIds, "Disco SSD 1TB", "SSD-006", new BigDecimal("800000"), 25, "Electrónica");
+            guardarProducto(catIds, "Smartphone Galaxy S23", "SMA-007", new BigDecimal("5500000"), 8, "Electrónica");
+            guardarProducto(catIds, "Smart TV 55\"", "TVS-008", new BigDecimal("4200000"), 5, "Electrónica");
+            guardarProducto(catIds, "Tablet 10\"", "TAB-009", new BigDecimal("2500000"), 12, "Electrónica");
+            guardarProducto(catIds, "Cargador Rápido USB-C", "CAR-010", new BigDecimal("120000"), 50, "Electrónica");
+            guardarProducto(catIds, "Cámara Web HD", "CAM-011", new BigDecimal("280000"), 18, "Electrónica");
 
             // --- Ropa ---
-            productoRepository.save(new Producto("Camisa de Algodón", "CAM-012", new BigDecimal("120000"), 50, "Ropa"));
-            productoRepository.save(new Producto("Pantalón Jeans", "PAN-013", new BigDecimal("180000"), 40, "Ropa"));
-            productoRepository.save(new Producto("Zapatillas Deportivas", "ZAP-014", new BigDecimal("450000"), 20, "Ropa"));
-            productoRepository.save(new Producto("Chaqueta de Cuero", "CHA-015", new BigDecimal("650000"), 10, "Ropa"));
-            productoRepository.save(new Producto("Vestido de Verano", "VES-016", new BigDecimal("220000"), 25, "Ropa"));
-            productoRepository.save(new Producto("Short Deportivo", "SHO-017", new BigDecimal("85000"), 35, "Ropa"));
-            productoRepository.save(new Producto("Gorra Urbana", "GOR-018", new BigDecimal("65000"), 40, "Ropa"));
+            guardarProducto(catIds, "Camisa de Algodón", "CAM-012", new BigDecimal("120000"), 50, "Ropa");
+            guardarProducto(catIds, "Pantalón Jeans", "PAN-013", new BigDecimal("180000"), 40, "Ropa");
+            guardarProducto(catIds, "Zapatillas Deportivas", "ZAP-014", new BigDecimal("450000"), 20, "Ropa");
+            guardarProducto(catIds, "Chaqueta de Cuero", "CHA-015", new BigDecimal("650000"), 10, "Ropa");
+            guardarProducto(catIds, "Vestido de Verano", "VES-016", new BigDecimal("220000"), 25, "Ropa");
+            guardarProducto(catIds, "Short Deportivo", "SHO-017", new BigDecimal("85000"), 35, "Ropa");
+            guardarProducto(catIds, "Gorra Urbana", "GOR-018", new BigDecimal("65000"), 40, "Ropa");
 
             // --- Hogar ---
-            productoRepository.save(new Producto("Juego de Sábanas", "SAB-019", new BigDecimal("250000"), 15, "Hogar"));
-            productoRepository.save(new Producto("Licuadora", "LIC-020", new BigDecimal("320000"), 12, "Hogar"));
-            productoRepository.save(new Producto("Microondas", "MIC-021", new BigDecimal("950000"), 7, "Hogar"));
-            productoRepository.save(new Producto("Lámpara de Escritorio", "LAM-022", new BigDecimal("80000"), 25, "Hogar"));
-            productoRepository.save(new Producto("Set de Ollas Antiadherentes", "OLL-023", new BigDecimal("550000"), 10, "Hogar"));
-            productoRepository.save(new Producto("Aspiradora", "ASP-024", new BigDecimal("1200000"), 6, "Hogar"));
-            productoRepository.save(new Producto("Cafetera", "CAF-025", new BigDecimal("780000"), 9, "Hogar"));
+            guardarProducto(catIds, "Juego de Sábanas", "SAB-019", new BigDecimal("250000"), 15, "Hogar");
+            guardarProducto(catIds, "Licuadora", "LIC-020", new BigDecimal("320000"), 12, "Hogar");
+            guardarProducto(catIds, "Microondas", "MIC-021", new BigDecimal("950000"), 7, "Hogar");
+            guardarProducto(catIds, "Lámpara de Escritorio", "LAM-022", new BigDecimal("80000"), 25, "Hogar");
+            guardarProducto(catIds, "Set de Ollas Antiadherentes", "OLL-023", new BigDecimal("550000"), 10, "Hogar");
+            guardarProducto(catIds, "Aspiradora", "ASP-024", new BigDecimal("1200000"), 6, "Hogar");
+            guardarProducto(catIds, "Cafetera", "CAF-025", new BigDecimal("780000"), 9, "Hogar");
 
             // --- Alimentos ---
-            productoRepository.save(new Producto("Café Molido 500g", "CAF-026", new BigDecimal("45000"), 100, "Alimentos"));
-            productoRepository.save(new Producto("Caja de Té Verde", "TEV-027", new BigDecimal("25000"), 80, "Alimentos"));
-            productoRepository.save(new Producto("Pack de Agua Mineral", "AGU-028", new BigDecimal("15000"), 200, "Alimentos"));
+            guardarProducto(catIds, "Café Molido 500g", "CAF-026", new BigDecimal("45000"), 100, "Alimentos");
+            guardarProducto(catIds, "Caja de Té Verde", "TEV-027", new BigDecimal("25000"), 80, "Alimentos");
+            guardarProducto(catIds, "Pack de Agua Mineral", "AGU-028", new BigDecimal("15000"), 200, "Alimentos");
 
             // --- Accesorios ---
-            productoRepository.save(new Producto("Reloj Inteligente", "REL-029", new BigDecimal("450000"), 15, "Accesorios"));
-            productoRepository.save(new Producto("Mochila para Laptop", "MOC-030", new BigDecimal("220000"), 30, "Accesorios"));
-            productoRepository.save(new Producto("Billetera de Cuero", "BIL-031", new BigDecimal("85000"), 25, "Accesorios"));
+            guardarProducto(catIds, "Reloj Inteligente", "REL-029", new BigDecimal("450000"), 15, "Accesorios");
+            guardarProducto(catIds, "Mochila para Laptop", "MOC-030", new BigDecimal("220000"), 30, "Accesorios");
+            guardarProducto(catIds, "Billetera de Cuero", "BIL-031", new BigDecimal("85000"), 25, "Accesorios");
 
             // --- Deportes ---
-            productoRepository.save(new Producto("Balón de Fútbol", "BAL-032", new BigDecimal("150000"), 30, "Deportes"));
-            productoRepository.save(new Producto("Raqueta de Tenis", "RAQ-033", new BigDecimal("650000"), 8, "Deportes"));
-            productoRepository.save(new Producto("Mancuernas 5kg", "MAN-034", new BigDecimal("180000"), 15, "Deportes"));
-            productoRepository.save(new Producto("Bicicleta MTB", "BIC-035", new BigDecimal("3500000"), 4, "Deportes"));
+            guardarProducto(catIds, "Balón de Fútbol", "BAL-032", new BigDecimal("150000"), 30, "Deportes");
+            guardarProducto(catIds, "Raqueta de Tenis", "RAQ-033", new BigDecimal("650000"), 8, "Deportes");
+            guardarProducto(catIds, "Mancuernas 5kg", "MAN-034", new BigDecimal("180000"), 15, "Deportes");
+            guardarProducto(catIds, "Bicicleta MTB", "BIC-035", new BigDecimal("3500000"), 4, "Deportes");
 
             // --- Juguetes ---
-            productoRepository.save(new Producto("Lego City", "LEG-036", new BigDecimal("350000"), 12, "Juguetes"));
-            productoRepository.save(new Producto("Muñeca Barbie", "MUN-037", new BigDecimal("180000"), 20, "Juguetes"));
-            productoRepository.save(new Producto("Carro a Control Remoto", "CAR-038", new BigDecimal("250000"), 10, "Juguetes"));
-            productoRepository.save(new Producto("Rompecabezas 1000 pzs", "ROM-039", new BigDecimal("120000"), 25, "Juguetes"));
+            guardarProducto(catIds, "Lego City", "LEG-036", new BigDecimal("350000"), 12, "Juguetes");
+            guardarProducto(catIds, "Muñeca Barbie", "MUN-037", new BigDecimal("180000"), 20, "Juguetes");
+            guardarProducto(catIds, "Carro a Control Remoto", "CAR-038", new BigDecimal("250000"), 10, "Juguetes");
+            guardarProducto(catIds, "Rompecabezas 1000 pzs", "ROM-039", new BigDecimal("120000"), 25, "Juguetes");
 
             // --- Libros ---
-            productoRepository.save(new Producto("Cien Años de Soledad", "LIB-040", new BigDecimal("85000"), 15, "Libros"));
-            productoRepository.save(new Producto("El Principito", "LIB-041", new BigDecimal("55000"), 30, "Libros"));
-            productoRepository.save(new Producto("Hábitos Atómicos", "LIB-042", new BigDecimal("110000"), 20, "Libros"));
-            productoRepository.save(new Producto("Clean Code", "LIB-043", new BigDecimal("250000"), 5, "Libros"));
+            guardarProducto(catIds, "Cien Años de Soledad", "LIB-040", new BigDecimal("85000"), 15, "Libros");
+            guardarProducto(catIds, "El Principito", "LIB-041", new BigDecimal("55000"), 30, "Libros");
+            guardarProducto(catIds, "Hábitos Atómicos", "LIB-042", new BigDecimal("110000"), 20, "Libros");
+            guardarProducto(catIds, "Clean Code", "LIB-043", new BigDecimal("250000"), 5, "Libros");
 
             // --- Mascotas ---
-            productoRepository.save(new Producto("Alimento Perro 10kg", "MAS-044", new BigDecimal("280000"), 40, "Mascotas"));
-            productoRepository.save(new Producto("Arena para Gato 5kg", "MAS-045", new BigDecimal("75000"), 50, "Mascotas"));
-            productoRepository.save(new Producto("Juguete Mordedor", "MAS-046", new BigDecimal("35000"), 60, "Mascotas"));
+            guardarProducto(catIds, "Alimento Perro 10kg", "MAS-044", new BigDecimal("280000"), 40, "Mascotas");
+            guardarProducto(catIds, "Arena para Gato 5kg", "MAS-045", new BigDecimal("75000"), 50, "Mascotas");
+            guardarProducto(catIds, "Juguete Mordedor", "MAS-046", new BigDecimal("35000"), 60, "Mascotas");
 
             // --- Belleza ---
-            productoRepository.save(new Producto("Crema Hidratante", "BEL-047", new BigDecimal("95000"), 35, "Belleza"));
-            productoRepository.save(new Producto("Perfume Floral", "BEL-048", new BigDecimal("450000"), 10, "Belleza"));
-            productoRepository.save(new Producto("Set de Maquillaje", "BEL-049", new BigDecimal("320000"), 15, "Belleza"));
+            guardarProducto(catIds, "Crema Hidratante", "BEL-047", new BigDecimal("95000"), 35, "Belleza");
+            guardarProducto(catIds, "Perfume Floral", "BEL-048", new BigDecimal("450000"), 10, "Belleza");
+            guardarProducto(catIds, "Set de Maquillaje", "BEL-049", new BigDecimal("320000"), 15, "Belleza");
+        }
+    }
+
+    private void guardarProducto(Map<String, Long> catIds, String nombre, String sku,
+                                 BigDecimal precio, Integer stock, String categoria) {
+        Producto producto = new Producto(nombre, sku, precio, 0, categoria);
+        producto.setCategoriaId(catIds.get(categoria));
+        producto.setCostoActual(precio.multiply(new BigDecimal("0.70")).setScale(2, RoundingMode.HALF_UP));
+        producto.setStockMinimo(5);
+        Producto saved = productoRepository.save(producto);
+
+        if (stock != null && stock != 0) {
+            movimientoStockService.registrar(saved, stock, "INICIAL", "PRODUCTO",
+                    saved.getId(), "Stock inicial demo", saved.getCostoActual());
         }
     }
 }

@@ -79,13 +79,13 @@ public class ProveedorUiController {
         try {
             boolean eliminado = proveedorService.delete(id);
             if (eliminado) {
-                return buildTableModel(0, 10, "Proveedor eliminado correctamente.", null);
+                return buildTableModel(0, 10, "Proveedor desactivado correctamente.", null);
             } else {
                 return buildTableModel(0, 10, null, "No se encontró el proveedor a eliminar.");
             }
         } catch (Exception e) {
             return buildTableModel(0, 10, null,
-                    e.getMessage() != null ? e.getMessage() : "No se puede eliminar el proveedor porque está asociado a compras u otros registros.");
+                    e.getMessage() != null ? e.getMessage() : "No se pudo desactivar el proveedor.");
         }
     }
 

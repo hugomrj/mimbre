@@ -81,13 +81,13 @@ public class ClienteUiController {
         try {
             boolean eliminado = clienteService.delete(id);
             if (eliminado) {
-                return buildTableModel(0, 10, "Cliente eliminado correctamente.", null);
+                return buildTableModel(0, 10, "Cliente desactivado correctamente.", null);
             } else {
                 return buildTableModel(0, 10, null, "No se encontró el cliente a eliminar.");
             }
         } catch (Exception e) {
             return buildTableModel(0, 10, null,
-                    e.getMessage() != null ? e.getMessage() : "No se puede eliminar el cliente porque está asociado a ventas u otros registros.");
+                    e.getMessage() != null ? e.getMessage() : "No se pudo desactivar el cliente.");
         }
     }
 

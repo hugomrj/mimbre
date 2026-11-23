@@ -18,6 +18,9 @@ public class Application {
 
     public static void main(String[] args) {
 
+        // 0. Migrar datos de la ubicacion anterior (./data o ./target/data).
+        LegacyDataMigrator.migrar();
+
         // 0. Detectar si estamos en modo desarrollo (IDE) o producción (JAR empaquetado)
         boolean isPackaged = Application.class.getProtectionDomain()
                 .getCodeSource()

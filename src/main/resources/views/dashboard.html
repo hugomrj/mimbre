@@ -1,166 +1,460 @@
-<!-- src/main/resources/views/dashboard.html -->
 {% extends "layout.html" %}
 
 {% block content %}
-<!-- ✅ Título dinámico para el navbar -->
 <div style="display: none;">
     <h1 class="navbar-title" id="navbarTitle" hx-swap-oob="true">Inicio</h1>
 </div>
 
-<!-- TARJETAS DE KPIs -->
-<div class="kpi-grid">
-    <!-- KPI 1: Ventas del Mes -->
+<div data-page-title="Inicio" style="display:none;"></div>
+
+<!-- KPIs -->
+<div class="kpi-grid kpi-grid--compact">
     <div class="kpi-card">
         <div class="kpi-header">
             <div class="kpi-icon kpi-icon-primary"><i class="fas fa-wallet"></i></div>
-            <span class="kpi-badge kpi-badge-primary">Mes Actual</span>
+            <span class="kpi-badge kpi-badge-primary">Mes</span>
         </div>
         <div class="kpi-value" id="kpiVentasMes">₲ 0</div>
-        <div class="kpi-label">Ventas del Mes</div>
+        <div class="kpi-label">Ventas del mes</div>
     </div>
 
-    <!-- KPI 2: Facturas Emitidas -->
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div class="kpi-icon kpi-icon-success"><i class="fas fa-cash-register"></i></div>
+            <span class="kpi-badge kpi-badge-success">Hoy</span>
+        </div>
+        <div class="kpi-value" id="kpiVentasHoy">₲ 0</div>
+        <div class="kpi-label">Ventas de hoy</div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div class="kpi-icon kpi-icon-secondary"><i class="fas fa-receipt"></i></div>
+            <span class="kpi-badge kpi-badge-secondary">Promedio</span>
+        </div>
+        <div class="kpi-value" id="kpiTicket">₲ 0</div>
+        <div class="kpi-label">Ticket promedio</div>
+    </div>
+
     <div class="kpi-card">
         <div class="kpi-header">
             <div class="kpi-icon kpi-icon-warning"><i class="fas fa-file-invoice-dollar"></i></div>
-            <span class="kpi-badge kpi-badge-warning">Completadas</span>
+            <span class="kpi-badge kpi-badge-warning">Mes</span>
         </div>
-        <div class="kpi-value" id="kpiFacturas">0</div>
-        <div class="kpi-label">Facturas Emitidas</div>
+        <div class="kpi-value" id="kpiFacturasMes">0</div>
+        <div class="kpi-label">Facturas del mes</div>
     </div>
 
-    <!-- KPI 3: Productos en Catálogo -->
     <div class="kpi-card">
         <div class="kpi-header">
-            <div class="kpi-icon kpi-icon-success"><i class="fas fa-boxes-stacked"></i></div>
-            <span class="kpi-badge kpi-badge-success">Catálogo</span>
+            <div class="kpi-icon kpi-icon-warning"><i class="fas fa-truck-ramp-box"></i></div>
+            <span class="kpi-badge kpi-badge-warning">Mes</span>
         </div>
-        <div class="kpi-value" id="kpiProductos">0</div>
-        <div class="kpi-label">Productos Registrados</div>
+        <div class="kpi-value" id="kpiComprasMes">₲ 0</div>
+        <div class="kpi-label">Compras del mes</div>
     </div>
 
-    <!-- KPI 4: Clientes -->
     <div class="kpi-card">
         <div class="kpi-header">
-            <div class="kpi-icon kpi-icon-secondary"><i class="fas fa-users"></i></div>
-            <span class="kpi-badge kpi-badge-secondary">Registrados</span>
+            <div class="kpi-icon kpi-icon-success"><i class="fas fa-chart-line"></i></div>
+            <span class="kpi-badge kpi-badge-success">Estimada</span>
         </div>
-        <div class="kpi-value" id="kpiClientes">0</div>
-        <div class="kpi-label">Clientes Registrados</div>
+        <div class="kpi-value" id="kpiGanancia">₲ 0</div>
+        <div class="kpi-label">Ganancia del mes</div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div class="kpi-icon kpi-icon-primary"><i class="fas fa-warehouse"></i></div>
+            <span class="kpi-badge kpi-badge-primary">Costo</span>
+        </div>
+        <div class="kpi-value" id="kpiInventario">₲ 0</div>
+        <div class="kpi-label">Valor inventario</div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-header">
+            <div class="kpi-icon kpi-icon-warning"><i class="fas fa-triangle-exclamation"></i></div>
+            <span class="kpi-badge kpi-badge-warning">Alerta</span>
+        </div>
+        <div class="kpi-value" id="kpiBajoStock">0</div>
+        <div class="kpi-label">Bajo stock</div>
     </div>
 </div>
 
-<!-- SECCIÓN: GRÁFICO DE SERIES -->
-<!-- ✅ Agregamos overflow: visible para que no se corten los tooltips del gráfico -->
-<div class="table-card" style="padding: 24px; overflow: visible;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin: 0;">
-            <i class="fas fa-chart-bar" style="color: var(--primary); margin-right: 8px;"></i> Resumen de Actividad (Simulador)
-        </h3>
+<div class="dashboard-inline-stats">
+    <span>Productos: <strong id="statProductos">0</strong></span>
+    <span>Clientes: <strong id="statClientes">0</strong></span>
+    <span>Proveedores: <strong id="statProveedores">0</strong></span>
+    <span>Facturas históricas: <strong id="statFacturas">0</strong></span>
+</div>
+
+<!-- EVOLUCIÓN -->
+<div class="table-card chart-card chart-card--full" style="margin-bottom:16px;">
+    <div class="chart-header-row">
+        <div>
+            <h3 class="chart-title"><i class="fas fa-chart-area"></i> Ingresos por día</h3>
+            <p class="chart-subtitle">Ventas de los últimos 14 días</p>
+        </div>
+        <div style="text-align:right;">
+            <div class="chart-total" id="totalPeriodo">₲ 0</div>
+            <span class="kpi-badge kpi-badge-success" id="variacionPeriodo">14 días</span>
+        </div>
+    </div>
+    <div class="chart-box"><canvas id="chartVentasDia"></canvas></div>
+</div>
+
+<!-- COMPOSICIÓN + MENSUAL -->
+<div class="dashboard-grid">
+    <div class="table-card chart-card">
+        <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Composición del mes</h3>
+        <p class="chart-subtitle">Categoría y condición de venta</p>
+        <div class="donuts-grid">
+            <div class="donut-block">
+                <div class="chart-box chart-box--donut"><canvas id="chartCategorias"></canvas></div>
+                <div class="donut-caption">Por categoría</div>
+            </div>
+            <div class="donut-block">
+                <div class="chart-box chart-box--donut"><canvas id="chartCondiciones"></canvas></div>
+                <div class="donut-caption">Contado vs crédito</div>
+            </div>
+        </div>
     </div>
 
-    <div style="position: relative; height: 320px; width: 100%;">
-        <canvas id="dashboardChart"></canvas>
+    <div class="table-card chart-card">
+        <h3 class="chart-title"><i class="fas fa-scale-balanced"></i> Ventas vs compras</h3>
+        <p class="chart-subtitle">Últimos 6 meses</p>
+        <div class="chart-box"><canvas id="chartMensual"></canvas></div>
     </div>
 </div>
 
-<!-- INICIALIZACIÓN VÍA FETCH Y CHART.JS -->
+<!-- TOP PRODUCTOS + BAJO STOCK -->
+<div class="dashboard-bottom">
+    <div class="table-card chart-card">
+        <h3 class="chart-title"><i class="fas fa-ranking-star"></i> Top productos del mes</h3>
+        <div id="topProductosLista" class="rank-list">
+            <div class="empty-state">Sin ventas este mes</div>
+        </div>
+    </div>
+
+    <div class="table-card chart-card">
+        <h3 class="chart-title"><i class="fas fa-triangle-exclamation"></i> Productos con bajo stock</h3>
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Stock</th>
+                <th>Mín.</th>
+            </tr>
+            </thead>
+            <tbody id="tbodyBajoStock">
+            <tr><td colspan="3" class="empty-state">Sin alertas</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <script>
-    (function loadDashboardData() {
-        // 1. Obtener los KPIs de la API
+    (function () {
+        const fmt = (valor) => '₲ ' + Number(valor || 0).toLocaleString('es-PY');
+        const esc = (texto) => String(texto == null ? '' : texto).replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+
+        const style = getComputedStyle(document.body);
+        const css = (name, fallback) => style.getPropertyValue(name).trim() || fallback;
+        const textMain = css('--text-main', '#E2E8F0');
+        const textMuted = css('--text-muted', '#94A3B8');
+        const border = css('--border-line', '#334155');
+        const bgApp = css('--bg-app', '#0F172A');
+        const primary = css('--primary', '#06B6D4');
+        const success = css('--success', '#22C55E');
+        const warning = css('--warning', '#F59E0B');
+        const danger = css('--danger', '#F43F5E');
+
+        const alpha = (color, a) => {
+            if (!color.startsWith('#')) return color;
+            const hex = color.replace('#', '');
+            const full = hex.length === 3 ? hex.split('').map(c => c + c).join('') : hex;
+            const r = parseInt(full.substring(0, 2), 16);
+            const g = parseInt(full.substring(2, 4), 16);
+            const b = parseInt(full.substring(4, 6), 16);
+            return `rgba(${r}, ${g}, ${b}, ${a})`;
+        };
+
+        const setText = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        };
+
+        const glow = {
+            id: 'glow',
+            beforeDatasetDraw(chart) {
+                chart.ctx.save();
+                chart.ctx.shadowColor = alpha(primary, 0.35);
+                chart.ctx.shadowBlur = 12;
+                chart.ctx.shadowOffsetY = 5;
+            },
+            afterDatasetDraw(chart) {
+                chart.ctx.restore();
+            }
+        };
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: bgApp,
+                    titleColor: textMain,
+                    bodyColor: textMain,
+                    borderColor: border,
+                    borderWidth: 1,
+                    padding: 10
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { color: textMuted, font: { family: 'Inter', size: 10 } } },
+                y: { grid: { color: alpha(border, 0.5) }, ticks: { color: textMuted, font: { family: 'Inter', size: 10 } } }
+            }
+        };
+
+        function destroyCharts() {
+            if (window.dashboardCharts) {
+                Object.values(window.dashboardCharts).forEach(chart => chart.destroy());
+            }
+            window.dashboardCharts = {};
+        }
+
+        function renderCharts(data) {
+            destroyCharts();
+            const charts = window.dashboardCharts;
+
+            // Evolución con área degradada y brillo.
+            const evoCanvas = document.getElementById('chartVentasDia');
+            if (evoCanvas) {
+                const ctx = evoCanvas.getContext('2d');
+                const gradiente = ctx.createLinearGradient(0, 0, 0, 210);
+                gradiente.addColorStop(0, alpha(primary, 0.45));
+                gradiente.addColorStop(1, alpha(primary, 0));
+
+                charts.ventasDia = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.fechasVentas || [],
+                        datasets: [{
+                            label: 'Ingresos',
+                            data: data.montosVentas || [],
+                            borderColor: primary,
+                            backgroundColor: gradiente,
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: primary
+                        }]
+                    },
+                    options: Object.assign({}, commonOptions, {
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: bgApp, titleColor: textMain, bodyColor: textMain,
+                                borderColor: border, borderWidth: 1,
+                                callbacks: { label: ctx2 => fmt(ctx2.parsed.y) }
+                            }
+                        }
+                    }),
+                    plugins: [glow]
+                });
+            }
+
+            // Dos doughnuts chicos en una sola tarjeta.
+            const categorias = data.categoriasLabels || [];
+            const montosCategorias = data.categoriasMontos || [];
+            const hayCategorias = categorias.length > 0 && montosCategorias.some(v => Number(v) > 0);
+            const catCanvas = document.getElementById('chartCategorias');
+            if (catCanvas) {
+                charts.categorias = new Chart(catCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: hayCategorias ? categorias : ['Sin ventas'],
+                        datasets: [{
+                            data: hayCategorias ? montosCategorias : [1],
+                            backgroundColor: hayCategorias
+                                ? [primary, success, warning, danger, '#8B5CF6', '#3B82F6']
+                                : ['#334155'],
+                            borderWidth: 0,
+                            hoverOffset: 6,
+                            spacing: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, cutout: '68%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: textMuted, font: { family: 'Inter', size: 10 }, boxWidth: 8, padding: 8 }
+                            },
+                            tooltip: {
+                                backgroundColor: bgApp, titleColor: textMain, bodyColor: textMain,
+                                borderColor: border, borderWidth: 1,
+                                callbacks: { label: ctx2 => ctx2.label + ': ' + fmt(ctx2.parsed) }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const condiciones = data.condicionesLabels || [];
+            const montosCondiciones = data.condicionesMontos || [];
+            const hayCondiciones = montosCondiciones.some(v => Number(v) > 0);
+            const condCanvas = document.getElementById('chartCondiciones');
+            if (condCanvas) {
+                charts.condiciones = new Chart(condCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: hayCondiciones ? condiciones : ['Sin ventas'],
+                        datasets: [{
+                            data: hayCondiciones ? montosCondiciones : [1],
+                            backgroundColor: hayCondiciones ? [primary, warning] : ['#334155'],
+                            borderWidth: 0,
+                            hoverOffset: 6,
+                            spacing: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, cutout: '68%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: textMuted, font: { family: 'Inter', size: 10 }, boxWidth: 8, padding: 8 }
+                            },
+                            tooltip: {
+                                backgroundColor: bgApp, titleColor: textMain, bodyColor: textMain,
+                                borderColor: border, borderWidth: 1,
+                                callbacks: { label: ctx2 => ctx2.label + ': ' + fmt(ctx2.parsed) }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Ventas vs compras con barras degradadas.
+            const mensualCanvas = document.getElementById('chartMensual');
+            if (mensualCanvas) {
+                const ctx = mensualCanvas.getContext('2d');
+                const gVentas = ctx.createLinearGradient(0, 0, 0, 210);
+                gVentas.addColorStop(0, alpha(primary, 0.95));
+                gVentas.addColorStop(1, alpha(primary, 0.35));
+                const gCompras = ctx.createLinearGradient(0, 0, 0, 210);
+                gCompras.addColorStop(0, alpha(danger, 0.9));
+                gCompras.addColorStop(1, alpha(danger, 0.3));
+
+                charts.mensual = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.mesesLabels || [],
+                        datasets: [
+                            { label: 'Ventas', data: data.ventasPorMes || [], backgroundColor: gVentas, borderRadius: 5, borderSkipped: false, maxBarThickness: 24 },
+                            { label: 'Compras', data: data.comprasPorMes || [], backgroundColor: gCompras, borderRadius: 5, borderSkipped: false, maxBarThickness: 24 }
+                        ]
+                    },
+                    options: Object.assign({}, commonOptions, {
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: textMuted, font: { family: 'Inter', size: 10 }, boxWidth: 10, padding: 10 }
+                            },
+                            tooltip: {
+                                backgroundColor: bgApp, titleColor: textMain, bodyColor: textMain,
+                                borderColor: border, borderWidth: 1,
+                                callbacks: { label: ctx2 => ctx2.dataset.label + ': ' + fmt(ctx2.parsed.y) }
+                            }
+                        }
+                    }),
+                    plugins: [glow]
+                });
+            }
+        }
+
+        function renderTopProductos(data) {
+            const contenedor = document.getElementById('topProductosLista');
+            if (!contenedor) return;
+
+            const labels = data.topProductosLabels || [];
+            const valores = data.topProductosCantidades || [];
+            if (!labels.length) {
+                contenedor.innerHTML = '<div class="empty-state">Sin ventas este mes</div>';
+                return;
+            }
+
+            const max = Math.max(...valores.map(Number), 1);
+            contenedor.innerHTML = labels.map((label, i) => {
+                const valor = Number(valores[i] || 0);
+                const ancho = Math.max(4, Math.round((valor / max) * 100));
+                return `<div class="rank-item">
+                    <div class="rank-head">
+                        <span class="rank-name" title="${esc(label)}">${esc(label)}</span>
+                        <span class="rank-value">${valor} u.</span>
+                    </div>
+                    <div class="rank-track"><div class="rank-fill" style="width:${ancho}%"></div></div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderBajoStock(data) {
+            const tbody = document.getElementById('tbodyBajoStock');
+            if (!tbody) return;
+            const productos = (data.productosBajoStockList || []).slice(0, 6);
+            if (!productos.length) {
+                tbody.innerHTML = '<tr><td colspan="3" class="empty-state">Sin alertas</td></tr>';
+                return;
+            }
+            tbody.innerHTML = productos.map(p => `<tr>
+                <td><strong>${esc(p.nombre)}</strong><div class="product-sku">${esc(p.sku)}</div></td>
+                <td><strong style="color:${danger};">${esc(p.stock)}</strong></td>
+                <td>${esc(p.stockMinimo != null ? p.stockMinimo : 5)}</td>
+            </tr>`).join('');
+        }
+
         fetch('/api/dashboard')
             .then(res => res.json())
             .then(data => {
-                const kpiVentas = document.getElementById('kpiVentasMes');
-                const kpiFacturas = document.getElementById('kpiFacturas');
-                const kpiProductos = document.getElementById('kpiProductos');
-                const kpiClientes = document.getElementById('kpiClientes');
+                const montos = data.montosVentas || [];
+                const total = montos.reduce((acc, v) => acc + Number(v || 0), 0);
+                const mitad = Math.floor(montos.length / 2);
+                const previos = montos.slice(0, mitad).reduce((acc, v) => acc + Number(v || 0), 0);
+                const ultimos = montos.slice(mitad).reduce((acc, v) => acc + Number(v || 0), 0);
+                const variacion = previos > 0 ? ((ultimos - previos) / previos) * 100 : 0;
 
-                if (kpiVentas) kpiVentas.textContent = '₲ ' + (data.totalVentasMes || 0).toLocaleString('es-PY');
-                if (kpiFacturas) kpiFacturas.textContent = data.facturasEmitidasCount || 0;
-                if (kpiProductos) kpiProductos.textContent = data.totalProductosCount || 0;
-                if (kpiClientes) kpiClientes.textContent = data.totalClientesCount || 0;
+                setText('kpiVentasMes', fmt(data.totalVentasMes));
+                setText('kpiVentasHoy', fmt(data.totalVentasHoy));
+                setText('kpiTicket', fmt(data.ticketPromedio));
+                setText('kpiFacturasMes', data.facturasMesCount || 0);
+                setText('kpiComprasMes', fmt(data.totalComprasMes));
+                setText('kpiGanancia', fmt(data.gananciaEstimadaMes));
+                setText('kpiInventario', fmt(data.valorInventario));
+                setText('kpiBajoStock', data.productosBajoStockCount || 0);
+                setText('statProductos', data.totalProductosCount || 0);
+                setText('statClientes', data.totalClientesCount || 0);
+                setText('statProveedores', data.totalProveedoresCount || 0);
+                setText('statFacturas', data.facturasEmitidasCount || 0);
+                setText('totalPeriodo', fmt(total));
+
+                const variacionEl = document.getElementById('variacionPeriodo');
+                if (variacionEl) {
+                    const signo = variacion >= 0 ? '+' : '';
+                    variacionEl.textContent = previos > 0 ? `${signo}${variacion.toFixed(0)}% vs 7 días previos` : '14 días';
+                    variacionEl.className = 'kpi-badge ' + (variacion >= 0 ? 'kpi-badge-success' : 'kpi-badge-warning');
+                }
+
+                renderCharts(data);
+                renderTopProductos(data);
+                renderBajoStock(data);
             })
             .catch(err => console.error('Error al cargar datos del dashboard:', err));
-
-        // 2. Renderizar el Gráfico de Series
-        const canvas = document.getElementById('dashboardChart');
-        if (!canvas) return;
-
-        // Extraer los 5 colores del CSS
-        const style = getComputedStyle(document.body);
-        const chartColors = [
-            style.getPropertyValue('--chart-1').trim(),
-            style.getPropertyValue('--chart-2').trim(),
-            style.getPropertyValue('--chart-3').trim(),
-            style.getPropertyValue('--chart-4').trim(),
-            style.getPropertyValue('--chart-5').trim()
-        ];
-
-        const textColor = style.getPropertyValue('--text-main').trim();
-        // ✅ Corrección: Usamos --border-line
-        const gridColor = style.getPropertyValue('--border-line').trim();
-
-        // Evitar que se dupliquen gráficos
-        if (window.dashboardChartInstance) {
-            window.dashboardChartInstance.destroy();
-        }
-
-        // Datos de prueba
-        const rawData = [
-            { label: 'Ventas', value: 80 },
-            { label: 'Compras', value: 65 },
-            { label: 'Inventario', value: 55 },
-            { label: 'Clientes', value: 45 },
-            { label: 'Proveedores', value: 30 }
-        ];
-
-        rawData.sort((a, b) => b.value - a.value);
-        const sortedLabels = rawData.map(item => item.label);
-        const sortedData = rawData.map(item => item.value);
-
-        const ctx = canvas.getContext('2d');
-        window.dashboardChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: sortedLabels,
-                datasets: [{
-                    label: 'Simulación',
-                    data: sortedData,
-                    backgroundColor: chartColors,
-                    borderRadius: 6,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: style.getPropertyValue('--bg-app').trim(),
-                        titleColor: textColor,
-                        bodyColor: textColor,
-                        borderColor: gridColor,
-                        borderWidth: 1,
-                        padding: 12,
-                        displayColors: true
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { display: false },
-                        // ✅ Corrección: Fuente Inter en lugar de Outfit
-                        ticks: { color: style.getPropertyValue('--text-muted').trim(), font: { family: 'Inter' } }
-                    },
-                    y: {
-                        grid: { color: gridColor, drawBorder: false },
-                        // ✅ Corrección: Fuente Inter
-                        ticks: { color: style.getPropertyValue('--text-muted').trim(), font: { family: 'Inter' } }
-                    }
-                }
-            }
-        });
     })();
 </script>
 {% endblock %}

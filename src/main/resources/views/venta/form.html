@@ -10,31 +10,29 @@
 
     <form hx-post="/ui/ventas/save" hx-target="#id-main" class="form-container" id="formVenta">
 
-        <!-- FILA 1: Cliente Autocompletar (4/6) + Condición (2/6) -->
-        <div class="form-group col-4" style="position: relative;">
-            <label class="form-label" for="buscarClienteInput">Cliente</label>
-            <input type="text" id="buscarClienteInput" name="q" placeholder="Escriba para buscar por Nombre o RUC/Cédula..." required class="form-control" autocomplete="off"
-                   hx-get="/ui/clientes/buscar-cliente" hx-trigger="keyup changed delay:300ms, focus" hx-target="#clienteResultados"
-                   oninput="document.getElementById('selectCliente').value=''">
-            <input type="hidden" id="selectCliente" name="clienteId" required>
-            <div id="clienteResultados"></div>
+        <!-- FILA 1: Cliente (4/6) + Condición (2/6) -->
+        <div class="form-group col-4">
+            <label class="form-label" for="selectCliente">Cliente</label>
+            <select id="selectCliente" name="clienteId" required class="form-control vanilla-select">
+                <option value="" disabled selected>Seleccione un cliente</option>
+                {% for c in clientes %}
+                <option value="{{ c.id }}">{{ c.nombre }} - {{ c.rucDocumento }}</option>
+                {% endfor %}
+            </select>
         </div>
 
         <div class="form-group col-2">
             <label class="form-label" for="selectCondicion">Condición de Venta</label>
-            <select id="selectCondicion" name="condicion" class="form-control">
+            <select id="selectCondicion" name="condicion" class="form-control vanilla-select">
                 <option value="Contado" selected>Contado</option>
                 <option value="Crédito">Crédito</option>
             </select>
         </div>
 
-        <!-- SECCIÓN: Encabezado de Productos y Botón Modal -->
-        <div class="form-group col-full" style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 4px;">
-            <label class="form-label" style="font-weight: 600; font-size: 1rem; color: var(--primary); margin: 0;">
-                <i class="fas fa-boxes-stacked"></i> Detalle de Productos
-            </label>
-            <button type="button" class="btn-add" onclick="VentaManager.abrirModalProducto()">
-                <i class="fas fa-cart-plus"></i> Agregar Producto
+        <!-- Acción secundaria: agregar producto -->
+        <div class="form-group col-full" style="align-items: flex-end; margin-top: 8px; margin-bottom: 0;">
+            <button type="button" class="btn-outline" onclick="VentaManager.abrirModalProducto()">
+                <i class="fas fa-plus"></i> Agregar Producto
             </button>
         </div>
 
@@ -64,7 +62,7 @@
         <div id="inputsOcultosDetalle"></div>
 
         <!-- TOTAL GENERAL -->
-        <div class="form-group col-full" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--dark-card-border); padding-top: 16px; margin-top: 8px;">
+        <div class="form-group col-full" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; border-top: 1px solid var(--dark-card-border); padding-top: 16px; margin-top: 8px;">
             <div style="font-size: 1.1rem; color: var(--dark-text-muted);">
                 Total a Pagar:
             </div>
@@ -84,7 +82,7 @@
 
 <!-- MODAL BÚSQUEDA Y SELECCIÓN DE PRODUCTO -->
 <div id="modalProducto" class="modal-overlay">
-    <div class="modal-container">
+    <div class="modal-container modal-container--wide">
         <div class="modal-header">
             <div class="modal-title">
                 <i class="fas fa-search" style="color: var(--primary);"></i> Buscar y Agregar Producto
@@ -94,11 +92,17 @@
             </button>
         </div>
         <div class="modal-body">
-            <div style="position: relative;">
-                <label class="form-label" for="buscarProductoInput">Buscar Producto</label>
-                <input type="text" id="buscarProductoInput" placeholder="Escriba Nombre o SKU..." class="form-control" autocomplete="off"
-                       hx-get="/ui/productos/buscar-producto" hx-trigger="keyup changed delay:300ms, focus" hx-target="#productoResultados">
-                <div id="productoResultados"></div>
+            <div>
+                <label class="form-label" for="selectProductoVenta">Producto</label>
+                <select id="selectProductoVenta" class="form-control vanilla-select"
+                        onchange="VentaManager.seleccionarProductoDesdeSelect(this)">
+                    <option value="" disabled selected>Seleccione un producto</option>
+                    {% for p in productos %}
+                    <option value="{{ p.id }}" data-nombre="{{ p.nombre }}" data-precio="{{ p.precio }}" data-stock="{{ p.stock }}">
+                        {{ p.nombre }} ({{ p.sku }}) - ₲ {{ p.precio }} - Stock {{ p.stock }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div>

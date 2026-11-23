@@ -8,6 +8,8 @@ import com.app.compra.repository.CompraDetalleRepository;
 import com.app.compra.repository.CompraRepository;
 import com.app.exception.BusinessException;
 import com.app.exception.ResourceNotFoundException;
+import com.app.movimiento_stock.service.MovimientoStockService;
+import com.app.secuencia.service.SecuenciaComprobanteService;
 import com.app.producto.model.Producto;
 import com.app.producto.repository.ProductoRepository;
 import com.app.proveedor.Proveedor;
@@ -16,6 +18,7 @@ import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,15 +32,21 @@ public class CompraService {
     private final CompraDetalleRepository compraDetalleRepository;
     private final ProductoRepository productoRepository;
     private final ProveedorRepository proveedorRepository;
+    private final MovimientoStockService movimientoStockService;
+    private final SecuenciaComprobanteService secuenciaComprobanteService;
 
     public CompraService(CompraRepository compraRepository,
                          CompraDetalleRepository compraDetalleRepository,
                          ProductoRepository productoRepository,
-                         ProveedorRepository proveedorRepository) {
+                         ProveedorRepository proveedorRepository,
+                         MovimientoStockService movimientoStockService,
+                         SecuenciaComprobanteService secuenciaComprobanteService) {
         this.compraRepository = compraRepository;
         this.compraDetalleRepository = compraDetalleRepository;
         this.productoRepository = productoRepository;
         this.proveedorRepository = proveedorRepository;
+        this.movimientoStockService = movimientoStockService;
+        this.secuenciaComprobanteService = secuenciaComprobanteService;
     }
 
     public List<CompraDto> findAll() {
@@ -68,6 +77,9 @@ public class CompraService {
         if (dto.getProveedorId() != null) {
             Proveedor proveedor = proveedorRepository.findById(dto.getProveedorId())
                     .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado (ID: " + dto.getProveedorId() + ")"));
+            if (!proveedor.isActivo()) {
+                throw new BusinessException("El proveedor '" + proveedor.getNombre() + "' esta inactivo.");
+            }
             dto.setProveedorNombre(proveedor.getNombre());
         }
 
@@ -75,8 +87,7 @@ public class CompraService {
 
         // Numero de factura autogenerado
         if (dto.getNumeroFactura() == null || dto.getNumeroFactura().trim().isEmpty()) {
-            long count = compraRepository.count() + 1;
-            compra.setNumeroFactura(String.format("COMP-%07d", count));
+            compra.setNumeroFactura(secuenciaComprobanteService.siguiente("COMPRA"));
         } else {
             compra.setNumeroFactura(dto.getNumeroFactura());
         }
@@ -103,14 +114,22 @@ public class CompraService {
                 if (dDto.getProductoId() != null) {
                     Producto prod = productoRepository.findById(dDto.getProductoId())
                             .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado (ID: " + dDto.getProductoId() + ")"));
+                    if (!prod.isActivo()) {
+                        throw new BusinessException("El producto '" + prod.getNombre() + "' esta inactivo.");
+                    }
                     detalle.setProductoNombre(prod.getNombre());
                     detalle.setPrecioCosto(dDto.getPrecioCosto() != null ? dDto.getPrecioCosto() : prod.getPrecio());
 
-                    // AUMENTAR STOCK
+                    // AUMENTAR STOCK Y RECALCULAR COSTO PROMEDIO
                     int cantidad = dDto.getCantidad() != null ? dDto.getCantidad() : 1;
                     detalle.setCantidad(cantidad);
-                    prod.setStock(prod.getStock() + cantidad);
-                    productoRepository.update(prod);
+                    BigDecimal costoCompra = detalle.getPrecioCosto();
+                    BigDecimal nuevoCosto = costoPromedio(
+                            prod.getStock() != null ? prod.getStock() : 0,
+                            prod.getCostoActual(), cantidad, costoCompra);
+                    prod.setCostoActual(nuevoCosto);
+                    movimientoStockService.registrar(prod, cantidad, "COMPRA", "COMPRA",
+                            savedCompra.getId(), "Compra " + savedCompra.getNumeroFactura(), costoCompra);
                 } else {
                     detalle.setProductoNombre(dDto.getProductoNombre() != null ? dDto.getProductoNombre() : "Producto");
                     detalle.setPrecioCosto(dDto.getPrecioCosto() != null ? dDto.getPrecioCosto() : BigDecimal.ZERO);
@@ -144,15 +163,28 @@ public class CompraService {
             List<CompraDetalle> detalles = compraDetalleRepository.findByCompraId(compra.getId());
             for (CompraDetalle d : detalles) {
                 if (d.getProductoId() != null) {
-                    productoRepository.findById(d.getProductoId()).ifPresent(prod -> {
-                        prod.setStock(Math.max(0, prod.getStock() - d.getCantidad()));
-                        productoRepository.update(prod);
-                    });
+                    productoRepository.findById(d.getProductoId()).ifPresent(prod ->
+                        movimientoStockService.registrar(prod, -d.getCantidad(), "ANULACION_COMPRA",
+                                "ANULACION_COMPRA", compra.getId(),
+                                "Anulación compra " + compra.getNumeroFactura(), prod.getCostoActual()));
                 }
             }
             return true;
         }
         return false;
+    }
+
+    private BigDecimal costoPromedio(int stockAnterior, BigDecimal costoAnterior,
+                                     int cantidad, BigDecimal costoCompra) {
+        BigDecimal anterior = costoAnterior != null ? costoAnterior : BigDecimal.ZERO;
+        BigDecimal compra = costoCompra != null ? costoCompra : BigDecimal.ZERO;
+        int total = stockAnterior + cantidad;
+        if (total <= 0) {
+            return compra;
+        }
+        return anterior.multiply(BigDecimal.valueOf(stockAnterior))
+                .add(compra.multiply(BigDecimal.valueOf(cantidad)))
+                .divide(BigDecimal.valueOf(total), 2, RoundingMode.HALF_UP);
     }
 
     private CompraDto mapToDto(Compra compra) {

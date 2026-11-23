@@ -43,6 +43,14 @@
                 <td>{{ p.categoria }}</td>
                 <td>
                     <div class="row-actions">
+                        <button class="row-action-btn" title="Movimientos"
+                                hx-get="/ui/productos/movimientos?id={{ p.id }}"
+                                hx-target="#id-main"
+                                hx-select="#id-main"
+                                hx-push-url="true">
+                            <i class="fas fa-list"></i>
+                        </button>
+
                         <button class="row-action-btn" title="Editar"
                                 hx-get="/ui/productos/form?id={{ p.id }}"
                                 hx-target="#id-main"

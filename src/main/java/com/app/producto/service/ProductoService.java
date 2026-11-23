@@ -1,17 +1,21 @@
 package com.app.producto.service;
 
 import com.app.exception.BusinessException;
+import com.app.movimiento_stock.dto.MovimientoStockDto;
+import com.app.movimiento_stock.service.MovimientoStockService;
 import com.app.producto.dto.ProductoDto;
 import com.app.producto.dto.ProductoFormDto;
-import com.app.producto.repository.ProductoRepository;
 import com.app.producto.model.Producto;
-import com.app.venta.repository.VentaDetalleRepository;
+import com.app.producto.repository.ProductoRepository;
+import com.app.producto_categoria.model.ProductoCategoria;
+import com.app.producto_categoria.repository.ProductoCategoriaRepository;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.data.model.Sort;
 import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,24 +25,26 @@ import java.util.stream.StreamSupport;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
-    private final VentaDetalleRepository ventaDetalleRepository;
+    private final ProductoCategoriaRepository productoCategoriaRepository;
+    private final MovimientoStockService movimientoStockService;
 
     public ProductoService(ProductoRepository productoRepository,
-                           VentaDetalleRepository ventaDetalleRepository) {
+                           ProductoCategoriaRepository productoCategoriaRepository,
+                           MovimientoStockService movimientoStockService) {
         this.productoRepository = productoRepository;
-        this.ventaDetalleRepository = ventaDetalleRepository;
+        this.productoCategoriaRepository = productoCategoriaRepository;
+        this.movimientoStockService = movimientoStockService;
     }
 
     public List<ProductoDto> findAll() {
-        return StreamSupport.stream(productoRepository.findAll().spliterator(), false)
+        return StreamSupport.stream(productoRepository.findAllByActivoTrue().spliterator(), false)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    // ✅ NUEVO MÉTODO CON PAGINACIÓN
     public Page<ProductoDto> findPage(int page, int size) {
         Pageable pageable = Pageable.from(page, size, Sort.of(Sort.Order.desc("id")));
-        Page<Producto> pagina = productoRepository.findAll(pageable);
+        Page<Producto> pagina = productoRepository.findAllByActivoTrue(pageable);
         return pagina.map(this::mapToDto);
     }
 
@@ -56,21 +62,50 @@ public class ProductoService {
         return productoRepository.findById(id).map(this::mapToDto);
     }
 
+    public List<MovimientoStockDto> findMovimientos(Long productoId) {
+        return movimientoStockService.findByProducto(productoId);
+    }
+
     @Transactional
     public ProductoDto save(ProductoFormDto formDto) {
-        Producto producto = mapFormToEntity(formDto);
+        ProductoCategoria categoria = resolverCategoria(formDto);
+        Producto producto = mapFormToEntity(formDto, categoria);
+
+        int stockInicial = producto.getStock() != null ? producto.getStock() : 0;
+        producto.setStock(0);
         Producto saved = productoRepository.save(producto);
+
+        if (stockInicial != 0) {
+            movimientoStockService.registrar(saved, stockInicial, "INICIAL", "PRODUCTO",
+                    saved.getId(), "Stock inicial", saved.getCostoActual());
+        }
         return mapToDto(saved);
     }
 
     @Transactional
     public Optional<ProductoDto> update(Long id, ProductoFormDto formDto) {
-        if (!productoRepository.existsById(id)) {
+        Optional<Producto> actualOpt = productoRepository.findById(id);
+        if (actualOpt.isEmpty()) {
             return Optional.empty();
         }
-        Producto producto = mapFormToEntity(formDto);
+
+        Producto actual = actualOpt.get();
+        ProductoCategoria categoria = resolverCategoria(formDto);
+        Producto producto = mapFormToEntity(formDto, categoria);
+
+        int stockActual = actual.getStock() != null ? actual.getStock() : 0;
+        int stockNuevo = formDto.getStock() != null ? formDto.getStock() : stockActual;
+
         producto.setId(id);
+        producto.setStock(stockActual);
+        producto.setActivo(actual.isActivo());
         Producto updated = productoRepository.update(producto);
+
+        int diferencia = stockNuevo - stockActual;
+        if (diferencia != 0) {
+            movimientoStockService.registrar(updated, diferencia, "AJUSTE", "PRODUCTO",
+                    id, "Ajuste manual de stock", updated.getCostoActual());
+        }
         return Optional.of(mapToDto(updated));
     }
 
@@ -79,11 +114,8 @@ public class ProductoService {
         Optional<Producto> prodOpt = productoRepository.findById(id);
         if (prodOpt.isPresent()) {
             Producto prod = prodOpt.get();
-            long countVentas = ventaDetalleRepository.countByProductoId(id);
-            if (countVentas > 0) {
-                throw new BusinessException("No se puede eliminar el producto '" + prod.getNombre() + "' porque está registrado en " + countVentas + " factura(s) de venta.");
-            }
-            productoRepository.deleteById(id);
+            prod.setActivo(false);
+            productoRepository.update(prod);
             return true;
         }
         return false;
@@ -96,18 +128,44 @@ public class ProductoService {
         dto.setSku(producto.getSku());
         dto.setPrecio(producto.getPrecio());
         dto.setStock(producto.getStock());
+        dto.setCostoActual(producto.getCostoActual());
+        dto.setStockMinimo(producto.getStockMinimo());
+        dto.setCategoriaId(producto.getCategoriaId());
         dto.setCategoria(producto.getCategoria());
         return dto;
     }
 
-    private Producto mapFormToEntity(ProductoFormDto formDto) {
+    private Producto mapFormToEntity(ProductoFormDto formDto, ProductoCategoria categoria) {
         Producto producto = new Producto();
         producto.setId(formDto.getId());
         producto.setNombre(formDto.getNombre());
         producto.setSku(formDto.getSku());
         producto.setPrecio(formDto.getPrecio());
         producto.setStock(formDto.getStock());
-        producto.setCategoria(formDto.getCategoria());
+        producto.setCostoActual(formDto.getCostoActual() != null ? formDto.getCostoActual() : BigDecimal.ZERO);
+        producto.setStockMinimo(formDto.getStockMinimo() != null ? formDto.getStockMinimo() : 5);
+        producto.setCategoriaId(categoria.getId());
+        producto.setCategoria(categoria.getNombre());
         return producto;
+    }
+
+    private ProductoCategoria resolverCategoria(ProductoFormDto formDto) {
+        ProductoCategoria categoria = null;
+        if (formDto.getCategoriaId() != null) {
+            categoria = productoCategoriaRepository.findById(formDto.getCategoriaId())
+                    .orElseThrow(() -> new BusinessException("La categoría seleccionada no existe."));
+        } else if (formDto.getCategoria() != null && !formDto.getCategoria().trim().isEmpty()) {
+            String nombre = formDto.getCategoria().trim();
+            categoria = productoCategoriaRepository.findFirstByNombreIgnoreCase(nombre)
+                    .orElseThrow(() -> new BusinessException("La categoría '" + nombre + "' no existe."));
+        }
+
+        if (categoria == null) {
+            throw new BusinessException("La categoría es obligatoria.");
+        }
+        if (!categoria.isActivo()) {
+            throw new BusinessException("La categoría '" + categoria.getNombre() + "' está inactiva.");
+        }
+        return categoria;
     }
 }

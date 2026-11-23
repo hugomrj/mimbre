@@ -12,6 +12,7 @@ import io.micronaut.views.View;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller("/ui/productos")
@@ -41,6 +42,19 @@ public class ProductoUiController {
             productoService.findById(id).ifPresent(p -> model.put("producto", p));
         }
         return model;
+    }
+
+    @View("producto/movimientos")
+    @Get("/movimientos{?id}")
+    public Map<String, Object> movimientos(@Nullable Long id) {
+        if (id == null) {
+            return Map.of();
+        }
+        return productoService.findById(id)
+                .map(producto -> Map.<String, Object>of(
+                        "producto", producto,
+                        "movimientos", productoService.findMovimientos(id)))
+                .orElseGet(Map::of);
     }
 
     @View("producto/results")
@@ -85,11 +99,11 @@ public class ProductoUiController {
         try {
             boolean eliminado = productoService.delete(id);
             return eliminado
-                    ? buildTableModel(0, 10, "Producto eliminado correctamente.", null)
+                    ? buildTableModel(0, 10, "Producto desactivado correctamente.", null)
                     : buildTableModel(0, 10, null, "No se encontró el producto a eliminar.");
         } catch (Exception e) {
             return buildTableModel(0, 10, null,
-                    e.getMessage() != null ? e.getMessage() : "No se puede eliminar el producto porque está asociado a ventas u otros registros.");
+                    e.getMessage() != null ? e.getMessage() : "No se pudo desactivar el producto.");
         }
     }
 

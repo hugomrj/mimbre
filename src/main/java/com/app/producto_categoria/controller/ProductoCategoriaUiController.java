@@ -75,13 +75,13 @@ public class ProductoCategoriaUiController {
         try {
             boolean eliminado = productoCategoriaService.delete(id);
             if (eliminado) {
-                return buildTableModel(0, 10, "Categoría eliminada correctamente.", null);
+                return buildTableModel(0, 10, "Categoría desactivada correctamente.", null);
             } else {
                 return buildTableModel(0, 10, null, "No se encontró la categoría a eliminar.");
             }
         } catch (Exception e) {
             return buildTableModel(0, 10, null,
-                    e.getMessage() != null ? e.getMessage() : "No se puede eliminar la categoría porque está asociada a productos u otros registros.");
+                    e.getMessage() != null ? e.getMessage() : "No se pudo desactivar la categoría.");
         }
     }
 

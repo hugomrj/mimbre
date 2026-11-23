@@ -1,8 +1,11 @@
 package com.app.producto_categoria.model;
 
+import io.micronaut.data.annotation.DateCreated;
+import io.micronaut.data.annotation.DateUpdated;
 import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
+import java.time.LocalDateTime;
 
 @MappedEntity
 public class ProductoCategoria {
@@ -10,6 +13,14 @@ public class ProductoCategoria {
     @Id
     @GeneratedValue(GeneratedValue.Type.AUTO)
     private Long id;
+
+    @DateCreated
+    private LocalDateTime creadoEn;
+
+    @DateUpdated
+    private LocalDateTime actualizadoEn;
+
+    private boolean activo = true;
 
     private String nombre;
     private String descripcion;
@@ -30,4 +41,13 @@ public class ProductoCategoria {
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public LocalDateTime getCreadoEn() { return creadoEn; }
+    public void setCreadoEn(LocalDateTime creadoEn) { this.creadoEn = creadoEn; }
+
+    public LocalDateTime getActualizadoEn() { return actualizadoEn; }
+    public void setActualizadoEn(LocalDateTime actualizadoEn) { this.actualizadoEn = actualizadoEn; }
+
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
 }

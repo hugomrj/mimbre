@@ -1,6 +1,8 @@
 package com.app.compra.model;
 
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.annotation.DateCreated;
+import io.micronaut.data.annotation.DateUpdated;
 import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
@@ -14,6 +16,12 @@ public class Compra {
     @Id
     @GeneratedValue(GeneratedValue.Type.AUTO)
     private Long id;
+
+    @DateCreated
+    private LocalDateTime creadoEn;
+
+    @DateUpdated
+    private LocalDateTime actualizadoEn;
 
     private String numeroFactura;
     private Long proveedorId;
@@ -64,4 +72,10 @@ public class Compra {
 
     public LocalDateTime getFechaAnulacion() { return fechaAnulacion; }
     public void setFechaAnulacion(LocalDateTime fechaAnulacion) { this.fechaAnulacion = fechaAnulacion; }
+
+    public LocalDateTime getCreadoEn() { return creadoEn; }
+    public void setCreadoEn(LocalDateTime creadoEn) { this.creadoEn = creadoEn; }
+
+    public LocalDateTime getActualizadoEn() { return actualizadoEn; }
+    public void setActualizadoEn(LocalDateTime actualizadoEn) { this.actualizadoEn = actualizadoEn; }
 }

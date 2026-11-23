@@ -95,6 +95,14 @@ font-size: 0.9rem; color: var(--text-main); }
 }
 .btn-ghost:hover { color: var(--text-main); background: var(--bg-surface-hover); }
 
+.btn-outline {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
+    background: transparent; color: var(--primary); border: 1px solid var(--primary);
+    border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.btn-outline:hover { background: rgba(6, 182, 212, 0.12); }
+
 
 
 /* =========================================
@@ -227,6 +235,7 @@ select.form-control option {
     border-radius: 16px; width: 90%; max-width: 480px;
     transform: scale(0.95); transition: transform 0.25s ease; display: flex; flex-direction: column;
 }
+.modal-container--wide { max-width: 760px; }
 .modal-overlay.active .modal-container { transform: scale(1); }
 .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-line); display: flex; justify-content: space-between; align-items: center; }
 .modal-title { font-size: 1.1rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
@@ -235,6 +244,72 @@ select.form-control option {
 .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border-line); display: flex; justify-content: flex-end; gap: 12px; }
 
+
+
+/* =========================================
+   DASHBOARD
+   ========================================= */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.dashboard-bottom {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.chart-card { padding: 16px 18px; overflow: visible; }
+.chart-card--full { grid-column: 1 / -1; }
+.chart-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.chart-title i { color: var(--primary); }
+.chart-subtitle { font-size: 0.75rem; color: var(--text-muted); margin: 0 0 10px 0; }
+.chart-header-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 16px; margin-bottom: 8px;
+}
+.chart-total { font-size: 1.5rem; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; text-align: right; }
+.chart-box { position: relative; height: 210px; width: 100%; }
+.chart-box--donut { height: 190px; }
+.donuts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.donut-block { min-width: 0; }
+.donut-caption { text-align: center; font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+
+.dashboard-inline-stats {
+    display: flex; flex-wrap: wrap; gap: 18px; align-items: center;
+    font-size: 0.78rem; color: var(--text-muted); margin: -4px 0 16px 0;
+}
+.dashboard-inline-stats strong { color: var(--text-main); font-weight: 600; }
+
+.rank-list { display: flex; flex-direction: column; gap: 10px; }
+.rank-head { display: flex; justify-content: space-between; gap: 12px; font-size: 0.8rem; margin-bottom: 4px; }
+.rank-name { color: var(--text-main); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank-value { color: var(--primary); font-weight: 700; white-space: nowrap; }
+.rank-track { height: 7px; background: var(--bg-surface-hover); border-radius: 999px; overflow: hidden; }
+.rank-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--primary), rgba(6, 182, 212, 0.45)); }
+.empty-state { text-align: center; color: var(--text-muted); padding: 24px 0; font-size: 0.8rem; }
+
+.kpi-grid--compact { gap: 14px; margin-bottom: 18px; }
+.kpi-grid--compact .kpi-card { padding: 14px 16px; gap: 4px; border-radius: 10px; }
+.kpi-grid--compact .kpi-icon { width: 26px; height: 26px; font-size: 0.8rem; }
+.kpi-grid--compact .kpi-value { font-size: 1.55rem; letter-spacing: -0.5px; }
+.kpi-grid--compact .kpi-label { font-size: 0.74rem; }
+.kpi-grid--compact .kpi-badge { font-size: 0.62rem; padding: 2px 6px; }
+
+@media (max-width: 1000px) {
+    .dashboard-grid, .dashboard-bottom { grid-template-columns: 1fr; }
+    .kpi-grid--compact { grid-template-columns: repeat(2, 1fr); }
+}
 
 /* =========================================
    TOASTS (Caja sólida + Ícono premium)

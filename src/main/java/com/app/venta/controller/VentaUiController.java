@@ -49,7 +49,7 @@ public class VentaUiController {
     @View("venta/form")
     @Get("/form")
     public Map<String, Object> form() {
-        return Map.of();
+        return Map.of("clientes", clienteService.findAll(), "productos", productoService.findAll());
     }
 
     @View("venta/detalle")

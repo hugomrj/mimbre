@@ -15,32 +15,24 @@ const VentaManager = {
         }
     },
 
-    seleccionarProducto: function(id, nombre, precio, stock) {
-        const buscarProductoInput = document.getElementById('buscarProductoInput');
-        const productoResultados = document.getElementById('productoResultados');
-        
-        if (buscarProductoInput && productoResultados) {
-            buscarProductoInput.value = nombre;
-            productoResultados.innerHTML = '';
-            
-            // Guardamos el producto temporalmente hasta que le dé a "Agregar"
-            this.productoTemporal = {
-                id: id,
-                nombre: nombre,
-                precio: precio,
-                stock: stock
-            };
+    seleccionarProductoDesdeSelect: function(select) {
+        const opt = select.options[select.selectedIndex];
+        if (!opt || !opt.value) {
+            this.productoTemporal = null;
+            return;
         }
+        this.productoTemporal = {
+            id: Number(opt.value),
+            nombre: opt.dataset.nombre,
+            precio: Number(opt.dataset.precio),
+            stock: Number(opt.dataset.stock)
+        };
     },
 
     abrirModalProducto: function() {
         const modal = document.getElementById('modalProducto');
         if (modal) {
             modal.classList.add('active');
-            const input = document.getElementById('buscarProductoInput');
-            if (input) {
-                setTimeout(() => input.focus(), 150);
-            }
         }
     },
 
@@ -49,13 +41,10 @@ const VentaManager = {
         if (modal) {
             modal.classList.remove('active');
         }
-        const buscarInput = document.getElementById('buscarProductoInput');
-        const prodResultados = document.getElementById('productoResultados');
         const cantInput = document.getElementById('inputCantidad');
 
-        if (buscarInput) buscarInput.value = '';
-        if (prodResultados) prodResultados.innerHTML = '';
         if (cantInput) cantInput.value = '1';
+        if (typeof resetVanillaSelect === 'function') resetVanillaSelect('selectProductoVenta');
         this.productoTemporal = null;
     },
 
@@ -100,15 +89,10 @@ const VentaManager = {
 
         this.renderizarTablaItems();
         this.showToast(`"${prod.nombre}" agregado a la venta`, 'success');
-        
-        // Limpiar para el siguiente producto
-        if (cantInput) cantInput.value = 1;
-        const buscarInput = document.getElementById('buscarProductoInput');
-        if (buscarInput) buscarInput.value = '';
-        this.productoTemporal = null;
 
+        if (cantInput) cantInput.value = 1;
         if (continuar) {
-            if (buscarInput) buscarInput.focus();
+            // Se mantiene el producto elegido para seguir agregando.
         } else {
             this.cerrarModalProducto();
         }
@@ -169,7 +153,7 @@ const VentaManager = {
         const clienteId = selectCliente ? selectCliente.value : '';
 
         if (!clienteId) {
-            this.showToast('Seleccione un cliente válido de la lista de sugerencias', 'warning');
+            this.showToast('Seleccione un cliente', 'warning');
             return false;
         }
 

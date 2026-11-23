@@ -16,6 +16,16 @@ Este proyecto está basado en **Micronaut Framework 4.8.0**, diseñado para la c
 * **Micronaut Serialization (Jackson):** [Documentación](https://micronaut-projects.github.io/micronaut-serialization/latest/guide/)
 * **Micronaut AOT:** [Documentación](https://micronaut-aot.github.io/micronaut-aot/latest/guide/)
 
+## Datos
+
+La base H2 y los backups viven en la carpeta del usuario:
+
+- Base: `~/.mimbre/data/database.mv.db`
+- Backups: `~/.mimbre/backups/`
+
+Al arrancar, `LegacyDataMigrator` copia una sola vez los datos de `./data` o
+`./target/data` si todavía existen.
+
 ## Comandos de Uso
 
 Para gestionar el ciclo de vida de la aplicación, utiliza los siguientes comandos en la terminal (desde la raíz del proyecto):

@@ -28,7 +28,7 @@ public class ProductoCategoriaService {
     }
 
     public List<ProductoCategoriaDto> findAll() {
-        return StreamSupport.stream(productoCategoriaRepository.findAll().spliterator(), false)
+        return StreamSupport.stream(productoCategoriaRepository.findAllByActivoTrue().spliterator(), false)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -36,7 +36,7 @@ public class ProductoCategoriaService {
     // ✅ NUEVO MÉTODO CON PAGINACIÓN
     public Page<ProductoCategoriaDto> findPage(int page, int size) {
         Pageable pageable = Pageable.from(page, size, Sort.of(Sort.Order.desc("id")));
-        Page<ProductoCategoria> pagina = productoCategoriaRepository.findAll(pageable);
+        Page<ProductoCategoria> pagina = productoCategoriaRepository.findAllByActivoTrue(pageable);
         return pagina.map(this::mapToDto);
     }
 
@@ -58,6 +58,7 @@ public class ProductoCategoriaService {
         }
         ProductoCategoria categoria = mapToEntity(dto);
         categoria.setId(id);
+        productoCategoriaRepository.findById(id).ifPresent(actual -> categoria.setActivo(actual.isActivo()));
         ProductoCategoria updated = productoCategoriaRepository.update(categoria);
         return Optional.of(mapToDto(updated));
     }
@@ -67,11 +68,12 @@ public class ProductoCategoriaService {
         Optional<ProductoCategoria> catOpt = productoCategoriaRepository.findById(id);
         if (catOpt.isPresent()) {
             ProductoCategoria cat = catOpt.get();
-            long countProductos = productoRepository.countByCategoria(cat.getNombre());
+            long countProductos = productoRepository.countByCategoriaId(cat.getId());
             if (countProductos > 0) {
                 throw new BusinessException("No se puede eliminar la categoría '" + cat.getNombre() + "' porque tiene " + countProductos + " producto(s) asociado(s).");
             }
-            productoCategoriaRepository.deleteById(id);
+            cat.setActivo(false);
+            productoCategoriaRepository.update(cat);
             return true;
         }
         return false;

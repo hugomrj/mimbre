@@ -4,6 +4,8 @@ import com.app.cliente.repository.ClienteRepository;
 import com.app.exception.BusinessException;
 import com.app.exception.ResourceNotFoundException;
 import com.app.exception.StockInsuficienteException;
+import com.app.movimiento_stock.service.MovimientoStockService;
+import com.app.secuencia.service.SecuenciaComprobanteService;
 import com.app.producto.model.Producto;
 import com.app.producto.repository.ProductoRepository;
 import com.app.venta.model.VentaDetalle;
@@ -18,6 +20,7 @@ import jakarta.inject.Singleton;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -29,21 +32,39 @@ public class VentaService {
     private final VentaDetalleRepository ventaDetalleRepository;
     private final ProductoRepository productoRepository;
     private final ClienteRepository clienteRepository;
+    private final MovimientoStockService movimientoStockService;
+    private final SecuenciaComprobanteService secuenciaComprobanteService;
 
     public VentaService(VentaRepository ventaRepository,
                         VentaDetalleRepository ventaDetalleRepository,
                         ProductoRepository productoRepository,
-                        ClienteRepository clienteRepository) {
+                        ClienteRepository clienteRepository,
+                        MovimientoStockService movimientoStockService,
+                        SecuenciaComprobanteService secuenciaComprobanteService) {
         this.ventaRepository = ventaRepository;
         this.ventaDetalleRepository = ventaDetalleRepository;
         this.productoRepository = productoRepository;
         this.clienteRepository = clienteRepository;
+        this.movimientoStockService = movimientoStockService;
+        this.secuenciaComprobanteService = secuenciaComprobanteService;
     }
 
     public List<VentaDto> findAll() {
         return StreamSupport.stream(ventaRepository.findAllOrderByIdDesc().spliterator(), false)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<VentaDto> findAllConDetalles() {
+        List<VentaDto> ventas = findAll();
+        Map<Long, List<VentaDetalleDto>> detallesPorVenta = StreamSupport
+                .stream(ventaDetalleRepository.findAll().spliterator(), false)
+                .filter(detalle -> detalle.getVentaId() != null)
+                .collect(Collectors.groupingBy(
+                        VentaDetalle::getVentaId,
+                        Collectors.mapping(this::mapDetalleToDto, Collectors.toList())));
+        ventas.forEach(venta -> venta.setDetalles(detallesPorVenta.getOrDefault(venta.getId(), List.of())));
+        return ventas;
     }
 
     public Optional<VentaDto> findById(Long id) {
@@ -70,6 +91,9 @@ public class VentaService {
                 Producto prod = productoRepository.findById(dDto.getProductoId())
                         .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado (ID: " + dDto.getProductoId() + ")"));
                 int cantidad = dDto.getCantidad() != null ? dDto.getCantidad() : 1;
+                if (!prod.isActivo()) {
+                    throw new BusinessException("El producto '" + prod.getNombre() + "' esta inactivo y no se puede vender.");
+                }
                 if (prod.getStock() < cantidad) {
                     throw new StockInsuficienteException("Stock insuficiente para '" + prod.getNombre() + "'. Stock disponible: " + prod.getStock() + ", solicitado: " + cantidad);
                 }
@@ -80,8 +104,7 @@ public class VentaService {
         
         // Número de factura autogenerado
         if (dto.getNumeroFactura() == null || dto.getNumeroFactura().trim().isEmpty()) {
-            long count = ventaRepository.count() + 1;
-            venta.setNumeroFactura(String.format("001-001-%07d", count));
+            venta.setNumeroFactura(secuenciaComprobanteService.siguiente("VENTA"));
         } else {
             venta.setNumeroFactura(dto.getNumeroFactura());
         }
@@ -90,7 +113,12 @@ public class VentaService {
         venta.setClienteId(dto.getClienteId());
         if (dto.getClienteId() != null) {
             clienteRepository.findById(dto.getClienteId())
-                    .ifPresent(cli -> venta.setClienteNombre(cli.getNombre()));
+                    .ifPresent(cli -> {
+                        if (!cli.isActivo()) {
+                            throw new BusinessException("El cliente '" + cli.getNombre() + "' esta inactivo.");
+                        }
+                        venta.setClienteNombre(cli.getNombre());
+                    });
         } else {
             venta.setClienteNombre(dto.getClienteNombre() != null ? dto.getClienteNombre() : "Cliente Ocasional");
         }
@@ -124,8 +152,8 @@ public class VentaService {
                     // Descontar stock
                     int cantidad = dDto.getCantidad() != null ? dDto.getCantidad() : 1;
                     detalle.setCantidad(cantidad);
-                    prod.setStock(Math.max(0, prod.getStock() - cantidad));
-                    productoRepository.update(prod);
+                    movimientoStockService.registrar(prod, -cantidad, "VENTA", "VENTA",
+                            savedVenta.getId(), "Venta " + savedVenta.getNumeroFactura(), prod.getCostoActual());
                 } else {
                     detalle.setProductoNombre(dDto.getProductoNombre() != null ? dDto.getProductoNombre() : "Producto");
                     detalle.setPrecioUnitario(dDto.getPrecioUnitario() != null ? dDto.getPrecioUnitario() : BigDecimal.ZERO);
@@ -159,10 +187,10 @@ public class VentaService {
             List<VentaDetalle> detalles = ventaDetalleRepository.findByVentaId(venta.getId());
             for (VentaDetalle d : detalles) {
                 if (d.getProductoId() != null) {
-                    productoRepository.findById(d.getProductoId()).ifPresent(prod -> {
-                        prod.setStock(prod.getStock() + d.getCantidad());
-                        productoRepository.update(prod);
-                    });
+                    productoRepository.findById(d.getProductoId()).ifPresent(prod ->
+                        movimientoStockService.registrar(prod, d.getCantidad(), "ANULACION_VENTA",
+                                "ANULACION_VENTA", venta.getId(),
+                                "Anulación venta " + venta.getNumeroFactura(), prod.getCostoActual()));
                 }
             }
             return true;

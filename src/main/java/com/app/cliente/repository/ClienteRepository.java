@@ -3,6 +3,8 @@ package com.app.cliente.repository;
 import com.app.cliente.model.Cliente;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
+import io.micronaut.data.model.Page;
+import io.micronaut.data.model.Pageable;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.PageableRepository;
 
@@ -11,6 +13,10 @@ import java.util.List;
 @JdbcRepository(dialect = Dialect.H2)
 public interface ClienteRepository extends PageableRepository<Cliente, Long> {
 
-    @Query("SELECT * FROM cliente WHERE LOWER(nombre) LIKE LOWER(:q) OR LOWER(ruc_documento) LIKE LOWER(:q)")
+    @Query("SELECT * FROM cliente WHERE activo = TRUE AND (LOWER(nombre) LIKE LOWER(:q) OR LOWER(ruc_documento) LIKE LOWER(:q))")
     List<Cliente> buscar(String q);
+
+    List<Cliente> findAllByActivoTrue();
+
+    Page<Cliente> findAllByActivoTrue(Pageable pageable);
 }

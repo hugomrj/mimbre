@@ -3,8 +3,6 @@ package com.app.cliente.service;
 import com.app.cliente.dto.ClienteDto;
 import com.app.cliente.model.Cliente;
 import com.app.cliente.repository.ClienteRepository;
-import com.app.exception.BusinessException;
-import com.app.venta.repository.VentaRepository;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.data.model.Sort;
@@ -19,15 +17,13 @@ import java.util.stream.StreamSupport;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
-    private final VentaRepository ventaRepository;
 
-    public ClienteService(ClienteRepository clienteRepository, VentaRepository ventaRepository) {
+    public ClienteService(ClienteRepository clienteRepository) {
         this.clienteRepository = clienteRepository;
-        this.ventaRepository = ventaRepository;
     }
 
     public List<ClienteDto> findAll() {
-        return StreamSupport.stream(clienteRepository.findAll().spliterator(), false)
+        return StreamSupport.stream(clienteRepository.findAllByActivoTrue().spliterator(), false)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -35,7 +31,7 @@ public class ClienteService {
     // ✅ NUEVO MÉTODO CON PAGINACIÓN
     public Page<ClienteDto> findPage(int page, int size) {
         Pageable pageable = Pageable.from(page, size, Sort.of(Sort.Order.desc("id")));
-        Page<Cliente> pagina = clienteRepository.findAll(pageable);
+        Page<Cliente> pagina = clienteRepository.findAllByActivoTrue(pageable);
         return pagina.map(this::mapToDto);
     }
 
@@ -67,6 +63,7 @@ public class ClienteService {
         }
         Cliente cliente = mapToEntity(dto);
         cliente.setId(id);
+        clienteRepository.findById(id).ifPresent(actual -> cliente.setActivo(actual.isActivo()));
         Cliente updated = clienteRepository.update(cliente);
         return Optional.of(mapToDto(updated));
     }
@@ -76,11 +73,8 @@ public class ClienteService {
         Optional<Cliente> cliOpt = clienteRepository.findById(id);
         if (cliOpt.isPresent()) {
             Cliente cli = cliOpt.get();
-            long countVentas = ventaRepository.countByClienteId(id);
-            if (countVentas > 0) {
-                throw new BusinessException("No se puede eliminar el cliente '" + cli.getNombre() + "' porque cuenta con " + countVentas + " venta(s) registrada(s).");
-            }
-            clienteRepository.deleteById(id);
+            cli.setActivo(false);
+            clienteRepository.update(cli);
             return true;
         }
         return false;
@@ -97,11 +91,15 @@ public class ClienteService {
         return dto;
     }
 
+    private String normalizar(String valor) {
+        return valor == null || valor.trim().isEmpty() ? null : valor.trim();
+    }
+
     private Cliente mapToEntity(ClienteDto dto) {
         Cliente cliente = new Cliente();
         cliente.setId(dto.getId());
         cliente.setNombre(dto.getNombre());
-        cliente.setRucDocumento(dto.getRucDocumento());
+        cliente.setRucDocumento(normalizar(dto.getRucDocumento()));
         cliente.setTelefono(dto.getTelefono());
         cliente.setEmail(dto.getEmail());
         cliente.setDireccion(dto.getDireccion());

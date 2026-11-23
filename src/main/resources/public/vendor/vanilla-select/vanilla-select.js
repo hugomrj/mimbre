@@ -149,6 +149,22 @@ class VanillaSelect {
         }
     }
 
+    setValue(value) {
+        const str = value == null ? '' : String(value);
+        this.select.value = str;
+        const valueSpan = this.control.querySelector('.vs-value');
+        let texto = null;
+        this.options.forEach(li => {
+            const match = li.dataset.value === str;
+            li.classList.toggle('is-selected', match);
+            if (match) texto = li.textContent;
+        });
+        if (texto !== null) {
+            valueSpan.textContent = texto;
+            valueSpan.classList.toggle('vs-placeholder', str === '');
+        }
+    }
+
     selectOption(li) {
         this.options.forEach(opt => opt.classList.remove('is-selected'));
         li.classList.add('is-selected');
@@ -177,9 +193,16 @@ function initVanillaSelects() {
     document.querySelectorAll('select.vanilla-select').forEach(select => {
         if (!select.dataset.vanillaInit) {
             select.dataset.vanillaInit = 'true';
-            new VanillaSelect(select);
+            select._vanillaSelect = new VanillaSelect(select);
         }
     });
+}
+
+function resetVanillaSelect(id) {
+    const select = document.getElementById(id);
+    if (select && select._vanillaSelect) {
+        select._vanillaSelect.setValue('');
+    }
 }
 
 // ✅ Envolvemos todo en DOMContentLoaded para que el body ya exista

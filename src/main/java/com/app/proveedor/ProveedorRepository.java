@@ -15,6 +15,10 @@ public interface ProveedorRepository extends CrudRepository<Proveedor, Long> {
     // ✅ NUEVO: Método para paginación nativa
     Page<Proveedor> findAll(Pageable pageable);
 
-    @Query("SELECT * FROM proveedor WHERE LOWER(nombre) LIKE LOWER(:pattern) OR LOWER(ruc) LIKE LOWER(:pattern)")
+    @Query("SELECT * FROM proveedor WHERE activo = TRUE AND (LOWER(nombre) LIKE LOWER(:pattern) OR LOWER(ruc) LIKE LOWER(:pattern))")
     List<Proveedor> buscar(String pattern);
+
+    List<Proveedor> findAllByActivoTrue();
+
+    Page<Proveedor> findAllByActivoTrue(Pageable pageable);
 }

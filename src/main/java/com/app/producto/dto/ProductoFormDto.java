@@ -25,8 +25,15 @@ public class ProductoFormDto {
     @Min(value = 0, message = "El stock no puede ser negativo")
     private Integer stock;
 
-    @NotBlank(message = "La categoría es obligatoria")
+    private Long categoriaId;
+
     private String categoria;
+
+    @Min(value = 0, message = "El costo no puede ser negativo")
+    private BigDecimal costoActual;
+
+    @Min(value = 0, message = "El stock mínimo no puede ser negativo")
+    private Integer stockMinimo;
 
     public ProductoFormDto() {
     }
@@ -53,6 +60,15 @@ public class ProductoFormDto {
 
     public Integer getStock() { return stock; }
     public void setStock(Integer stock) { this.stock = stock; }
+
+    public BigDecimal getCostoActual() { return costoActual; }
+    public void setCostoActual(BigDecimal costoActual) { this.costoActual = costoActual; }
+
+    public Integer getStockMinimo() { return stockMinimo; }
+    public void setStockMinimo(Integer stockMinimo) { this.stockMinimo = stockMinimo; }
+
+    public Long getCategoriaId() { return categoriaId; }
+    public void setCategoriaId(Long categoriaId) { this.categoriaId = categoriaId; }
 
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }

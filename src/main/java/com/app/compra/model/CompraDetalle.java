@@ -1,10 +1,13 @@
 package com.app.compra.model;
 
+import io.micronaut.data.annotation.DateCreated;
+import io.micronaut.data.annotation.DateUpdated;
 import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @MappedEntity
 public class CompraDetalle {
@@ -12,6 +15,12 @@ public class CompraDetalle {
     @Id
     @GeneratedValue(GeneratedValue.Type.AUTO)
     private Long id;
+
+    @DateCreated
+    private LocalDateTime creadoEn;
+
+    @DateUpdated
+    private LocalDateTime actualizadoEn;
 
     private Long compraId;
     private Long productoId;
@@ -52,4 +61,10 @@ public class CompraDetalle {
 
     public BigDecimal getSubtotal() { return subtotal; }
     public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
+
+    public LocalDateTime getCreadoEn() { return creadoEn; }
+    public void setCreadoEn(LocalDateTime creadoEn) { this.creadoEn = creadoEn; }
+
+    public LocalDateTime getActualizadoEn() { return actualizadoEn; }
+    public void setActualizadoEn(LocalDateTime actualizadoEn) { this.actualizadoEn = actualizadoEn; }
 }

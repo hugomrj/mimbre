@@ -5,6 +5,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.data.exceptions.DataAccessException;
 import io.micronaut.http.server.exceptions.ExceptionHandler;
 import jakarta.inject.Singleton;
 import jakarta.validation.ConstraintViolationException;
@@ -63,6 +64,9 @@ public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpR
         if (ex instanceof ConstraintViolationException) {
             return HttpStatus.BAD_REQUEST;
         }
+        if (ex instanceof DataAccessException && esViolacionDeIntegridad(ex)) {
+            return HttpStatus.BAD_REQUEST;
+        }
         if (ex instanceof IllegalArgumentException || ex instanceof IllegalStateException) {
             return HttpStatus.BAD_REQUEST;
         }
@@ -75,7 +79,17 @@ public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpR
                     .map(v -> v.getMessage())
                     .collect(Collectors.joining(". "));
         }
+        if (ex instanceof DataAccessException && esViolacionDeIntegridad(ex)) {
+            return "Los datos violan una restriccion de la base (valor duplicado o referencia invalida).";
+        }
         return ex.getMessage() != null ? ex.getMessage() : "Ha ocurrido un error inesperado en el servidor.";
+    }
+
+    private boolean esViolacionDeIntegridad(Throwable ex) {
+        String mensaje = ex.getMessage() != null ? ex.getMessage().toLowerCase() : "";
+        return mensaje.contains("unique") || mensaje.contains("constraint")
+                || mensaje.contains("duplicate") || mensaje.contains("referential")
+                || mensaje.contains("check");
     }
 
     private String sanitize(String input) {

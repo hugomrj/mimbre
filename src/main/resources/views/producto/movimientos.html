@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block navbar_title %}Movimientos de stock{% endblock %}
+
+{% block content %}
+<div class="page-view page-view--wide">
+
+    <div data-page-title="Movimientos de stock"></div>
+
+    <div class="toolbar">
+        <div class="toolbar-filters">
+            <span class="filter-chip active">
+                {{ producto.nombre | default('Producto') }}
+                <span class="count">{{ producto.stock | default(0) }}</span>
+            </span>
+            <span class="text-muted" style="font-size:.85rem; margin-left:8px;">SKU {{ producto.sku | default('-') }}</span>
+        </div>
+        <div class="toolbar-right">
+            <button class="btn-ghost" hx-get="/ui/productos/list" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Stock antes</th>
+                <th>Stock después</th>
+                <th>Costo unitario</th>
+                <th>Origen</th>
+                <th>Motivo</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for m in movimientos %}
+            <tr class="row-anim">
+                <td><span class="mono" style="font-size:.8rem;">{{ m.creadoEn }}</span></td>
+                <td><span class="filter-chip" style="font-size:.75rem;">{{ m.tipo }}</span></td>
+                <td>
+                    <strong style="color: {% if m.cantidad > 0 %}#22C55E{% else %}#EF4444{% endif %};">
+                        {% if m.cantidad > 0 %}+{% endif %}{{ m.cantidad }}
+                    </strong>
+                </td>
+                <td>{{ m.stockAnterior }}</td>
+                <td>{{ m.stockNuevo }}</td>
+                <td>₲ {{ m.costoUnitario | default(0) }}</td>
+                <td>
+                    {{ m.origenTipo | default('') }}
+                    {% if m.origenId %}<span class="mono">#{{ m.origenId }}</span>{% endif %}
+                </td>
+                <td>{{ m.motivo | default('') }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                    No hay movimientos registrados para este producto.
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

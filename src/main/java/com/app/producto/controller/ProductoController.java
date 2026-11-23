@@ -1,5 +1,6 @@
 package com.app.producto.controller;
 
+import com.app.movimiento_stock.dto.MovimientoStockDto;
 import com.app.producto.dto.ProductoDto;
 import com.app.producto.dto.ProductoFormDto;
 import com.app.producto.service.ProductoService;
@@ -27,6 +28,14 @@ public class ProductoController {
         return productoService.findById(id)
                 .map(HttpResponse::ok)
                 .orElse(HttpResponse.notFound());
+    }
+
+    @Get("/{id}/movimientos")
+    public HttpResponse<List<MovimientoStockDto>> movimientos(@PathVariable Long id) {
+        if (productoService.findById(id).isEmpty()) {
+            return HttpResponse.notFound();
+        }
+        return HttpResponse.ok(productoService.findMovimientos(id));
     }
 
     @Post

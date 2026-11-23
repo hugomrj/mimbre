@@ -1,7 +1,5 @@
 package com.app.proveedor;
 
-import com.app.compra.repository.CompraRepository;
-import com.app.exception.BusinessException;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.transaction.annotation.Transactional;
@@ -16,21 +14,19 @@ import java.util.stream.StreamSupport;
 public class ProveedorService {
 
     private final ProveedorRepository proveedorRepository;
-    private final CompraRepository compraRepository;
 
-    public ProveedorService(ProveedorRepository proveedorRepository, CompraRepository compraRepository) {
+    public ProveedorService(ProveedorRepository proveedorRepository) {
         this.proveedorRepository = proveedorRepository;
-        this.compraRepository = compraRepository;
     }
 
     // ✅ NUEVO MÉTODO: Paginación nativa igual que en Cliente y Producto
     public Page<ProveedorDto> findPage(int page, int size) {
-        Page<Proveedor> entityPage = proveedorRepository.findAll(Pageable.from(page, size));
+        Page<Proveedor> entityPage = proveedorRepository.findAllByActivoTrue(Pageable.from(page, size));
         return entityPage.map(this::mapToDto);
     }
 
     public List<ProveedorDto> findAll() {
-        return StreamSupport.stream(proveedorRepository.findAll().spliterator(), false)
+        return StreamSupport.stream(proveedorRepository.findAllByActivoTrue().spliterator(), false)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -63,21 +59,18 @@ public class ProveedorService {
         }
         Proveedor proveedor = mapToEntity(dto);
         proveedor.setId(id);
+        proveedorRepository.findById(id).ifPresent(actual -> proveedor.setActivo(actual.isActivo()));
         Proveedor updated = proveedorRepository.update(proveedor);
         return Optional.of(mapToDto(updated));
     }
 
     @Transactional
     public boolean delete(Long id) {
-        if (proveedorRepository.existsById(id)) {
-            long countCompras = compraRepository.countByProveedorId(id);
-            if (countCompras > 0) {
-                throw new BusinessException("No se puede eliminar el proveedor '" + proveedorRepository.findById(id).map(Proveedor::getNombre).orElse("") + "' porque cuenta con " + countCompras + " compra(s) registrada(s).");
-            }
-            proveedorRepository.deleteById(id);
+        return proveedorRepository.findById(id).map(proveedor -> {
+            proveedor.setActivo(false);
+            proveedorRepository.update(proveedor);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     private ProveedorDto mapToDto(Proveedor proveedor) {
@@ -91,11 +84,15 @@ public class ProveedorService {
         return dto;
     }
 
+    private String normalizar(String valor) {
+        return valor == null || valor.trim().isEmpty() ? null : valor.trim();
+    }
+
     private Proveedor mapToEntity(ProveedorDto dto) {
         Proveedor proveedor = new Proveedor();
         proveedor.setId(dto.getId());
         proveedor.setNombre(dto.getNombre());
-        proveedor.setRuc(dto.getRuc());
+        proveedor.setRuc(normalizar(dto.getRuc()));
         proveedor.setTelefono(dto.getTelefono());
         proveedor.setEmail(dto.getEmail());
         proveedor.setDireccion(dto.getDireccion());

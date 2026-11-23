@@ -15,32 +15,24 @@ proveedorResultados.innerHTML = '';
 }
 },
 
-seleccionarProducto: function(id, nombre, precio, stock) {
-const buscarProductoInput = document.getElementById('buscarProductoInputCompra');
-const productoResultados = document.getElementById('productoResultadosCompra');
-
-if (buscarProductoInput && productoResultados) {
-buscarProductoInput.value = nombre;
-productoResultados.innerHTML = '';
-
-// Guardamos el producto temporalmente hasta que le dé a "Agregar"
-this.productoTemporal = {
-id: id,
-nombre: nombre,
-precio: precio,
-stock: stock
-};
+seleccionarProductoDesdeSelect: function(select) {
+const opt = select.options[select.selectedIndex];
+if (!opt || !opt.value) {
+this.productoTemporal = null;
+return;
 }
+this.productoTemporal = {
+id: Number(opt.value),
+nombre: opt.dataset.nombre,
+precio: Number(opt.dataset.precio),
+stock: Number(opt.dataset.stock)
+};
 },
 
 abrirModalProducto: function() {
 const modal = document.getElementById('modalProductoCompra');
 if (modal) {
 modal.classList.add('active');
-const input = document.getElementById('buscarProductoInputCompra');
-if (input) {
-setTimeout(() => input.focus(), 150);
-}
 }
 },
 
@@ -49,13 +41,10 @@ const modal = document.getElementById('modalProductoCompra');
 if (modal) {
 modal.classList.remove('active');
 }
-const buscarInput = document.getElementById('buscarProductoInputCompra');
-const prodResultados = document.getElementById('productoResultadosCompra');
 const cantInput = document.getElementById('inputCantidadCompra');
 
-if (buscarInput) buscarInput.value = '';
-if (prodResultados) prodResultados.innerHTML = '';
 if (cantInput) cantInput.value = '1';
+if (typeof resetVanillaSelect === 'function') resetVanillaSelect('selectProductoCompra');
 this.productoTemporal = null;
 },
 
@@ -91,14 +80,9 @@ subtotal: cantidad * prod.precio
 
 this.renderizarTablaItems();
 
-// Limpiar para el siguiente producto
 if (cantInput) cantInput.value = 1;
-const buscarInput = document.getElementById('buscarProductoInputCompra');
-if (buscarInput) buscarInput.value = '';
-this.productoTemporal = null;
-
 if (continuar) {
-if (buscarInput) buscarInput.focus();
+// Se mantiene el producto elegido para seguir agregando.
 } else {
 this.cerrarModalProducto();
 }
@@ -159,7 +143,7 @@ const selectProveedor = document.getElementById('selectProveedor');
 const proveedorId = selectProveedor ? selectProveedor.value : '';
 
 if (!proveedorId) {
-this.showToast('Seleccione un proveedor válido de la lista de sugerencias', 'warning');
+this.showToast('Seleccione un proveedor', 'warning');
 return false;
 }
 
