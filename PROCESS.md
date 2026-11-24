@@ -5,8 +5,8 @@
 > Contexto: `CONTEXT.md`. Plan por hitos: `PLAN.md`. Estado diario: `PROGRESS.md`.
 > Reglas: `AGENTS.md`.
 
-**Fecha de corte:** 2026-11-23 (America/Asunción)
-**Rama:** `main` · **Commit base:** `20b584f` · **Working tree:** 59 cambios sin commitear
+**Fecha de corte:** 2026-11-24 (America/Asunción)
+**Rama:** `main` · **Commit:** `4786d68` · **Working tree:** limpio
 **App:** corriendo en `http://localhost:8000` (una sola instancia)
 **Base:** `~/.mimbre/data/database.mv.db` · **Backups:** `~/.mimbre/backups/`
 
@@ -23,7 +23,7 @@ comprobantes y dashboard.
 - **M3 (numeración):** implementado y verificado; pendiente de aprobación formal.
 - **Extras posteriores:** dashboard ampliado/compacto y varias correcciones de UI
   (navegación Ventas/Compras, `vanilla-select`, modales de producto, layout de venta).
-- **Sin commit:** todo el trabajo está en el working tree. **Riesgo principal.**
+- **Commits al día:** el código está commiteado y pusheado; falta tag/release.
 
 ---
 
@@ -31,17 +31,19 @@ comprobantes y dashboard.
 
 ### Base de datos y calidad (M0/M1)
 - Flyway como dueño del esquema (`schema-generate=NONE`).
-- Migraciones **V1 a V6**:
+- Migraciones **V1 a V7**:
   - V1 baseline (8 tablas).
   - V2 `fecha_anulacion`.
   - V3 integridad: timestamps, `activo`, unique, checks, FKs, índices.
   - V4 `producto.categoria_id` con backfill y FK.
   - V5 kardex: `movimiento_stock`, `costo_actual`, `stock_minimo`.
   - V6 `secuencia_comprobante`.
+  - V7 proveedor opcional: quita `NOT NULL` de campos opcionales.
 - Datos movidos de `./data`/`target/data` a **`~/.mimbre/data`**.
 - `BackupService`: `CHECKPOINT` + copia a `~/.mimbre/backups`, retención 30 días.
 - Soft delete en producto, cliente y proveedor; listados filtran activos.
 - Errores de integridad devueltos como HTTP 400.
+- Proveedores con campos opcionales; email vacío válido (`@Pattern`) y RUC/email vacíos normalizados a `NULL`.
 
 ### Inventario y ventas (M2/M3)
 - `MovimientoStockService` es la única vía de escritura del stock.
@@ -64,8 +66,8 @@ comprobantes y dashboard.
 - Formulario de venta/compra: sin título “Detalle de Productos”, botón Agregar a la derecha y secundario, total alineado.
 
 ### Tests
-- **10 tests**, última corrida completa: 10/10.
-  - humo de contexto, baseline Flyway, migración legacy, 3 de integridad, seed, kardex, 2 de numeración.
+- **12 tests**, última corrida completa: 12/12.
+  - humo de contexto, baseline Flyway, migración legacy, 3 de integridad, seed, kardex, 2 de numeración y 2 de proveedor.
 - Después de esa corrida hubo cambios de dashboard/UI; **volver a correr tests al retomar**.
 
 ---
@@ -76,11 +78,12 @@ comprobantes y dashboard.
 |---|---|
 | Productos | 49 |
 | Clientes activos | 15 |
+| Proveedores activos | 10 |
 | Ventas | 1 (₲ 150.000) |
 | Movimientos de stock | 50 (49 iniciales + 1 venta) |
 | Secuencia VENTA | 1 |
 | Secuencia COMPRA | 0 |
-| Migración actual | V6 |
+| Migración actual | V7 |
 
 **No borrar esa venta ni la base**: puede ser data de prueba del humano.
 
@@ -177,7 +180,7 @@ ss -ltnp | grep :8000
 
 ## 7. Riesgos y cuidados
 
-1. **Trabajo sin commit.** Es el riesgo más alto: 59 cambios. Commitear antes de seguir.
+1. **Sin tag/release todavía.** El código está commiteado y pusheado; falta decidir versión y publicar artefactos.
 2. **App corriendo** en `:8000`; no empaquetar con la app viva.
 3. **No tocar `~/.mimbre` a mano** sin backup; hay una venta real.
 4. **Costos en 0** en la base demo: no confundir con un bug del dashboard.
@@ -189,6 +192,6 @@ ss -ltnp | grep :8000
 
 > Leé `PROCESS.md`, `PROGRESS.md`, `PLAN.md` y `AGENTS.md`.
 > Decime en qué estado estamos y cuál es la próxima acción.
-> Primero ayudame a revisar y commitear los cambios pendientes.
+> Primero revisá el estado de git y los tests.
 > Después seguí con **M4 — Caja**, salvo que yo pida priorizar la UX de venta.
 > Un hito a la vez: no mezcles dos. No toques `~/.mimbre` sin backup.
