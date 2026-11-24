@@ -26,12 +26,16 @@ public class GlobalExceptionHandler implements ExceptionHandler<Throwable, HttpR
 
     @Override
     public HttpResponse<?> handle(HttpRequest request, Throwable exception) {
-        LOG.error("Excepción capturada en GlobalExceptionHandler [URI: {}]: {}", 
-                request.getUri(), exception.getMessage(), exception);
+        HttpStatus status = determineHttpStatus(exception);
+
+        if (status.getCode() >= 400 && status.getCode() < 500) {
+            // Errores esperados de validación/negocio: no son fallos del servidor.
+            LOG.warn("Solicitud rechazada [{}]: {}", request.getUri(), exception.getMessage());
+        } else {
+            LOG.error("Excepción no controlada [{}]: {}", request.getUri(), exception.getMessage(), exception);
+        }
 
         boolean isUiRequest = request.getPath().startsWith("/ui") || request.getHeaders().contains("HX-Request");
-
-        HttpStatus status = determineHttpStatus(exception);
         String errorMessage = formatMessage(exception);
 
         if (isUiRequest) {

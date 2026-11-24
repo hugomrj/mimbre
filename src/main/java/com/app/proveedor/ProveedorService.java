@@ -1,5 +1,6 @@
 package com.app.proveedor;
 
+import com.app.exception.BusinessException;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.transaction.annotation.Transactional;
@@ -48,6 +49,7 @@ public class ProveedorService {
     @Transactional
     public ProveedorDto save(ProveedorDto dto) {
         Proveedor proveedor = mapToEntity(dto);
+        validarRucUnico(proveedor.getRuc(), null);
         Proveedor saved = proveedorRepository.save(proveedor);
         return mapToDto(saved);
     }
@@ -59,6 +61,7 @@ public class ProveedorService {
         }
         Proveedor proveedor = mapToEntity(dto);
         proveedor.setId(id);
+        validarRucUnico(proveedor.getRuc(), id);
         proveedorRepository.findById(id).ifPresent(actual -> proveedor.setActivo(actual.isActivo()));
         Proveedor updated = proveedorRepository.update(proveedor);
         return Optional.of(mapToDto(updated));
@@ -71,6 +74,17 @@ public class ProveedorService {
             proveedorRepository.update(proveedor);
             return true;
         }).orElse(false);
+    }
+
+    private void validarRucUnico(String ruc, Long id) {
+        if (ruc == null || ruc.isBlank()) {
+            return;
+        }
+        proveedorRepository.findFirstByRuc(ruc).ifPresent(existente -> {
+            if (id == null || !existente.getId().equals(id)) {
+                throw new BusinessException("Ya existe un proveedor con el RUC " + ruc + ".");
+            }
+        });
     }
 
     private ProveedorDto mapToDto(Proveedor proveedor) {
@@ -91,12 +105,25 @@ public class ProveedorService {
     private Proveedor mapToEntity(ProveedorDto dto) {
         Proveedor proveedor = new Proveedor();
         proveedor.setId(dto.getId());
-        proveedor.setNombre(dto.getNombre());
-        proveedor.setRuc(normalizar(dto.getRuc()));
+        proveedor.setNombre(normalizarNombre(dto.getNombre()));
+        proveedor.setRuc(normalizarRuc(dto.getRuc()));
         proveedor.setEmail(normalizar(dto.getEmail()));
         proveedor.setTelefono(dto.getTelefono());
-        proveedor.setEmail(dto.getEmail());
         proveedor.setDireccion(dto.getDireccion());
         return proveedor;
+    }
+
+    private String normalizarNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new BusinessException("El nombre del proveedor es obligatorio.");
+        }
+        return nombre.trim();
+    }
+
+    private String normalizarRuc(String ruc) {
+        if (ruc == null || ruc.trim().isEmpty()) {
+            throw new BusinessException("El RUC del proveedor es obligatorio.");
+        }
+        return ruc.trim();
     }
 }

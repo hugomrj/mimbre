@@ -77,7 +77,18 @@ function pathMatches(currentPath, href) {
 
 // ✅ Sincroniza el menú con la URL actual (Soluciona el bug del F5)
 function syncActiveMenuWithUrl() {
-    const currentPath = window.location.pathname;
+    const alias = {
+        '/ui/proveedores/form': '/ui/proveedores/list',
+        '/ui/clientes/form': '/ui/clientes/list',
+        '/ui/productos/form': '/ui/productos/list',
+        '/ui/productos/movimientos': '/ui/productos/list',
+        '/ui/categorias/form': '/ui/categorias/list',
+        '/ui/ventas/form': '/ui/ventas/list',
+        '/ui/ventas/detalle': '/ui/ventas/list',
+        '/ui/compras/form': '/ui/compras/list',
+        '/ui/compras/detalle': '/ui/compras/list'
+    };
+    const currentPath = alias[window.location.pathname] || window.location.pathname;
     const menuLinks = document.querySelectorAll('.nav-item, .nav-sub-item');
 
     // 1. Cerrar TODOS los submenús primero (esto es lo que faltaba)

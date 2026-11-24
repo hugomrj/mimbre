@@ -80,11 +80,16 @@ function closePageSizeDropdown() {
 // =========================================================
 // 5. MODALES (Confirmación de eliminación y anulación)
 // =========================================================
-function configurarBotonConfirmar(btnConfirmar, url) {
+function configurarBotonConfirmar(btnConfirmar, url, hxSelect) {
     btnConfirmar.removeAttribute('disabled');
     btnConfirmar.setAttribute('hx-post', url);
     btnConfirmar.setAttribute('hx-target', '#id-main');
     btnConfirmar.setAttribute('hx-disabled-elt', 'this');
+    if (hxSelect) {
+        btnConfirmar.setAttribute('hx-select', hxSelect);
+    } else {
+        btnConfirmar.removeAttribute('hx-select');
+    }
     if (typeof htmx !== 'undefined') htmx.process(btnConfirmar);
 }
 
@@ -106,7 +111,7 @@ function abrirModalEliminacion(nombreRegistro, urlDelete) {
     if (titulo) titulo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ¿Confirmar Eliminación?`;
     setTextoConfirmacion('¿Está seguro de que desea eliminar ', nombreRegistro, '? Esta acción no se puede deshacer.');
     btnConfirmar.innerHTML = `<i class="fas fa-trash-alt"></i> Confirmar y Eliminar`;
-    configurarBotonConfirmar(btnConfirmar, urlDelete);
+    configurarBotonConfirmar(btnConfirmar, urlDelete, '#id-main');
     modal.classList.add('active');
 }
 

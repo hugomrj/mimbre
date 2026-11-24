@@ -52,7 +52,7 @@ class FlywayBaselineTest {
                 .load();
         flyway.migrate();
 
-        assertEquals("7", flyway.info().current().getVersion().getVersion());
+        assertEquals("8", flyway.info().current().getVersion().getVersion());
 
         // 3. Los datos siguen ahi y el historial registra baseline + migracion.
         try (Connection conn = DriverManager.getConnection(url, "sa", "");

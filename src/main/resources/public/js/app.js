@@ -35,6 +35,14 @@ function setupHtmxListeners() {
 }
 
 function setupGlobalListeners() {
+    // Errores de UI: el backend envía HX-Trigger: showToast
+    document.addEventListener('showToast', function (evt) {
+        const detalle = evt.detail || {};
+        if (typeof showToast === 'function') {
+            showToast(detalle.message || 'Ocurrió un error', detalle.type || 'error');
+        }
+    });
+
     // Cerrar modales al hacer clic afuera
     document.addEventListener('click', function(e) {
         const modalElim = document.getElementById('modalConfirmarEliminacion');

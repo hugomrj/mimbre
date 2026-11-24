@@ -1,5 +1,6 @@
 package com.app;
 
+import com.app.exception.BusinessException;
 import com.app.proveedor.ProveedorDto;
 import com.app.proveedor.ProveedorService;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -8,6 +9,7 @@ import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,10 +34,20 @@ class ProveedorTest {
     }
 
     @Test
-    void guardaProveedorSinRucNiEmail() {
+    void rucVacioEsRechazado() {
         ProveedorDto dto = new ProveedorDto();
-        dto.setNombre("Proveedor opcional");
+        dto.setNombre("Proveedor sin RUC");
         dto.setRuc("");
+        dto.setEmail("");
+
+        assertThrows(BusinessException.class, () -> proveedorService.save(dto));
+    }
+
+    @Test
+    void guardaProveedorConRucSinEmail() {
+        ProveedorDto dto = new ProveedorDto();
+        dto.setNombre("Proveedor con RUC");
+        dto.setRuc("80000000-1");
         dto.setEmail("");
 
         ProveedorDto guardado = proveedorService.save(dto);
