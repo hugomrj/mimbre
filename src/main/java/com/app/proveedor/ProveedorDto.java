@@ -1,8 +1,7 @@
 package com.app.proveedor;
 
 import io.micronaut.serde.annotation.Serdeable;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Serdeable
 public class ProveedorDto {
@@ -14,7 +13,10 @@ public class ProveedorDto {
 
     private String telefono;
 
-    @Email(message = "El formato del correo electrónico no es válido")
+    @Pattern(
+            regexp = "^$|^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "El formato del correo electrónico no es válido"
+    )
     private String email;
 
     private String direccion;
