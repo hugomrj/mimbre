@@ -159,6 +159,10 @@ Para agregar o modificar un feature, seguí este orden:
 - **Selects**: todo `<select>` debe llevar `class="form-control vanilla-select"`;
   nunca uses un select nativo. El componente se inicializa solo en
   `DOMContentLoaded` y `htmx:afterSwap`.
+- **Fragmentos vs páginas**: si la vista destino **no** extiende `layout.html`
+  (es un fragmento), el `hx-get` va a `#id-main` **sin** `hx-select`. Si la vista
+  extiende layout, usá `hx-select="#id-main"`. Un `hx-select` sobre un fragmento
+  deja la pantalla en blanco.
 - **JavaScript**: `const`/`let`, funciones nombradas, sin dependencias nuevas.
   Respetá el orden de carga de `layout.html` (ui → dominio → main → app).
 

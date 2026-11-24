@@ -18,7 +18,7 @@
 
             <button class="btn-ghost" onclick="showToast('Exportando...')"><i class="fas fa-file-export"></i> Exportar</button>
 
-            <button class="btn-add" hx-get="/ui/proveedores/form" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <button class="btn-add" hx-get="/ui/proveedores/form" hx-target="#id-main" hx-push-url="true">
                 <i class="fas fa-plus"></i> Nuevo proveedor
             </button>
         </div>
@@ -49,7 +49,6 @@
                         <button class="row-action-btn" title="Editar"
                                 hx-get="/ui/proveedores/form?id={{ p.id }}"
                                 hx-target="#id-main"
-                                hx-select="#id-main"
                                 hx-push-url="true">
                             <i class="fas fa-pen"></i>
                         </button>

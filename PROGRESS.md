@@ -235,6 +235,7 @@
 
 | Fecha | Qué | Referencia |
 |---|---|---|
+| 2026-11-24 | Fix Proveedores: “Nuevo/Editar” quedaba en blanco por `hx-select` sobre un fragmento; se quitó el select | UI |
 | 2026-11-23 | Se crea `PROCESS.md` con el traspaso y los próximos pasos | traspaso |
 | 2026-11-23 | Dashboard rediseñado: KPIs compactos, evolución con área degradada, composición en 2 doughnuts, ventas vs compras y ranking top | UI |
 | 2026-11-23 | UI Venta/Compra: sin título "Detalle de Productos", botón Agregar a la derecha y estilo secundario; total alineado | UI |
