@@ -249,6 +249,8 @@ muerto (sin implementar).
     saldo inicial de cada producto.
   - `V6__secuencias.sql`: `secuencia_comprobante` y backfill desde los numeros
     existentes.
+  - `V7__proveedor_opcional.sql`: quita el `NOT NULL` de los campos opcionales
+    de proveedor (nombre, RUC, teléfono, email, dirección).
   - `baseline-on-migrate=true` y `baseline-version=1`: una base existente sin
     historial se marca como versión 1 y solo se aplican las migraciones nuevas,
     sin perder datos.
@@ -310,8 +312,9 @@ python build.py         # package + jpackage → release/Mimbre (JRE incluido)
   autenticación, sesiones ni roles: la app se abre directo en la PC del negocio
   y, si existe, el usuario es predeterminado y transparente. Los endpoints de
   desarrollo están expuestos.
-- **Tests básicos** (10): humo, baseline, migración, tres de integridad, seed,
-  kardex y dos de numeración (ventas y compras). Todavía
+- **Tests básicos** (12): humo, baseline, migración, tres de integridad, seed,
+  kardex, dos de numeración y dos de proveedor (email vacío/inválido y guardado
+  sin RUC). Todavía
   no hay tests de ventas, compras, cobros ni caja (M2/M5).
 - **Soft delete sin interfaz de administración**: los listados solo muestran
   activos; no hay pantalla para ver o reactivar inactivos.

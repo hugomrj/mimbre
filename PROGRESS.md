@@ -6,7 +6,7 @@
 > Plan por hitos y revisiones: `PLAN.md`. Traspaso de sesión: `PROCESS.md`.
 
 **Última actualización:** 2026-11-23 · **Versión:** 0.1 · **Rama:** `main` · **Commit base:** `20b584f` (+ M0/M1a sin commitear)
-**Tests:** 10 · **Cobertura:** sin medir
+**Tests:** 12 · **Cobertura:** sin medir
 
 ---
 
@@ -75,7 +75,7 @@
 | Java / Micronaut | 21 / 4.8.0 |
 | Base de datos | H2 en `~/.mimbre/data/database.mv.db` (backups en `~/.mimbre/backups`) |
 | Puerto | 8000 |
-| Tests | 10 (humo, baseline, migración, integridad, seed, kardex y numeración) |
+| Tests | 12 (humo, baseline, migración, integridad, seed, kardex, numeración y proveedor) |
 | Distribución | `jpackage` app-image (Win/Linux/macOS) vía `build.py` + CI |
 | Último commit | `20b584f` |
 
@@ -235,6 +235,7 @@
 
 | Fecha | Qué | Referencia |
 |---|---|---|
+| 2026-11-24 | Fix Proveedores: campos opcionales; `V7` quita `NOT NULL` de la tabla vieja y se normalizan RUC/email vacíos | UI |
 | 2026-11-24 | Fix Proveedores: email vacío ya no devuelve 400; validación con `@Pattern` que acepta vacío | UI |
 | 2026-11-24 | Fix Proveedores: “Nuevo/Editar” quedaba en blanco por `hx-select` sobre un fragmento; se quitó el select | UI |
 | 2026-11-23 | Se crea `PROCESS.md` con el traspaso y los próximos pasos | traspaso |

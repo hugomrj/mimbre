@@ -93,6 +93,7 @@ public class ProveedorService {
         proveedor.setId(dto.getId());
         proveedor.setNombre(dto.getNombre());
         proveedor.setRuc(normalizar(dto.getRuc()));
+        proveedor.setEmail(normalizar(dto.getEmail()));
         proveedor.setTelefono(dto.getTelefono());
         proveedor.setEmail(dto.getEmail());
         proveedor.setDireccion(dto.getDireccion());

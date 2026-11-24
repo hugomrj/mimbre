@@ -52,7 +52,7 @@ o las reglas de negocio, actualizá `CONTEXT.md` en el mismo commit.
 ```bash
 ./mvnw mn:run                 # desarrollo (http://localhost:8000)
 ./mvnw compile                # compilar
-./mvnw test                   # tests JUnit 5 (10 tests)
+./mvnw test                   # tests JUnit 5 (12 tests)
 ./mvnw clean package          # JAR sombreado en target/mimbre-0.1.jar
 python build.py               # package + jpackage → release/Mimbre
 ./mvnw validate               # enforcer
@@ -98,7 +98,7 @@ src/main/java/com/app/
 
 src/main/resources/
 ├── application.properties        # puerto 8000, H2, Flyway, backup, estáticos
-├── db/migration/                 # Flyway: V1 baseline, V2 fecha, V3 integridad, V4 categoría, V5 kardex, V6 secuencias
+├── db/migration/                 # Flyway: V1 baseline, V2 fecha, V3 integridad, V4 categoría, V5 kardex, V6 secuencias, V7 proveedor opcional
 ├── views/                        # Pebble: layout.html + <feature>/*.html + fragments/
 └── public/                       # css/, js/, vendor/ (htmx, chartjs, fontawesome, ...)
 ```
@@ -207,7 +207,7 @@ Para agregar o modificar un feature, seguí este orden:
   que mantiene el proceso vivo.
 - **Base en `~/.mimbre/data`**: sobrevive a `mvn clean`; no la borres a mano.
   `LegacyDataMigrator` copia una sola vez desde `./data` o `target/data`.
-- **Tests**: hay 10 (humo, baseline, migración, tres de integridad, seed, kardex y dos de numeración). Si agregás
+- **Tests**: hay 12 (humo, baseline, migración, tres de integridad, seed, kardex, dos de numeración y dos de proveedor). Si agregás
   lógica, sumá tests en `src/test/java` con JUnit 5 + Micronaut Test.
 
 ## 9. Verificación antes de terminar
