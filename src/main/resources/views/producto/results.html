@@ -1,10 +1,10 @@
 <!-- views/producto/results.html -->
 <div class="cliente-dropdown-list">
     {% for prod in productos %}
-    <div class="cliente-dropdown-item" onclick="VentaManager.seleccionarProducto({{ prod.id }}, '{{ prod.nombre }}', {{ prod.precio }}, {{ prod.stock }})">
+    <div class="cliente-dropdown-item" onclick="VentaManager.seleccionarProducto({{ prod.id }}, '{{ prod.nombre }}', {{ prod.precioVenta }}, {{ prod.stock }})">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <div style="font-weight: 600; color: var(--dark-text);">{{ prod.nombre }}</div>
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--primary);">₲ {{ prod.precio }}</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--primary);">₲ {{ prod.precioVenta }}</div>
         </div>
         <div style="font-size: 0.75rem; color: var(--dark-text-muted); margin-top: 4px;">
             SKU: {{ prod.sku }} | 

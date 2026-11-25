@@ -5,8 +5,8 @@
 > bloquea. Contexto del sistema: `CONTEXT.md`. Reglas de trabajo: `AGENTS.md`.
 > Plan por hitos y revisiones: `PLAN.md`. Traspaso de sesión: `PROCESS.md`.
 
-**Última actualización:** 2026-11-23 · **Versión:** 0.1 · **Rama:** `main` · **Commit base:** `20b584f` (+ M0/M1a sin commitear)
-**Tests:** 12 · **Cobertura:** sin medir
+**Última actualización:** 2026-11-25 · **Versión:** 1.0 · **Rama:** `main` · **Commit base:** `75e225f` (+ v1 sin commitear)
+**Tests:** 13 · **Cobertura:** sin medir
 
 ---
 
@@ -19,13 +19,13 @@
 | Pregunta | Estado al 2026-11-23 |
 |---|---|
 | **¿Qué es el proyecto?** | **Mimbre**: gestión comercial de escritorio para un pequeño negocio paraguayo (productos, categorías, clientes, proveedores, ventas, compras, stock y dashboard). Java 21 + Micronaut 4.8 + H2 + Pebble/HTMX, offline en `http://localhost:8000`. |
-| **¿En qué fase está?** | **MVP funcional + base versionada, íntegra, con kardex y secuencias (M0–M3).** Flyway, constraints, FKs, categoría normalizada y soft delete. Sin login por diseño. |
-| **¿Qué está terminado y usable?** | CRUD de productos, categorías, clientes y proveedores; ventas y compras con actualización de stock; anulaciones con reversión; dashboard con KPIs; búsqueda y paginación; build multiplataforma con JRE incluido. |
-| **¿Qué estoy haciendo ahora?** | **M3 implementado; dashboard y UI extra también.** Esperando revisión y commit. Datos en `~/.mimbre`, integridad, kardex, secuencias y dashboard ampliado. |
-| **¿Cuál es la próxima acción concreta?** | Commitear lo pendiente, revisar M3 y decidir: **M4 — Caja** o **UX de venta completa**. |
+| **¿En qué fase está?** | **v1.0 cerrada como base operativa interna.** M0–M3 aprobados, más dashboard, reportes, backups y configuración. Caja, cobranzas, gastos y devoluciones quedan para **v2**. |
+| **¿Qué está terminado y usable?** | CRUD de productos, categorías, clientes y proveedores; precios de venta y compra; ventas y compras; kardex; anulaciones; dashboard; reportes con CSV; búsqueda global; ajuste de stock con motivo; configuración, backups, restauración y borrado seguro; build multiplataforma. |
+| **¿Qué estoy haciendo ahora?** | **Cierre de v1.0.** Código y documentación listos para commit y push. La v2 está planificada pero no iniciada. |
+| **¿Cuál es la próxima acción concreta?** | Commitear y etiquetar v1.0. Después, iniciar **v2 por M4 — Caja**, seguido de formas de pago y cobranzas. |
 | **¿Qué me bloquea?** | Nada. |
-| **¿Qué decisión está pendiente?** | Ninguna de alcance; la siguiente es numeración (M3). |
-| **¿Qué NO asumir?** | Que hay caja, cobros o tests de ventas a crédito: **no los hay**. Kardex, secuencias, FKs, unique y soft delete sí. El login no existe por diseño. |
+| **¿Qué decisión está pendiente?** | Orden fino de v2. Recomendación registrada: Caja → formas de pago → Cobranzas → Gastos. |
+| **¿Qué NO asumir?** | Que hay caja, cobranzas, gastos o devoluciones: **no las hay en v1**. Kardex, secuencias, reportes, backups y ajuste de stock sí. El login no existe por diseño. |
 | **¿Dónde toco si...?** | Ver `AGENTS.md` §4 (mapa del código) y §5 (anatomía de un feature). |
 | **¿Cómo sé que terminé?** | Criterio del hito en `PLAN.md` + checklist de `AGENTS.md` §9. |
 
@@ -71,13 +71,13 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 0.1 |
+| Versión | 1.0 |
 | Java / Micronaut | 21 / 4.8.0 |
 | Base de datos | H2 en `~/.mimbre/data/database.mv.db` (backups en `~/.mimbre/backups`) |
 | Puerto | 8000 |
-| Tests | 12 (humo, baseline, migración, integridad, seed, kardex, numeración y proveedor) |
+| Tests | 13 (humo, baseline, migración, integridad, seed, kardex, numeración, proveedor y precios) |
 | Distribución | `jpackage` app-image (Win/Linux/macOS) vía `build.py` + CI |
-| Último commit | `20b584f` |
+| Último commit | `75e225f` + v1 sin commitear |
 
 ---
 
@@ -235,6 +235,8 @@
 
 | Fecha | Qué | Referencia |
 |---|---|---|
+| 2026-11-25 | v1.0 cerrada: precios venta/compra, reportes, configuración, backups, restauración/borrado, ajuste de stock, bajo stock accionable, presets de fecha y paleta de gráficos | v1.0 |
+| 2026-11-25 | Alcance de v2 registrado: Caja, Cobranzas, Gastos/ganancia real, CxP, Devoluciones y costo histórico de venta | PLAN §9 |
 | 2026-11-24 | Fix Proveedores: campos opcionales; `V7` quita `NOT NULL` de la tabla vieja y se normalizan RUC/email vacíos | UI |
 | 2026-11-24 | Fix Proveedores: email vacío ya no devuelve 400; validación con `@Pattern` que acepta vacío | UI |
 | 2026-11-24 | Fix Proveedores: “Nuevo/Editar” quedaba en blanco por `hx-select` sobre un fragmento; se quitó el select | UI |

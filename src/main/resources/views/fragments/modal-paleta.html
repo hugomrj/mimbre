@@ -6,7 +6,23 @@
             <button class="modal-close-btn" onclick="closeSettingsModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <label class="form-label">Elige el estilo visual para tu sistema</label>
+            <label class="form-label">Tema</label>
+            <div class="palette-grid theme-grid">
+                <button class="palette-item theme-item" data-theme-option="dark" onclick="applyTheme('dark')">
+                    <span class="palette-circle" style="background:#18181B; border:1px solid #52525B;"></span>
+                    <span class="palette-label">Oscuro</span>
+                </button>
+                <button class="palette-item theme-item" data-theme-option="light" onclick="applyTheme('light')">
+                    <span class="palette-circle" style="background:#F4F4F5; border:1px solid #D4D4D8;"></span>
+                    <span class="palette-label">Claro</span>
+                </button>
+                <button class="palette-item theme-item" data-theme-option="auto" onclick="applyTheme('auto')">
+                    <span class="palette-circle" style="background:linear-gradient(135deg,#18181B 50%,#F4F4F5 50%); border:1px solid #52525B;"></span>
+                    <span class="palette-label">Automático</span>
+                </button>
+            </div>
+
+            <label class="form-label" style="margin-top:18px;">Color principal</label>
 
             <div class="palette-grid">
                 <!-- Cyan -->

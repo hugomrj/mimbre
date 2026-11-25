@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block navbar_title %}{{ reporte.titulo }}{% endblock %}
+
+{% block content %}
+<div class="page-view page-view--wide">
+
+    <div data-page-title="{{ reporte.titulo }}" style="display: none;"></div>
+
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <div>
+                <h2 class="reporte-titulo">{{ reporte.titulo }}</h2>
+                <p class="reporte-subtitulo">{{ reporte.subtitulo }}</p>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <a class="btn-ghost" style="text-decoration:none;" href="/ui/reportes"
+               hx-get="/ui/reportes" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+                <i class="fas fa-arrow-left"></i> Reportes
+            </a>
+            <a class="btn-ghost" style="text-decoration:none;" href="{{ exportUrl }}">
+                <i class="fas fa-file-csv"></i> Exportar CSV
+            </a>
+            <button class="btn-primary" onclick="window.print()">
+                <i class="fas fa-print"></i> Imprimir
+            </button>
+        </div>
+    </div>
+
+    {% if reporte.mostrarFechas %}
+    <form class="reporte-filtros" id="formFiltroReporte" action="/ui/reportes/{{ reporte.tipo }}" method="get">
+        <div class="reporte-presets">
+            <button type="button" class="filter-chip" onclick="aplicarPresetReporte('hoy')">Hoy</button>
+            <button type="button" class="filter-chip" onclick="aplicarPresetReporte('semana')">Semana</button>
+            <button type="button" class="filter-chip" onclick="aplicarPresetReporte('mes')">Mes</button>
+            <button type="button" class="filter-chip" onclick="aplicarPresetReporte('ano')">Año</button>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="desde">Desde</label>
+            <input type="date" id="desde" name="desde" value="{{ desde }}" class="form-control">
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="hasta">Hasta</label>
+            <input type="date" id="hasta" name="hasta" value="{{ hasta }}" class="form-control">
+        </div>
+        <button type="submit" class="btn-primary">Filtrar</button>
+    </form>
+    {% endif %}
+
+    <div class="kpi-grid kpi-grid--compact reporte-kpis">
+        {% for kpi in reporte.kpis %}
+        <div class="kpi-card">
+            <span class="kpi-label">{{ kpi.etiqueta }}</span>
+            <span class="kpi-value">{{ kpi.valor }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead>
+            <tr>
+                {% for columna in reporte.columnas %}
+                <th>{{ columna }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for fila in reporte.filas %}
+            <tr class="row-anim">
+                {% for celda in fila %}
+                <td>{{ celda }}</td>
+                {% endfor %}
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="{{ reporte.columnas.size() }}" style="text-align:center; padding:32px; color:var(--text-muted);">
+                    No hay datos para el rango seleccionado.
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

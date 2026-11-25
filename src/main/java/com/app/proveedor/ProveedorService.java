@@ -22,7 +22,14 @@ public class ProveedorService {
 
     // ✅ NUEVO MÉTODO: Paginación nativa igual que en Cliente y Producto
     public Page<ProveedorDto> findPage(int page, int size) {
-        Page<Proveedor> entityPage = proveedorRepository.findAllByActivoTrue(Pageable.from(page, size));
+        return findPage(page, size, null);
+    }
+
+    public Page<ProveedorDto> findPage(int page, int size, String q) {
+        Pageable pageable = Pageable.from(page, size);
+        Page<Proveedor> entityPage = (q == null || q.trim().isEmpty())
+                ? proveedorRepository.findAllByActivoTrue(pageable)
+                : proveedorRepository.buscarPaginado("%" + q.trim() + "%", pageable);
         return entityPage.map(this::mapToDto);
     }
 

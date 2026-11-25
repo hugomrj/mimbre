@@ -5,9 +5,9 @@
 > Contexto: `CONTEXT.md`. Plan por hitos: `PLAN.md`. Estado diario: `PROGRESS.md`.
 > Reglas: `AGENTS.md`.
 
-**Fecha de corte:** 2026-11-24 (America/Asunción)
-**Rama:** `main` · **Commit:** `4786d68` · **Working tree:** limpio
-**App:** corriendo en `http://localhost:8000` (una sola instancia)
+**Fecha de corte:** 2026-11-25 (America/Asunción)
+**Rama:** `main` · **Commit:** `75e225f` + v1 sin commitear
+**App:** detenida
 **Base:** `~/.mimbre/data/database.mv.db` · **Backups:** `~/.mimbre/backups/`
 
 ---
@@ -19,11 +19,11 @@ para una myPyme paraguaya. Hoy funciona de punta a punta: productos, categorías
 clientes, proveedores, ventas, compras, kardex de stock, secuencias de
 comprobantes y dashboard.
 
-- **Hitos M0–M2:** aprobados y verificados.
-- **M3 (numeración):** implementado y verificado; pendiente de aprobación formal.
+- **Hitos M0–M3:** aprobados y verificados.
+- **Versión 1.0:** cerrada como base operativa interna.
 - **Extras posteriores:** dashboard ampliado/compacto y varias correcciones de UI
   (navegación Ventas/Compras, `vanilla-select`, modales de producto, layout de venta).
-- **Commits al día:** el código está commiteado y pusheado; falta tag/release.
+- **Pendiente inmediato:** commit, push y tag de v1.0. Después inicia v2.
 
 ---
 
@@ -31,7 +31,7 @@ comprobantes y dashboard.
 
 ### Base de datos y calidad (M0/M1)
 - Flyway como dueño del esquema (`schema-generate=NONE`).
-- Migraciones **V1 a V7**:
+- Migraciones **V1 a V9**:
   - V1 baseline (8 tablas).
   - V2 `fecha_anulacion`.
   - V3 integridad: timestamps, `activo`, unique, checks, FKs, índices.
@@ -39,6 +39,8 @@ comprobantes y dashboard.
   - V5 kardex: `movimiento_stock`, `costo_actual`, `stock_minimo`.
   - V6 `secuencia_comprobante`.
   - V7 proveedor opcional: quita `NOT NULL` de campos opcionales.
+  - V8 RUC de proveedor obligatorio.
+  - V9 precios de venta y compra del producto.
 - Datos movidos de `./data`/`target/data` a **`~/.mimbre/data`**.
 - `BackupService`: `CHECKPOINT` + copia a `~/.mimbre/backups`, retención 30 días.
 - Soft delete en producto, cliente y proveedor; listados filtran activos.
@@ -66,7 +68,7 @@ comprobantes y dashboard.
 - Formulario de venta/compra: sin título “Detalle de Productos”, botón Agregar a la derecha y secundario, total alineado.
 
 ### Tests
-- **12 tests**, última corrida completa: 12/12.
+- **13 tests**, última corrida completa: 13/13.
   - humo de contexto, baseline Flyway, migración legacy, 3 de integridad, seed, kardex, 2 de numeración y 2 de proveedor.
 - Después de esa corrida hubo cambios de dashboard/UI; **volver a correr tests al retomar**.
 
@@ -93,7 +95,7 @@ comprobantes y dashboard.
 
 ### Inmediato (antes de seguir)
 1. **Revisar y commitear** todo el working tree. Hay 59 archivos modificados/nuevos sin commit.
-2. Aprobar formalmente **M3** (o registrar observaciones).
+2. Etiquetar **v1.0.0**.
 3. Decidir prioridad: **M4 Caja** o **UX de venta completa**.
 
 ### UX de venta pendiente (no está en un hito formal)
@@ -105,7 +107,7 @@ comprobantes y dashboard.
 - Atajos de teclado (`F2` producto, `F4` cobrar).
 - URLs directas `/ui/ventas/list` y `/ui/ventas/form` renderizan solo el fragmento (sin layout).
 
-### Hitos siguientes (ver `PLAN.md`)
+### Versión 2 (ver `PLAN.md` §9)
 - **M4 — Caja:** `caja_sesion`, `caja_movimiento`, apertura/cierre, arqueo simple, ventas en efectivo.
 - **M5 — Cobranzas:** `forma_pago`, `cuenta_cobrar`, `cobro`, `cobro_aplicacion`.
 - **M6 — Compras a crédito:** `cuenta_pagar`, `pago_proveedor`.
@@ -195,3 +197,32 @@ ss -ltnp | grep :8000
 > Primero revisá el estado de git y los tests.
 > Después seguí con **M4 — Caja**, salvo que yo pida priorizar la UX de venta.
 > Un hito a la vez: no mezcles dos. No toques `~/.mimbre` sin backup.
+
+
+---
+
+## 9. Versión 2 — alcance registrado
+
+No iniciar sin pedido explícito. Orden recomendado:
+
+1. **M4 — Caja:** apertura, cierre, movimientos y arqueo.
+2. **Formas de pago y vuelto**, consumidor final, descuentos y ticket térmico.
+3. **M5 — Cobranzas:** cuenta por cobrar, cobros parciales y antigüedad.
+4. **M7 — Gastos y ganancia real:** `categoria_gasto`, `gasto`, estado de
+   resultados y snapshot de `costo_unitario` en `venta_detalle`.
+5. **M6 — Compras a crédito / cuentas por pagar.**
+6. **M8 — Devoluciones parciales.**
+7. **M9 — Reportes v2, release y tag `v2.0.0`.**
+
+Fórmula:
+
+```
+Ventas netas      = ventas completadas - devoluciones
+Costo de ventas   = suma(costo_unitario_snapshot * cantidad)
+Margen bruto      = ventas netas - costo de ventas
+Gastos operativos = suma(gastos del período)
+Resultado neto    = margen bruto - gastos operativos
+```
+
+Una compra de mercadería no es gasto del período: queda en inventario y se
+reconoce como costo al vender.

@@ -3,10 +3,13 @@ package com.app.compra.controller;
 import com.app.compra.dto.CompraDetalleDto;
 import com.app.compra.dto.CompraDto;
 import com.app.compra.service.CompraService;
+import com.app.utils.FormatoNumero;
 import com.app.producto.service.ProductoService;
 import com.app.proveedor.ProveedorService;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.views.View;
@@ -14,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,15 +43,64 @@ public class CompraUiController {
     }
 
     @View("compra/table")
-    @Get("/list{?estado}")
-    public Map<String, Object> list(@Nullable String estado) {
+    @Get("/list{?estado,q}")
+    public Map<String, Object> list(@Nullable String estado, @Nullable String q) {
         List<CompraDto> compras = compraService.findAll();
         if (estado != null && !estado.trim().isEmpty() && !"TODAS".equalsIgnoreCase(estado)) {
             compras = compras.stream()
                     .filter(c -> estado.equalsIgnoreCase(c.getEstado()))
                     .collect(Collectors.toList());
         }
-        return Map.of("compras", compras, "estadoFiltro", estado != null ? estado.toUpperCase() : "TODAS");
+        if (q != null && !q.trim().isEmpty()) {
+            String texto = q.trim().toLowerCase();
+            compras = compras.stream().filter(c ->
+                    (c.getNumeroFactura() != null && c.getNumeroFactura().toLowerCase().contains(texto))
+                    || (c.getProveedorNombre() != null && c.getProveedorNombre().toLowerCase().contains(texto))
+                    || (c.getEstado() != null && c.getEstado().toLowerCase().contains(texto))
+            ).toList();
+        }
+        return Map.of("compras", compras,
+                "estadoFiltro", estado != null ? estado.toUpperCase() : "TODAS",
+                "q", q != null ? q : "");
+    }
+
+    @Get("/exportar{?estado,q}")
+    public HttpResponse<byte[]> exportar(@Nullable String estado, @Nullable String q) {
+        List<CompraDto> compras = compraService.findAll();
+        if (estado != null && !estado.trim().isEmpty() && !"TODAS".equalsIgnoreCase(estado)) {
+            compras = compras.stream()
+                    .filter(c -> estado.equalsIgnoreCase(c.getEstado()))
+                    .collect(Collectors.toList());
+        }
+        if (q != null && !q.trim().isEmpty()) {
+            String texto = q.trim().toLowerCase();
+            compras = compras.stream().filter(c ->
+                    (c.getNumeroFactura() != null && c.getNumeroFactura().toLowerCase().contains(texto))
+                    || (c.getProveedorNombre() != null && c.getProveedorNombre().toLowerCase().contains(texto))
+                    || (c.getEstado() != null && c.getEstado().toLowerCase().contains(texto))
+            ).toList();
+        }
+
+        StringBuilder csv = new StringBuilder("\uFEFF");
+        csv.append("N° Factura;Fecha;Proveedor;Condición;Total;Estado\r\n");
+        for (CompraDto c : compras) {
+            csv.append(quote(c.getNumeroFactura())).append(';')
+                    .append(c.getFecha() != null ? c.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : "").append(';')
+                    .append(quote(c.getProveedorNombre())).append(';')
+                    .append(quote(c.getCondicion())).append(';')
+                    .append(FormatoNumero.miles(c.getMontoTotal())).append(';')
+                    .append(quote(c.getEstado())).append("\r\n");
+        }
+
+        String nombre = "compras-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmm")) + ".csv";
+        return HttpResponse.ok(csv.toString().getBytes(StandardCharsets.UTF_8))
+                .contentType(MediaType.of("text/csv; charset=UTF-8"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombre + "\"");
+    }
+
+    private String quote(String valor) {
+        if (valor == null) return "";
+        return "\"" + valor.replace("\"", "\"\"") + "\"";
     }
 
     @View("compra/form")
@@ -69,6 +124,14 @@ public class CompraUiController {
                     .orElseGet(Map::of);
         }
         return Map.of();
+    }
+
+    @View("compra/reporte")
+    @Get("/reporte/{id}")
+    public Map<String, Object> reporte(@PathVariable Long id) {
+        return compraService.findById(id)
+                .map(compra -> Map.<String, Object>of("compra", compra))
+                .orElseGet(Map::of);
     }
 
     @View("compra/table")

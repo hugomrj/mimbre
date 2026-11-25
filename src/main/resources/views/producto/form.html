@@ -9,7 +9,7 @@
 
     <div data-page-title="{% if producto.id %}Editar Producto{% else %}Nuevo Producto{% endif %}" style="display: none;"></div>
 
-    <form hx-post="/ui/productos/save" hx-target="#id-main" hx-select="#id-main" hx-push-url="/ui/productos/list" class="form-container animate-fade-in delay-1">
+    <form id="formProducto" hx-post="/ui/productos/save" hx-target="#id-main" hx-select="#id-main" hx-push-url="/ui/productos/list" class="form-container animate-fade-in delay-1">
         {% if producto.id %}
         <input type="hidden" name="id" value="{{ producto.id }}">
         {% endif %}
@@ -34,9 +34,16 @@
             </select>
         </div>
 
-        <div class="form-group col-2">
-            <label class="form-label" for="prodPrecio">Precio</label>
-            <input type="number" id="prodPrecio" step="0.01" name="precio" value="{{ producto.precio }}" required class="form-control">
+        <div class="form-group col-3">
+            <label class="form-label" for="prodPrecioVenta">Precio de venta</label>
+            <input type="text" id="prodPrecioVenta" inputmode="numeric" name="precioVenta"
+                   value="{{ producto.precioVentaMiles }}" required class="form-control money-input">
+        </div>
+
+        <div class="form-group col-3">
+            <label class="form-label" for="prodPrecioCompra">Precio de compra</label>
+            <input type="text" id="prodPrecioCompra" inputmode="numeric" name="precioCompra"
+                   value="{% if producto.id %}{{ producto.precioCompraMiles }}{% else %}0{% endif %}" required class="form-control money-input">
         </div>
 
         <div class="form-group col-2">
@@ -45,7 +52,7 @@
         </div>
 
         <div class="form-group col-2">
-            <label class="form-label" for="prodCosto">Costo actual</label>
+            <label class="form-label" for="prodCosto">Costo actual (kardex)</label>
             <input type="number" id="prodCosto" step="0.01" min="0" name="costoActual"
                    value="{{ producto.costoActual | default(0) }}" class="form-control">
         </div>

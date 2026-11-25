@@ -131,17 +131,36 @@
 /* ✅ BUSCADOR: Usa border-focus al hacer clic */
 .navbar-search { position: relative; }
 .navbar-search input {
-    width: 200px; padding: 8px 12px 8px 32px; border-radius: 8px; border: 1px solid transparent;
+    width: 200px; padding: 8px 34px 8px 32px; border-radius: 8px; border: 1px solid transparent;
     background: var(--bg-surface-hover); color: var(--text-main); font-size: 0.875rem;
     font-family: 'Outfit', sans-serif; outline: none; transition: all 0.2s ease;
 }
 .navbar-search input:focus {
     background: var(--bg-app);
     border: 1px solid var(--border-focus);
-    width: 240px;
+    width: 380px;
 }
 .navbar-search input::placeholder { color: var(--text-muted); }
-.navbar-search i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; pointer-events: none; }
+.navbar-search > i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem; pointer-events: none; }
+.navbar-search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+}
+.navbar-search-clear:hover { background: var(--bg-surface-hover); color: var(--text-main); }
+.navbar-search-clear[hidden] { display: none; }
 
 .navbar-btn {
     width: 32px; height: 32px; border-radius: 50%; border: none;

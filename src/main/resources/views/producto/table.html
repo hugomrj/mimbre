@@ -23,7 +23,8 @@
             <thead>
             <tr>
                 <th>Producto</th>
-                <th>Precio</th>
+                <th>Precio venta</th>
+                <th>Precio compra</th>
                 <th>Stock</th>
                 <th>Categoría</th>
                 <th style="text-align:right">Acciones</th>
@@ -38,11 +39,18 @@
                         <span class="product-sku">{{ p.sku }}</span>
                     </div>
                 </td>
-                <td><span class="price">₲ {{ p.precio }}</span></td>
+                <td><span class="price">{{ p.precioVentaMiles }}</span></td>
+                <td><span class="price">{{ p.precioCompraMiles }}</span></td>
                 <td><span class="stock-num">{{ p.stock }}</span></td>
                 <td>{{ p.categoria }}</td>
                 <td>
                     <div class="row-actions">
+                        <button class="row-action-btn" title="Ajustar stock"
+                                data-id="{{ p.id }}" data-nombre="{{ p.nombre }}" data-stock="{{ p.stock }}"
+                                onclick="abrirModalAjuste(this)">
+                            <i class="fas fa-sliders"></i>
+                        </button>
+
                         <button class="row-action-btn" title="Movimientos"
                                 hx-get="/ui/productos/movimientos?id={{ p.id }}"
                                 hx-target="#id-main"
@@ -68,7 +76,7 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="5" style="text-align: center; padding: 32px; color: var(--text-muted);">No hay productos registrados.</td>
+                <td colspan="6" style="text-align: center; padding: 32px; color: var(--text-muted);">No hay productos registrados.</td>
             </tr>
             {% endfor %}
             </tbody>

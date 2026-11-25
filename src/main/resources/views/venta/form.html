@@ -8,7 +8,7 @@
 
 <div class="table-card" style="padding: 24px;">
 
-    <form hx-post="/ui/ventas/save" hx-target="#id-main" class="form-container" id="formVenta">
+    <form hx-post="/ui/ventas/save" hx-target="#id-main" hx-select="#id-main" class="form-container" id="formVenta">
 
         <!-- FILA 1: Cliente (4/6) + Condición (2/6) -->
         <div class="form-group col-4">
@@ -43,7 +43,7 @@
                 <tr>
                     <th>Producto</th>
                     <th style="width: 120px; text-align: center;">Cantidad</th>
-                    <th style="width: 150px; text-align: right;">Precio Unit.</th>
+                    <th style="width: 150px; text-align: right;">Precio Venta</th>
                     <th style="width: 150px; text-align: right;">Subtotal</th>
                     <th style="width: 60px; text-align: center;">Acción</th>
                 </tr>
@@ -67,14 +67,14 @@
                 Total a Pagar:
             </div>
             <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary);" id="labelTotalVenta">
-                ₲ 0
+                0
             </div>
         </div>
 
         <!-- FILA DE ACCIONES -->
         <div class="form-actions">
             <button type="submit" class="btn-add"><i class="fas fa-check"></i> Emitir Factura / Confirmar Venta</button>
-            <button type="button" class="btn-ghost" hx-get="/ui/ventas/list" hx-target="#id-main">Cancelar</button>
+            <button type="button" class="btn-ghost" hx-get="/ui/ventas/list" hx-target="#id-main" hx-select="#id-main">Cancelar</button>
         </div>
 
     </form>
@@ -98,20 +98,20 @@
                         onchange="VentaManager.seleccionarProductoDesdeSelect(this)">
                     <option value="" disabled selected>Seleccione un producto</option>
                     {% for p in productos %}
-                    <option value="{{ p.id }}" data-nombre="{{ p.nombre }}" data-precio="{{ p.precio }}" data-stock="{{ p.stock }}">
-                        {{ p.nombre }} ({{ p.sku }}) - ₲ {{ p.precio }} - Stock {{ p.stock }}
+                    <option value="{{ p.id }}" data-nombre="{{ p.nombre }}" data-precio-venta="{{ p.precioVenta }}" data-stock="{{ p.stock }}">
+                        {{ p.nombre }} ({{ p.sku }}) - {{ p.precioVentaMiles }} - Stock {{ p.stock }}
                     </option>
                     {% endfor %}
                 </select>
             </div>
 
-            <div>
+            <div class="cantidad-group">
                 <label class="form-label" for="inputCantidad">Cantidad</label>
-                <input type="number" id="inputCantidad" value="1" min="1" class="form-control">
+                <input type="number" id="inputCantidad" value="1" min="1" class="form-control cantidad-input">
             </div>
         </div>
         <!-- ✅ FIX: jerarquía de botones — primario (Agregar y Cerrar) a la derecha, secundario (Continuar) a la izquierda -->
-        <div class="modal-footer">
+        <div class="modal-footer modal-footer--izquierda">
             <button type="button" class="btn-ghost" onclick="VentaManager.agregarItemDesdeInput(true)">
                 <i class="fas fa-plus-circle"></i> Agregar y Continuar
             </button>

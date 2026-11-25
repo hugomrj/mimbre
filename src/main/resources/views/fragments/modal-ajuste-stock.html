@@ -1,0 +1,34 @@
+<div class="modal-overlay" id="modalAjusteStock" onclick="if(event.target===this) cerrarModalAjuste()">
+    <div class="modal-container" style="max-width: 480px;">
+        <div class="modal-header">
+            <h3 class="modal-title"><i class="fas fa-sliders"></i> Ajustar stock</h3>
+            <button class="modal-close-btn" onclick="cerrarModalAjuste()"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="formAjusteStock" hx-post="/ui/productos/ajustar" hx-target="#id-main"
+              hx-select="#id-main" hx-push-url="/ui/productos/list">
+            <div class="modal-body">
+                <input type="hidden" id="ajusteProductoId" name="productoId">
+                <div>
+                    <span class="form-label">Producto</span>
+                    <strong id="ajusteProductoNombre" style="display:block; margin-top:4px;"></strong>
+                </div>
+                <div>
+                    <span class="form-label">Stock actual</span>
+                    <strong id="ajusteStockActual" style="display:block; margin-top:4px;"></strong>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ajusteCantidad">Cantidad (positiva entra, negativa sale)</label>
+                    <input type="number" id="ajusteCantidad" name="cantidad" required class="form-control" placeholder="Ej: 5 o -2">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ajusteMotivo">Motivo</label>
+                    <textarea id="ajusteMotivo" name="motivo" required rows="3" class="form-control" placeholder="Ej: conteo físico, rotura, corrección"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer modal-footer--izquierda">
+                <button type="button" class="btn-ghost" onclick="cerrarModalAjuste()">Cancelar</button>
+                <button type="submit" class="btn-primary">Guardar ajuste</button>
+            </div>
+        </form>
+    </div>
+</div>

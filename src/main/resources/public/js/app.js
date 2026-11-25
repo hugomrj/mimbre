@@ -25,6 +25,12 @@ function setupHtmxListeners() {
         if (evt.target.querySelector('#formVenta') && typeof VentaManager !== 'undefined') VentaManager.reset();
         if (evt.target.querySelector('#formCompra') && typeof CompraManager !== 'undefined') CompraManager.reset();
         syncActiveMenuWithUrl();
+
+        const buscador = document.getElementById('globalSearch');
+        if (buscador && document.activeElement !== buscador) {
+            buscador.value = new URLSearchParams(window.location.search).get('q') || '';
+            if (typeof actualizarBotonLimpiarBuscador === 'function') actualizarBotonLimpiarBuscador();
+        }
     });
 
     document.body.addEventListener('htmx:afterRequest', function(evt) {

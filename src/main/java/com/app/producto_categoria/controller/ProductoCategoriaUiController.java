@@ -9,6 +9,8 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.views.View;
 import jakarta.validation.Valid;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,10 +24,11 @@ public class ProductoCategoriaUiController {
     }
 
     @View("producto_categoria/table")
-    @Get("/list{?page,size}")
+    @Get("/list{?page,size,q}")
     public Map<String, Object> list(@Nullable @QueryValue("page") Integer page,
-                                    @Nullable @QueryValue("size") Integer size) {
-        return buildTableModel(page, size, null, null);
+                                    @Nullable @QueryValue("size") Integer size,
+                                    @Nullable @QueryValue("q") String q) {
+        return buildTableModel(page, size, null, null, q);
     }
 
     @View("producto_categoria/form")
@@ -86,10 +89,14 @@ public class ProductoCategoriaUiController {
     }
 
     private Map<String, Object> buildTableModel(Integer page, Integer size, String mensaje, String error) {
+        return buildTableModel(page, size, mensaje, error, null);
+    }
+
+    private Map<String, Object> buildTableModel(Integer page, Integer size, String mensaje, String error, String q) {
         int pageNum = (page != null && page >= 0) ? page : 0;
         int sizeNum = (size != null && size > 0) ? size : 10;
 
-        Page<ProductoCategoriaDto> pagina = productoCategoriaService.findPage(pageNum, sizeNum);
+        Page<ProductoCategoriaDto> pagina = productoCategoriaService.findPage(pageNum, sizeNum, q);
         long totalElements = pagina.getTotalSize();
         int startItem = totalElements == 0 ? 0 : (pagina.getPageNumber() * pagina.getSize() + 1);
         int endItem = (int) Math.min((long) (pagina.getPageNumber() + 1) * pagina.getSize(), totalElements);
@@ -103,6 +110,9 @@ public class ProductoCategoriaUiController {
         model.put("startItem", startItem);
         model.put("endItem", endItem);
         model.put("baseUrl", "/ui/categorias/list");
+        String qLimpio = q == null ? "" : q.trim();
+        model.put("q", qLimpio);
+        model.put("qEncoded", URLEncoder.encode(qLimpio, StandardCharsets.UTF_8));
 
         if (mensaje != null) model.put("mensaje", mensaje);
         if (error != null) model.put("error", error);

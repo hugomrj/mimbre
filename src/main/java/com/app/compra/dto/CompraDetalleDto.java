@@ -1,5 +1,6 @@
 package com.app.compra.dto;
 
+import com.app.utils.FormatoNumero;
 import io.micronaut.serde.annotation.Serdeable;
 
 import java.math.BigDecimal;
@@ -32,6 +33,10 @@ public class CompraDetalleDto {
     public BigDecimal getPrecioCosto() { return precioCosto; }
     public void setPrecioCosto(BigDecimal precioCosto) { this.precioCosto = precioCosto; }
 
+    public String getPrecioCostoMiles() { return FormatoNumero.miles(precioCosto); }
+
     public BigDecimal getSubtotal() { return subtotal; }
     public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
+
+    public String getSubtotalMiles() { return FormatoNumero.miles(subtotal); }
 }

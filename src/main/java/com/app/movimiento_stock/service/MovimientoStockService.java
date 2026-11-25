@@ -10,7 +10,9 @@ import io.micronaut.transaction.annotation.Transactional;
 import jakarta.inject.Singleton;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -63,6 +65,20 @@ public class MovimientoStockService {
         movimiento.setMotivo(motivo);
 
         return movimientoRepository.save(movimiento);
+    }
+
+    public List<MovimientoStockDto> findAll() {
+        Map<Long, String> nombres = new HashMap<>();
+        for (Producto producto : productoRepository.findAll()) {
+            nombres.put(producto.getId(), producto.getNombre());
+        }
+        return movimientoRepository.findAllOrdenado().stream()
+                .map(movimiento -> {
+                    MovimientoStockDto dto = mapToDto(movimiento);
+                    dto.setProductoNombre(nombres.getOrDefault(movimiento.getProductoId(), "Producto"));
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     public List<MovimientoStockDto> findByProducto(Long productoId) {

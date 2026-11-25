@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de compra {{ compra.numeroFactura }}</title>
+    <link rel="stylesheet" href="/css/reporte.css">
+</head>
+<body>
+<div class="reporte-acciones">
+    <button type="button" onclick="window.print()">Imprimir / Guardar PDF</button>
+    <button type="button" onclick="window.close()">Cerrar</button>
+</div>
+
+<main class="reporte-hoja">
+    <header class="reporte-cabecera">
+        <div class="reporte-marca">
+            <div class="reporte-logo">M</div>
+            <div>
+                <h1>MIMBRE</h1>
+                <p>Gestión comercial</p>
+            </div>
+        </div>
+        <div class="reporte-documento">
+            <span class="tipo">Reporte de compra</span>
+            <span class="numero">{{ compra.numeroFactura }}</span>
+            {% if compra.estado == 'ANULADA' %}
+            <span class="reporte-estado anulada">ANULADA</span>
+            {% else %}
+            <span class="reporte-estado">COMPLETADA</span>
+            {% endif %}
+        </div>
+    </header>
+
+    <section class="reporte-datos">
+        <div>
+            <span class="etiqueta">Proveedor</span>
+            <span class="valor">{{ compra.proveedorNombre | default('-') }}</span>
+        </div>
+        <div>
+            <span class="etiqueta">Condición</span>
+            <span class="valor">{{ compra.condicion | default('-') }}</span>
+        </div>
+        <div>
+            <span class="etiqueta">Fecha de emisión</span>
+            <span class="valor">{{ compra.fecha | date("dd/MM/yyyy") }}</span>
+        </div>
+        <div>
+            <span class="etiqueta">Hora</span>
+            <span class="valor">{{ compra.fecha | date("HH:mm") }}</span>
+        </div>
+    </section>
+
+    <table class="reporte-tabla">
+        <thead>
+        <tr>
+            <th>Producto</th>
+            <th class="centro">Cantidad</th>
+            <th class="num">Precio compra</th>
+            <th class="num">Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for d in compra.detalles %}
+        <tr>
+            <td>{{ d.productoNombre }}</td>
+            <td class="centro">{{ d.cantidad }}</td>
+            <td class="num">{{ d.precioCostoMiles }}</td>
+            <td class="num">{{ d.subtotalMiles }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4">Sin ítems registrados.</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="reporte-total">
+        <span>Total de la compra</span>
+        <strong>{{ compra.montoTotalMiles }}</strong>
+    </div>
+
+    <footer class="reporte-pie">
+        <span>Documento interno generado por Mimbre.</span>
+        <span>No válido como factura legal.</span>
+    </footer>
+</main>
+</body>
+</html>

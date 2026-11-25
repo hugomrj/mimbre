@@ -3,7 +3,7 @@
     <div class="pagination">
         <!-- Anterior -->
         {% if currentPage > 0 %}
-        <button class="page-btn" hx-get="{{ baseUrl }}?page={{ currentPage - 1 }}&size={{ size }}" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+        <button class="page-btn" hx-get="{{ baseUrl }}?page={{ currentPage - 1 }}&size={{ size }}{% if q %}&q={{ qEncoded }}{% endif %}" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
             <i class="fas fa-chevron-left" style="font-size: 0.7rem;"></i>
         </button>
         {% else %}
@@ -14,7 +14,7 @@
         {% for i in range(0, totalPages) %}
         {% if i < totalPages %}
         <button class="page-btn {% if i == currentPage %}active{% endif %}"
-                hx-get="{{ baseUrl }}?page={{ i }}&size={{ size }}" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+                hx-get="{{ baseUrl }}?page={{ i }}&size={{ size }}{% if q %}&q={{ qEncoded }}{% endif %}" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
             {{ i + 1 }}
         </button>
         {% endif %}
@@ -22,7 +22,7 @@
 
         <!-- Siguiente -->
         {% if currentPage < totalPages - 1 %}
-        <button class="page-btn" hx-get="{{ baseUrl }}?page={{ currentPage + 1 }}&size={{ size }}" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+        <button class="page-btn" hx-get="{{ baseUrl }}?page={{ currentPage + 1 }}&size={{ size }}{% if q %}&q={{ qEncoded }}{% endif %}" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
             <i class="fas fa-chevron-right" style="font-size: 0.7rem;"></i>
         </button>
         {% else %}

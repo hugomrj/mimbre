@@ -1,17 +1,24 @@
+{% extends "layout.html" %}
+
+{% block navbar_title %}Ventas{% endblock %}
+
+{% block content %}
+<div class="page-view page-view--wide">
+    <div data-page-title="Ventas" style="display: none;"></div>
 <div class="toolbar">
     <div class="toolbar-filters">
-        <button class="filter-chip {% if estadoFiltro == 'TODAS' or not estadoFiltro %}active{% endif %}" hx-get="/ui/ventas/list" hx-target="#id-main">
+        <button class="filter-chip {% if estadoFiltro == 'TODAS' or not estadoFiltro %}active{% endif %}" hx-get="/ui/ventas/list" hx-target="#id-main" hx-select="#id-main">
             Todas <span class="count">{{ ventas.size() | default(0) }}</span>
         </button>
-        <button class="filter-chip {% if estadoFiltro == 'COMPLETADA' %}active{% endif %}" hx-get="/ui/ventas/list?estado=COMPLETADA" hx-target="#id-main">
+        <button class="filter-chip {% if estadoFiltro == 'COMPLETADA' %}active{% endif %}" hx-get="/ui/ventas/list?estado=COMPLETADA" hx-target="#id-main" hx-select="#id-main">
             Completadas
         </button>
-        <button class="filter-chip {% if estadoFiltro == 'ANULADA' %}active{% endif %}" hx-get="/ui/ventas/list?estado=ANULADA" hx-target="#id-main">
+        <button class="filter-chip {% if estadoFiltro == 'ANULADA' %}active{% endif %}" hx-get="/ui/ventas/list?estado=ANULADA" hx-target="#id-main" hx-select="#id-main">
             Anuladas
         </button>
     </div>
     <div class="toolbar-right">
-        <button class="btn-ghost" onclick="showToast('Exportando reporte...')"><i class="fas fa-file-export"></i> Exportar</button>
+        <a class="btn-ghost" style="text-decoration:none;" href="/ui/ventas/exportar{% if estadoFiltro and estadoFiltro != 'TODAS' %}?estado={{ estadoFiltro }}{% endif %}"><i class="fas fa-file-export"></i> Exportar</a>
         <button class="btn-add" hx-get="/ui/ventas/form" hx-target="#id-main"><i class="fas fa-shopping-cart"></i> Nueva Venta / Factura</button>
     </div>
 </div>
@@ -33,10 +40,10 @@
         {% for v in ventas %}
         <tr class="row-anim" style="animation-delay: 0.04s">
             <td><code>{{ v.numeroFactura }}</code></td>
-            <td style="color:var(--dark-text-muted)">{{ v.fecha | date("dd/MM/yyyy HH:mm") }}</td>
+            <td style="color:var(--dark-text-muted)">{{ v.fecha | date("dd/MM/yyyy") }}</td>
             <td><strong>{{ v.clienteNombre }}</strong></td>
             <td><span class="badge" style="background: rgba(14,165,233,0.12); color: #0EA5E9; padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">{{ v.condicion }}</span></td>
-            <td><span class="price">₲ {{ v.montoTotal }}</span></td>
+            <td><span class="price">{{ v.montoTotalMiles }}</span></td>
             <td>
                 {% if v.estado == 'ANULADA' %}
                 <span class="badge" style="background: rgba(244,63,94,0.12); color: #F43F5E; padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;"><i class="fas fa-times-circle"></i> Anulada</span>
@@ -47,6 +54,7 @@
             <td>
                 <div class="row-actions">
                     <button class="row-action-btn" title="Ver Factura / Detalle" hx-get="/ui/ventas/detalle?id={{ v.id }}" hx-target="#id-main"><i class="fas fa-eye"></i></button>
+                    <button class="row-action-btn" title="Reporte PDF" onclick="window.open('/ui/ventas/reporte/{{ v.id }}', '_blank')"><i class="fas fa-file-pdf" style="color:var(--primary);"></i></button>
                     {% if v.estado != 'ANULADA' %}
                     <button class="row-action-btn" title="Anular Venta" onclick="abrirModalAnularVenta('{{ v.numeroFactura }}', '/ui/ventas/anular/{{ v.id }}')"><i class="fas fa-ban" style="color: #F43F5E;"></i></button>
                     {% endif %}
@@ -68,3 +76,6 @@
 {% if error %}
 <script>if (typeof showToast === 'function') showToast("{{ error }}", "error");</script>
 {% endif %}
+
+</div>
+{% endblock %}

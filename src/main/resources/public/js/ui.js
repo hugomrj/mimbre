@@ -124,7 +124,7 @@ function abrirModalAnularVenta(nroFactura, urlAnular) {
     if (titulo) titulo.innerHTML = `<i class="fas fa-ban"></i> ¿Anular Venta / Factura?`;
     setTextoConfirmacion('¿Está seguro de anular la factura ', nroFactura, '? Se repondrá automáticamente el stock de los productos.');
     btnConfirmar.innerHTML = `<i class="fas fa-ban"></i> Confirmar y Anular`;
-    configurarBotonConfirmar(btnConfirmar, urlAnular);
+    configurarBotonConfirmar(btnConfirmar, urlAnular, '#id-main');
     modal.classList.add('active');
 }
 
@@ -137,7 +137,7 @@ function abrirModalAnularCompra(nroFactura, urlAnular) {
     if (titulo) titulo.innerHTML = `<i class="fas fa-ban"></i> ¿Anular Compra / Factura?`;
     setTextoConfirmacion('¿Está seguro de anular la compra ', nroFactura, '? El stock de los productos será devuelto al inventario.');
     btnConfirmar.innerHTML = `<i class="fas fa-ban"></i> Confirmar y Anular`;
-    configurarBotonConfirmar(btnConfirmar, urlAnular);
+    configurarBotonConfirmar(btnConfirmar, urlAnular, '#id-main');
     modal.classList.add('active');
 }
 

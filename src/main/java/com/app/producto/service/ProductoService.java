@@ -43,8 +43,14 @@ public class ProductoService {
     }
 
     public Page<ProductoDto> findPage(int page, int size) {
+        return findPage(page, size, null);
+    }
+
+    public Page<ProductoDto> findPage(int page, int size, String q) {
         Pageable pageable = Pageable.from(page, size, Sort.of(Sort.Order.desc("id")));
-        Page<Producto> pagina = productoRepository.findAllByActivoTrue(pageable);
+        Page<Producto> pagina = (q == null || q.trim().isEmpty())
+                ? productoRepository.findAllByActivoTrue(pageable)
+                : productoRepository.buscarPaginado("%" + q.trim() + "%", Pageable.from(page, size));
         return pagina.map(this::mapToDto);
     }
 
@@ -110,6 +116,24 @@ public class ProductoService {
     }
 
     @Transactional
+    public ProductoDto ajustarStock(Long id, Integer cantidad, String motivo) {
+        if (cantidad == null || cantidad == 0) {
+            throw new BusinessException("La cantidad del ajuste no puede ser cero.");
+        }
+        if (motivo == null || motivo.trim().isEmpty()) {
+            throw new BusinessException("El motivo del ajuste es obligatorio.");
+        }
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Producto no encontrado."));
+        if (!producto.isActivo()) {
+            throw new BusinessException("No se puede ajustar un producto inactivo.");
+        }
+        movimientoStockService.registrar(producto, cantidad, "AJUSTE", "AJUSTE",
+                producto.getId(), motivo.trim(), producto.getCostoActual());
+        return findById(id).orElseThrow(() -> new BusinessException("Producto no encontrado."));
+    }
+
+    @Transactional
     public boolean delete(Long id) {
         Optional<Producto> prodOpt = productoRepository.findById(id);
         if (prodOpt.isPresent()) {
@@ -126,7 +150,8 @@ public class ProductoService {
         dto.setId(producto.getId());
         dto.setNombre(producto.getNombre());
         dto.setSku(producto.getSku());
-        dto.setPrecio(producto.getPrecio());
+        dto.setPrecioVenta(producto.getPrecioVenta());
+        dto.setPrecioCompra(producto.getPrecioCompra());
         dto.setStock(producto.getStock());
         dto.setCostoActual(producto.getCostoActual());
         dto.setStockMinimo(producto.getStockMinimo());
@@ -140,7 +165,8 @@ public class ProductoService {
         producto.setId(formDto.getId());
         producto.setNombre(formDto.getNombre());
         producto.setSku(formDto.getSku());
-        producto.setPrecio(formDto.getPrecio());
+        producto.setPrecioVenta(formDto.getPrecioVenta());
+        producto.setPrecioCompra(formDto.getPrecioCompra() != null ? formDto.getPrecioCompra() : BigDecimal.ZERO);
         producto.setStock(formDto.getStock());
         producto.setCostoActual(formDto.getCostoActual() != null ? formDto.getCostoActual() : BigDecimal.ZERO);
         producto.setStockMinimo(formDto.getStockMinimo() != null ? formDto.getStockMinimo() : 5);

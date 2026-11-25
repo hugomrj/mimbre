@@ -4,6 +4,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
@@ -17,9 +18,13 @@ public class ProductoFormDto {
     @NotBlank(message = "El SKU es obligatorio")
     private String sku;
 
-    @NotNull(message = "El precio es obligatorio")
-    @Positive(message = "El precio debe ser un valor positivo")
-    private BigDecimal precio;
+    @NotNull(message = "El precio de venta es obligatorio")
+    @Positive(message = "El precio de venta debe ser un valor positivo")
+    private BigDecimal precioVenta;
+
+    @NotNull(message = "El precio de compra es obligatorio")
+    @DecimalMin(value = "0.0", message = "El precio de compra no puede ser negativo")
+    private BigDecimal precioCompra;
 
     @NotNull(message = "El stock es obligatorio")
     @Min(value = 0, message = "El stock no puede ser negativo")
@@ -41,7 +46,8 @@ public class ProductoFormDto {
     public ProductoFormDto(String nombre, String sku, BigDecimal precio, Integer stock, String categoria) {
         this.nombre = nombre;
         this.sku = sku;
-        this.precio = precio;
+        this.precioVenta = precio;
+        this.precioCompra = BigDecimal.ZERO;
         this.stock = stock;
         this.categoria = categoria;
     }
@@ -55,8 +61,11 @@ public class ProductoFormDto {
     public String getSku() { return sku; }
     public void setSku(String sku) { this.sku = sku; }
 
-    public BigDecimal getPrecio() { return precio; }
-    public void setPrecio(BigDecimal precio) { this.precio = precio; }
+    public BigDecimal getPrecioVenta() { return precioVenta; }
+    public void setPrecioVenta(BigDecimal precioVenta) { this.precioVenta = precioVenta; }
+
+    public BigDecimal getPrecioCompra() { return precioCompra; }
+    public void setPrecioCompra(BigDecimal precioCompra) { this.precioCompra = precioCompra; }
 
     public Integer getStock() { return stock; }
     public void setStock(Integer stock) { this.stock = stock; }

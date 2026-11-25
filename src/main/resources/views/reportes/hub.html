@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+{% block navbar_title %}Reportes{% endblock %}
+
+{% block content %}
+<div class="page-view page-view--wide">
+
+    <div data-page-title="Reportes" style="display: none;"></div>
+
+    <div class="reportes-intro">
+        <h2>Reportes</h2>
+        <p>Consultas del negocio con filtros de fecha, exportación CSV e impresión.</p>
+    </div>
+
+    <div class="reportes-grid">
+        <a class="reporte-card" href="/ui/reportes/resumen"
+           hx-get="/ui/reportes/resumen" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-chart-pie"></i>
+            <h3>Resumen ejecutivo</h3>
+            <p>Ventas, compras, margen e inventario del período en una vista.</p>
+        </a>
+
+        <a class="reporte-card" href="/ui/reportes/ventas"
+           hx-get="/ui/reportes/ventas" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-chart-line"></i>
+            <h3>Ventas por período</h3>
+            <p>Total vendido, facturas, ticket promedio y condición de pago.</p>
+        </a>
+
+        <a class="reporte-card" href="/ui/reportes/ventas-producto"
+           hx-get="/ui/reportes/ventas-producto" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-box-open"></i>
+            <h3>Ventas por producto</h3>
+            <p>Unidades, ingresos, costo y margen estimado por producto.</p>
+        </a>
+
+        <a class="reporte-card" href="/ui/reportes/ventas-cliente"
+           hx-get="/ui/reportes/ventas-cliente" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-users"></i>
+            <h3>Ventas por cliente</h3>
+            <p>Ranking de clientes, facturas, total comprado y última venta.</p>
+        </a>
+
+        <a class="reporte-card" href="/ui/reportes/compras"
+           hx-get="/ui/reportes/compras" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-shopping-bag"></i>
+            <h3>Compras por período</h3>
+            <p>Total comprado, facturas, ticket promedio y estado.</p>
+        </a>
+
+        <a class="reporte-card" href="/ui/reportes/compras-proveedor"
+           hx-get="/ui/reportes/compras-proveedor" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-truck"></i>
+            <h3>Compras por proveedor</h3>
+            <p>Ranking de proveedores, facturas, unidades y total comprado.</p>
+        </a>
+
+        <a class="reporte-card" href="/ui/reportes/inventario"
+           hx-get="/ui/reportes/inventario" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-warehouse"></i>
+            <h3>Inventario valorizado</h3>
+            <p>Stock, costo, valor a costo, valor a venta y bajo stock.</p>
+        </a>
+
+        <a class="reporte-card" href="/ui/reportes/movimientos"
+           hx-get="/ui/reportes/movimientos" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-exchange-alt"></i>
+            <h3>Movimientos de stock</h3>
+            <p>Entradas, salidas y saldo por producto en el período.</p>
+        </a>
+
+        <a class="reporte-card" href="/ui/reportes/anulaciones"
+           hx-get="/ui/reportes/anulaciones" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-ban"></i>
+            <h3>Anulaciones</h3>
+            <p>Ventas y compras anuladas, con monto y fecha de anulación.</p>
+        </a>
+
+        <a class="reporte-card" href="/ui/reportes/sin-movimiento"
+           hx-get="/ui/reportes/sin-movimiento" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-box"></i>
+            <h3>Productos sin movimiento</h3>
+            <p>Productos activos sin movimientos en el rango y valor inmovilizado.</p>
+        </a>
+
+        <a class="reporte-card" href="/ui/reportes/margen"
+           hx-get="/ui/reportes/margen" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+            <i class="fas fa-percentage"></i>
+            <h3>Margen estimado</h3>
+            <p>Ingresos menos costo actual y porcentaje de margen.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

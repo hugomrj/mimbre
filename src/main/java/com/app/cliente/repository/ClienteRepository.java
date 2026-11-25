@@ -19,4 +19,8 @@ public interface ClienteRepository extends PageableRepository<Cliente, Long> {
     List<Cliente> findAllByActivoTrue();
 
     Page<Cliente> findAllByActivoTrue(Pageable pageable);
+
+    @Query(value = "SELECT * FROM cliente WHERE activo = TRUE AND (LOWER(nombre) LIKE LOWER(:q) OR LOWER(ruc_documento) LIKE LOWER(:q)) ORDER BY id DESC",
+            countQuery = "SELECT COUNT(*) FROM cliente WHERE activo = TRUE AND (LOWER(nombre) LIKE LOWER(:q) OR LOWER(ruc_documento) LIKE LOWER(:q))")
+    Page<Cliente> buscarPaginado(String q, Pageable pageable);
 }

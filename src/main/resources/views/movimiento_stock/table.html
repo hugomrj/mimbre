@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block navbar_title %}Movimientos de stock{% endblock %}
+
+{% block content %}
+<div class="page-view page-view--wide">
+
+    <div data-page-title="Movimientos de stock" style="display: none;"></div>
+
+    <div class="toolbar">
+        <div class="toolbar-filters mov-filtros">
+            <button class="filter-chip {% if tipoFiltro == 'TODOS' %}active{% endif %}"
+                    hx-get="/ui/movimientos" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+                Todos
+            </button>
+            <button class="filter-chip {% if tipoFiltro == 'COMPRA' %}active{% endif %}"
+                    hx-get="/ui/movimientos?tipo=COMPRA" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+                Compras
+            </button>
+            <button class="filter-chip {% if tipoFiltro == 'VENTA' %}active{% endif %}"
+                    hx-get="/ui/movimientos?tipo=VENTA" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+                Ventas
+            </button>
+            <button class="filter-chip {% if tipoFiltro == 'INICIAL' %}active{% endif %}"
+                    hx-get="/ui/movimientos?tipo=INICIAL" hx-target="#id-main" hx-select="#id-main" hx-push-url="true">
+                Iniciales
+            </button>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Movimiento</th>
+                <th>Cantidad</th>
+                <th>Stock</th>
+                <th>Costo unitario</th>
+                <th>Motivo</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for m in movimientos %}
+            <tr class="row-anim">
+                <td>
+                    <div class="mov-fecha">{{ m.creadoEn | date("dd/MM/yyyy") }}</div>
+                    <div class="mov-hora">{{ m.creadoEn | date("HH:mm") }}</div>
+                </td>
+                <td><strong>{{ m.productoNombre | default('Producto') }}</strong></td>
+                <td>
+                    <div class="mov-origen">
+                        <span class="filter-chip" style="font-size:.75rem;">{{ m.tipo }}</span>
+                        {% if m.origenId %}<span class="mono">#{{ m.origenId }}</span>{% endif %}
+                    </div>
+                </td>
+                <td>
+                    <span class="mov-cantidad {% if m.cantidad > 0 %}mov-cantidad--pos{% else %}mov-cantidad--neg{% endif %}">
+                        {% if m.cantidad > 0 %}+{% endif %}{{ m.cantidad }}
+                    </span>
+                </td>
+                <td>
+                    <span class="mov-stock">
+                        {{ m.stockAnterior }} <span class="mov-arrow">→</span>
+                        <strong>{{ m.stockNuevo }}</strong>
+                    </span>
+                </td>
+                <td>{{ m.costoUnitarioMiles }}</td>
+                <td>{{ m.motivo | default('') }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                    No hay movimientos registrados.
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

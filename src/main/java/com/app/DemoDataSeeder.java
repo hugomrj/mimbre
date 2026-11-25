@@ -162,9 +162,10 @@ public class DemoDataSeeder {
 
     private void guardarProducto(Map<String, Long> catIds, String nombre, String sku,
                                  BigDecimal precio, Integer stock, String categoria) {
-        Producto producto = new Producto(nombre, sku, precio, 0, categoria);
+        BigDecimal costo = precio.multiply(new BigDecimal("0.70")).setScale(2, RoundingMode.HALF_UP);
+        Producto producto = new Producto(nombre, sku, precio, costo, 0, categoria);
         producto.setCategoriaId(catIds.get(categoria));
-        producto.setCostoActual(precio.multiply(new BigDecimal("0.70")).setScale(2, RoundingMode.HALF_UP));
+        producto.setCostoActual(costo);
         producto.setStockMinimo(5);
         Producto saved = productoRepository.save(producto);
 

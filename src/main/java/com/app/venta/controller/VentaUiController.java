@@ -4,9 +4,12 @@ import com.app.cliente.service.ClienteService;
 import com.app.producto.service.ProductoService;
 import com.app.venta.dto.VentaDetalleDto;
 import com.app.venta.dto.VentaDto;
+import com.app.utils.FormatoNumero;
 import com.app.venta.service.VentaService;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.views.View;
@@ -14,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,15 +41,64 @@ public class VentaUiController {
     }
 
     @View("venta/table")
-    @Get("/list{?estado}")
-    public Map<String, Object> list(@Nullable String estado) {
+    @Get("/list{?estado,q}")
+    public Map<String, Object> list(@Nullable String estado, @Nullable String q) {
         List<VentaDto> ventas = ventaService.findAll();
         if (estado != null && !estado.trim().isEmpty() && !"TODAS".equalsIgnoreCase(estado)) {
             ventas = ventas.stream()
                     .filter(v -> estado.equalsIgnoreCase(v.getEstado()))
                     .collect(Collectors.toList());
         }
-        return Map.of("ventas", ventas, "estadoFiltro", estado != null ? estado.toUpperCase() : "TODAS");
+        if (q != null && !q.trim().isEmpty()) {
+            String texto = q.trim().toLowerCase();
+            ventas = ventas.stream().filter(v ->
+                    (v.getNumeroFactura() != null && v.getNumeroFactura().toLowerCase().contains(texto))
+                    || (v.getClienteNombre() != null && v.getClienteNombre().toLowerCase().contains(texto))
+                    || (v.getEstado() != null && v.getEstado().toLowerCase().contains(texto))
+            ).toList();
+        }
+        return Map.of("ventas", ventas,
+                "estadoFiltro", estado != null ? estado.toUpperCase() : "TODAS",
+                "q", q != null ? q : "");
+    }
+
+    @Get("/exportar{?estado,q}")
+    public HttpResponse<byte[]> exportar(@Nullable String estado, @Nullable String q) {
+        List<VentaDto> ventas = ventaService.findAll();
+        if (estado != null && !estado.trim().isEmpty() && !"TODAS".equalsIgnoreCase(estado)) {
+            ventas = ventas.stream()
+                    .filter(v -> estado.equalsIgnoreCase(v.getEstado()))
+                    .collect(Collectors.toList());
+        }
+        if (q != null && !q.trim().isEmpty()) {
+            String texto = q.trim().toLowerCase();
+            ventas = ventas.stream().filter(v ->
+                    (v.getNumeroFactura() != null && v.getNumeroFactura().toLowerCase().contains(texto))
+                    || (v.getClienteNombre() != null && v.getClienteNombre().toLowerCase().contains(texto))
+                    || (v.getEstado() != null && v.getEstado().toLowerCase().contains(texto))
+            ).toList();
+        }
+
+        StringBuilder csv = new StringBuilder("\uFEFF");
+        csv.append("N° Factura;Fecha;Cliente;Condición;Total;Estado\r\n");
+        for (VentaDto v : ventas) {
+            csv.append(quote(v.getNumeroFactura())).append(';')
+                    .append(v.getFecha() != null ? v.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : "").append(';')
+                    .append(quote(v.getClienteNombre())).append(';')
+                    .append(quote(v.getCondicion())).append(';')
+                    .append(FormatoNumero.miles(v.getMontoTotal())).append(';')
+                    .append(quote(v.getEstado())).append("\r\n");
+        }
+
+        String nombre = "ventas-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmm")) + ".csv";
+        return HttpResponse.ok(csv.toString().getBytes(StandardCharsets.UTF_8))
+                .contentType(MediaType.of("text/csv; charset=UTF-8"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nombre + "\"");
+    }
+
+    private String quote(String valor) {
+        if (valor == null) return "";
+        return "\"" + valor.replace("\"", "\"\"") + "\"";
     }
 
     @View("venta/form")
@@ -61,6 +116,14 @@ public class VentaUiController {
                     .orElseGet(Map::of);
         }
         return Map.of();
+    }
+
+    @View("venta/reporte")
+    @Get("/reporte/{id}")
+    public Map<String, Object> reporte(@PathVariable Long id) {
+        return ventaService.findById(id)
+                .map(venta -> Map.<String, Object>of("venta", venta))
+                .orElseGet(Map::of);
     }
 
     @View("venta/table")

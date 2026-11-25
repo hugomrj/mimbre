@@ -24,7 +24,7 @@ const VentaManager = {
         this.productoTemporal = {
             id: Number(opt.value),
             nombre: opt.dataset.nombre,
-            precio: Number(opt.dataset.precio),
+            precio: Number(opt.dataset.precioVenta),
             stock: Number(opt.dataset.stock)
         };
     },
@@ -115,21 +115,22 @@ const VentaManager = {
 
         if (this.itemsVenta.length === 0) {
             tbody.innerHTML = '<tr id="rowVacia"><td colspan="5" style="text-align: center; padding: 24px; color: var(--dark-text-muted);">No se han agregado productos a la venta.</td></tr>';
-            totalLabel.textContent = '₲ 0';
+            totalLabel.textContent = '0';
             return;
         }
 
-        let total = 0;
-
         this.itemsVenta.forEach((item, idx) => {
-            total += item.subtotal;
-
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>${item.nombre}</strong></td>
                 <td style="text-align: center;">${item.cantidad}</td>
-                <td style="text-align: right;">₲ ${item.precio.toLocaleString('es-PY')}</td>
-                <td style="text-align: right;"><strong>₲ ${item.subtotal.toLocaleString('es-PY')}</strong></td>
+                <td style="text-align: right;">
+                    <input type="number" name="precioUnitario" value="${item.precio}" required
+                           min="0" step="0.01" class="form-control"
+                           style="width: 130px; text-align: right; padding: 6px 8px; margin-left: auto;"
+                           oninput="VentaManager.cambiarPrecio(${idx}, this.value)">
+                </td>
+                <td style="text-align: right;" id="subtotalVenta-${idx}"><strong>${this.formatearMiles(item.subtotal)}</strong></td>
                 <td style="text-align: center;">
                     <button type="button" class="row-action-btn" onclick="VentaManager.eliminarItem(${idx})">
                         <i class="fas fa-trash-alt" style="color: #F43F5E;"></i>
@@ -141,11 +142,33 @@ const VentaManager = {
             inputsDiv.innerHTML += `
                 <input type="hidden" name="productoId" value="${item.id}">
                 <input type="hidden" name="cantidad" value="${item.cantidad}">
-                <input type="hidden" name="precioUnitario" value="${item.precio}">
             `;
         });
 
-        totalLabel.textContent = '₲ ' + total.toLocaleString('es-PY');
+        this.actualizarTotal();
+    },
+
+    cambiarPrecio: function(index, valor) {
+        const item = this.itemsVenta[index];
+        if (!item) return;
+        const precio = Number(valor);
+        item.precio = Number.isFinite(precio) ? precio : 0;
+        item.subtotal = item.cantidad * item.precio;
+        const celdaSubtotal = document.getElementById(`subtotalVenta-${index}`);
+        if (celdaSubtotal) {
+            celdaSubtotal.innerHTML = '<strong>' + this.formatearMiles(item.subtotal) + '</strong>';
+        }
+        this.actualizarTotal();
+    },
+
+    formatearMiles: function(valor) {
+        return Math.round(Number(valor) || 0).toLocaleString('es-PY');
+    },
+
+    actualizarTotal: function() {
+        const total = this.itemsVenta.reduce((suma, item) => suma + item.subtotal, 0);
+        const label = document.getElementById('labelTotalVenta');
+        if (label) label.textContent = this.formatearMiles(total);
     },
 
     validarVenta: function() {

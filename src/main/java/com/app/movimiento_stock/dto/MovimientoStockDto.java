@@ -1,5 +1,6 @@
 package com.app.movimiento_stock.dto;
 
+import com.app.utils.FormatoNumero;
 import io.micronaut.serde.annotation.Serdeable;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ public class MovimientoStockDto {
 
     private Long id;
     private Long productoId;
+    private String productoNombre;
     private String tipo;
     private Integer cantidad;
     private Integer stockAnterior;
@@ -26,6 +28,9 @@ public class MovimientoStockDto {
     public Long getProductoId() { return productoId; }
     public void setProductoId(Long productoId) { this.productoId = productoId; }
 
+    public String getProductoNombre() { return productoNombre; }
+    public void setProductoNombre(String productoNombre) { this.productoNombre = productoNombre; }
+
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
 
@@ -40,6 +45,8 @@ public class MovimientoStockDto {
 
     public BigDecimal getCostoUnitario() { return costoUnitario; }
     public void setCostoUnitario(BigDecimal costoUnitario) { this.costoUnitario = costoUnitario; }
+
+    public String getCostoUnitarioMiles() { return FormatoNumero.miles(costoUnitario); }
 
     public String getOrigenTipo() { return origenTipo; }
     public void setOrigenTipo(String origenTipo) { this.origenTipo = origenTipo; }

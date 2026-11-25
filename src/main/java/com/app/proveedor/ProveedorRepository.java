@@ -24,4 +24,8 @@ public interface ProveedorRepository extends CrudRepository<Proveedor, Long> {
     Page<Proveedor> findAllByActivoTrue(Pageable pageable);
 
     Optional<Proveedor> findFirstByRuc(String ruc);
+
+    @Query(value = "SELECT * FROM proveedor WHERE activo = TRUE AND (LOWER(nombre) LIKE LOWER(:q) OR LOWER(ruc) LIKE LOWER(:q)) ORDER BY id DESC",
+            countQuery = "SELECT COUNT(*) FROM proveedor WHERE activo = TRUE AND (LOWER(nombre) LIKE LOWER(:q) OR LOWER(ruc) LIKE LOWER(:q))")
+    Page<Proveedor> buscarPaginado(String q, Pageable pageable);
 }

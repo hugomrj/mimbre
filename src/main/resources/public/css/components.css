@@ -41,6 +41,11 @@ padding: 16px 24px;
 padding: 12px 24px;
 font-size: 0.9rem; color: var(--text-main); }
 
+/* Celda producto: descripción arriba, código abajo */
+.product-info { display: flex; flex-direction: column; gap: 2px; }
+.product-name { font-weight: 600; color: var(--text-main); }
+.product-sku { font-size: 0.75rem; color: var(--text-muted); font-family: 'Courier New', monospace; }
+
 /* Acciones de la tabla */
 .row-actions { display: flex; gap: 4px; justify-content: flex-end; }
 .row-action-btn {
@@ -243,6 +248,7 @@ select.form-control option {
 .modal-close-btn:hover { color: var(--text-main); }
 .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border-line); display: flex; justify-content: flex-end; gap: 12px; }
+.modal-footer--izquierda { justify-content: flex-start; }
 
 
 
@@ -296,7 +302,7 @@ select.form-control option {
 .rank-name { color: var(--text-main); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rank-value { color: var(--primary); font-weight: 700; white-space: nowrap; }
 .rank-track { height: 7px; background: var(--bg-surface-hover); border-radius: 999px; overflow: hidden; }
-.rank-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--primary), rgba(6, 182, 212, 0.45)); }
+.rank-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--primary), var(--chart-2)); }
 .empty-state { text-align: center; color: var(--text-muted); padding: 24px 0; font-size: 0.8rem; }
 
 .kpi-grid--compact { gap: 14px; margin-bottom: 18px; }
@@ -613,4 +619,124 @@ select.form-control option {
     color: var(--primary);
     font-weight: 600;
     background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+/* Movimientos de stock */
+.mov-fecha { font-size: 0.85rem; color: var(--text-main); font-variant-numeric: tabular-nums; }
+.mov-hora { font-size: 0.75rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.mov-arrow { color: var(--text-muted); margin: 0 4px; }
+.mov-origen { display: flex; align-items: center; gap: 6px; }
+.mov-cantidad-stock { display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+.mov-cantidad {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.mov-cantidad--pos { color: #22C55E; background: rgba(34, 197, 94, 0.12); }
+.mov-cantidad--neg { color: #EF4444; background: rgba(244, 63, 94, 0.12); }
+.mov-stock { font-size: 0.8rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.mov-stock strong { color: var(--text-main); }
+
+
+/* Cantidad compacta en el modal de venta/compra */
+.cantidad-group { display: block; }
+.cantidad-group .form-label { text-align: left; }
+.cantidad-input {
+    max-width: 110px;
+    text-align: center;
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+.cantidad-input::-webkit-outer-spin-button,
+.cantidad-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/* =========================================
+   REPORTES
+   ========================================= */
+.reportes-intro { margin-bottom: 20px; }
+.reportes-intro h2 { margin: 0 0 4px; font-size: 1.4rem; color: var(--text-main); }
+.reportes-intro p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+
+.reportes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 14px;
+}
+
+.reporte-card {
+    display: block;
+    padding: 20px;
+    border: 1px solid var(--border-line);
+    border-radius: 12px;
+    background: var(--bg-surface);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.reporte-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.reporte-card i { color: var(--primary); font-size: 1.2rem; margin-bottom: 10px; }
+.reporte-card h3 { margin: 0 0 6px; font-size: 1rem; color: var(--text-main); }
+.reporte-card p { margin: 0; color: var(--text-muted); font-size: 0.82rem; line-height: 1.45; }
+
+.reporte-titulo { margin: 0 0 2px; font-size: 1.3rem; color: var(--text-main); }
+.reporte-subtitulo { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
+
+.reporte-filtros {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    padding: 16px;
+    border: 1px solid var(--border-line);
+    border-radius: 12px;
+    background: var(--bg-surface);
+}
+
+.reporte-presets { display: flex; gap: 6px; flex-wrap: wrap; width: 100%; }
+.reporte-filtros .form-group { margin: 0; min-width: 150px; }
+.reporte-filtros .form-control { padding: 8px 12px; }
+.reporte-kpis { margin-bottom: 18px; }
+
+@media print {
+    .sidebar, .navbar, .reporte-filtros, .toolbar, .navbar-actions { display: none !important; }
+    .app-layout { padding: 0; }
+    .content-area { margin: 0; }
+    .page-view { max-width: none !important; padding: 0; }
+    .table-card, .kpi-card { break-inside: avoid; }
+}
+
+
+/* Configuración */
+.config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.config-card { padding: 20px; margin-bottom: 0; }
+.config-card h3 { margin: 0 0 10px; font-size: 1rem; color: var(--text-main); }
+.config-card h3 i { color: var(--primary); margin-right: 6px; }
+.config-text { margin: 0 0 10px; color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; }
+.config-path { display: block; padding: 10px 12px; border-radius: 8px; background: var(--bg-surface-hover); color: var(--text-main); font-size: 0.78rem; overflow-wrap: anywhere; }
+.config-table { margin-top: 8px; }
+.config-table td, .config-table th { padding: 10px 8px; }
+.config-danger { grid-column: 1 / -1; border-color: rgba(244, 63, 94, 0.35); }
+.btn-danger { background: #F43F5E; color: #fff; border: none; border-radius: 8px; padding: 9px 14px; font-weight: 600; cursor: pointer; }
+.btn-danger:hover { background: #E11D48; }
+.config-alerta { padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 0.85rem; }
+.config-alerta--ok { background: rgba(34, 197, 94, 0.12); color: #22C55E; }
+.config-alerta--error { background: rgba(244, 63, 94, 0.12); color: #F43F5E; }
+
+@media (max-width: 900px) {
+    .config-grid { grid-template-columns: 1fr; }
 }

@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -53,6 +54,18 @@ public class CompraService {
         return StreamSupport.stream(compraRepository.findAllOrderByIdDesc().spliterator(), false)
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<CompraDto> findAllConDetalles() {
+        List<CompraDto> compras = findAll();
+        Map<Long, List<CompraDetalleDto>> detallesPorCompra = StreamSupport
+                .stream(compraDetalleRepository.findAll().spliterator(), false)
+                .filter(detalle -> detalle.getCompraId() != null)
+                .collect(Collectors.groupingBy(
+                        CompraDetalle::getCompraId,
+                        Collectors.mapping(this::mapDetalleToDto, Collectors.toList())));
+        compras.forEach(compra -> compra.setDetalles(detallesPorCompra.getOrDefault(compra.getId(), List.of())));
+        return compras;
     }
 
     public Optional<CompraDto> findById(Long id) {
@@ -118,7 +131,13 @@ public class CompraService {
                         throw new BusinessException("El producto '" + prod.getNombre() + "' esta inactivo.");
                     }
                     detalle.setProductoNombre(prod.getNombre());
-                    detalle.setPrecioCosto(dDto.getPrecioCosto() != null ? dDto.getPrecioCosto() : prod.getPrecio());
+                    BigDecimal precioCompra = dDto.getPrecioCosto() != null
+                            ? dDto.getPrecioCosto()
+                            : prod.getPrecioCompra();
+                    if (precioCompra == null || precioCompra.signum() < 0) {
+                        throw new BusinessException("El precio de compra no puede ser negativo.");
+                    }
+                    detalle.setPrecioCosto(precioCompra);
 
                     // AUMENTAR STOCK Y RECALCULAR COSTO PROMEDIO
                     int cantidad = dDto.getCantidad() != null ? dDto.getCantidad() : 1;

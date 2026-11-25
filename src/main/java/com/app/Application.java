@@ -38,31 +38,37 @@ public class Application {
             System.err.println("    Si querés reiniciar: ícono de la bandeja → 'Salir'.");
             System.err.println("==================================================");
 
-            // Si es el .exe y el usuario hizo doble clic, le abrimos la que ya está corriendo.
-            if (isPackaged) {
-                abrirNavegador();
-            }
+            // Si ya hay una instancia, abrimos la que está corriendo.
+            abrirNavegador();
             return;   // salida limpia, sin stack trace
         }
+
+        // Aplicar restauración/borrado pendiente solo si esta instancia va a arrancar.
+        DatabaseMaintenance.procesar();
 
         // 1. Iniciar Micronaut en segundo plano
         final ApplicationContext context = Micronaut.run(Application.class, args);
 
-        // 2. Auto-abrir navegador solo en la versión empaquetada
+        // 2. Abrir el navegador automáticamente al iniciar (también en desarrollo).
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000); // Esperamos 2 seg a que el servidor esté listo
+                abrirNavegador();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+
         if (isPackaged) {
-            new Thread(() -> {
-                try {
-                    Thread.sleep(2000); // Esperamos 2 seg a que el servidor esté listo
-                    abrirNavegador();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }).start();
+            System.out.println("==================================================");
+            System.out.println(" Servidor iniciado en " + URL_LOCAL);
+            System.out.println(" El navegador se abrirá automáticamente.");
+            System.out.println(" Para detener: ícono de bandeja → 'Salir' (NO Ctrl+C).");
+            System.out.println("==================================================");
         } else {
             System.out.println("==================================================");
             System.out.println(" MODO DESARROLLO: Servidor iniciado en " + URL_LOCAL);
-            System.out.println(" El navegador NO se abrirá automáticamente para no molestar.");
-            System.out.println(" Puedes abrirlo manualmente desde el ícono de la bandeja del sistema.");
+            System.out.println(" El navegador se abrirá automáticamente.");
             System.out.println(" Para detener: ícono de bandeja → 'Salir' (NO Ctrl+C).");
             System.out.println("==================================================");
         }

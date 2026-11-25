@@ -145,10 +145,11 @@
                 <th>Producto</th>
                 <th>Stock</th>
                 <th>Mín.</th>
+                <th style="text-align:right">Acciones</th>
             </tr>
             </thead>
             <tbody id="tbodyBajoStock">
-            <tr><td colspan="3" class="empty-state">Sin alertas</td></tr>
+            <tr><td colspan="4" class="empty-state">Sin alertas</td></tr>
             </tbody>
         </table>
     </div>
@@ -168,9 +169,31 @@
         const border = css('--border-line', '#334155');
         const bgApp = css('--bg-app', '#0F172A');
         const primary = css('--primary', '#06B6D4');
-        const success = css('--success', '#22C55E');
-        const warning = css('--warning', '#F59E0B');
         const danger = css('--danger', '#F43F5E');
+
+        // Secuencia de 5 colores derivada del color principal de la paleta.
+        const mezclar = (color, destino, peso) => {
+            if (!color.startsWith('#') || !destino.startsWith('#')) return color;
+            const a = color.replace('#', '');
+            const b = destino.replace('#', '');
+            const fullA = a.length === 3 ? a.split('').map(c => c + c).join('') : a;
+            const fullB = b.length === 3 ? b.split('').map(c => c + c).join('') : b;
+            const w = Math.max(0, Math.min(1, peso));
+            const canal = (hex, i) => parseInt(hex.substring(i, i + 2), 16);
+            const r = Math.round(canal(fullA, 0) * (1 - w) + canal(fullB, 0) * w);
+            const g = Math.round(canal(fullA, 2) * (1 - w) + canal(fullB, 2) * w);
+            const bl = Math.round(canal(fullA, 4) * (1 - w) + canal(fullB, 4) * w);
+            const hex = n => n.toString(16).padStart(2, '0');
+            return `#${hex(r)}${hex(g)}${hex(bl)}`;
+        };
+
+        const chart1 = mezclar(primary, '#000000', 0.50);
+        const chart2 = mezclar(primary, '#000000', 0.25);
+        const chart3 = primary;
+        const chart4 = mezclar(primary, '#FFFFFF', 0.25);
+        const chart5 = mezclar(primary, '#FFFFFF', 0.50);
+        const chartNeutro = mezclar(primary, '#64748B', 0.65);
+        const chartPalette = [chart1, chart2, chart3, chart4, chart5];
 
         const alpha = (color, a) => {
             if (!color.startsWith('#')) return color;
@@ -283,7 +306,7 @@
                         datasets: [{
                             data: hayCategorias ? montosCategorias : [1],
                             backgroundColor: hayCategorias
-                                ? [primary, success, warning, danger, '#8B5CF6', '#3B82F6']
+                                ? [...chartPalette, chartNeutro]
                                 : ['#334155'],
                             borderWidth: 0,
                             hoverOffset: 6,
@@ -318,7 +341,7 @@
                         labels: hayCondiciones ? condiciones : ['Sin ventas'],
                         datasets: [{
                             data: hayCondiciones ? montosCondiciones : [1],
-                            backgroundColor: hayCondiciones ? [primary, warning] : ['#334155'],
+                            backgroundColor: hayCondiciones ? [chart3, chart2] : ['#334155'],
                             borderWidth: 0,
                             hoverOffset: 6,
                             spacing: 2
@@ -349,8 +372,8 @@
                 gVentas.addColorStop(0, alpha(primary, 0.95));
                 gVentas.addColorStop(1, alpha(primary, 0.35));
                 const gCompras = ctx.createLinearGradient(0, 0, 0, 210);
-                gCompras.addColorStop(0, alpha(danger, 0.9));
-                gCompras.addColorStop(1, alpha(danger, 0.3));
+                gCompras.addColorStop(0, alpha(chart1, 0.95));
+                gCompras.addColorStop(1, alpha(chart1, 0.35));
 
                 charts.mensual = new Chart(ctx, {
                     type: 'bar',
@@ -409,13 +432,20 @@
             if (!tbody) return;
             const productos = (data.productosBajoStockList || []).slice(0, 6);
             if (!productos.length) {
-                tbody.innerHTML = '<tr><td colspan="3" class="empty-state">Sin alertas</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Sin alertas</td></tr>';
                 return;
             }
             tbody.innerHTML = productos.map(p => `<tr>
                 <td><strong>${esc(p.nombre)}</strong><div class="product-sku">${esc(p.sku)}</div></td>
                 <td><strong style="color:${danger};">${esc(p.stock)}</strong></td>
                 <td>${esc(p.stockMinimo != null ? p.stockMinimo : 5)}</td>
+                <td style="text-align:right;">
+                    <button class="row-action-btn" title="Ajustar stock"
+                            data-id="${p.id}" data-nombre="${esc(p.nombre)}" data-stock="${p.stock}"
+                            onclick="abrirModalAjuste(this)">
+                        <i class="fas fa-sliders"></i>
+                    </button>
+                </td>
             </tr>`).join('');
         }
 

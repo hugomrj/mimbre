@@ -23,4 +23,8 @@ public interface ProductoRepository extends PageableRepository<Producto, Long> {
     long countByCategoria(String categoria);
 
     long countByCategoriaId(Long categoriaId);
+
+    @Query(value = "SELECT * FROM producto WHERE activo = TRUE AND (LOWER(nombre) LIKE LOWER(:q) OR LOWER(sku) LIKE LOWER(:q) OR LOWER(categoria) LIKE LOWER(:q)) ORDER BY id DESC",
+            countQuery = "SELECT COUNT(*) FROM producto WHERE activo = TRUE AND (LOWER(nombre) LIKE LOWER(:q) OR LOWER(sku) LIKE LOWER(:q) OR LOWER(categoria) LIKE LOWER(:q))")
+    Page<Producto> buscarPaginado(String q, Pageable pageable);
 }

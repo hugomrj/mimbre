@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block navbar_title %}Configuración{% endblock %}
+
+{% block content %}
+<div class="page-view page-view--wide">
+
+    <div data-page-title="Configuración" style="display: none;"></div>
+
+    <div class="reportes-intro">
+        <h2>Configuración</h2>
+        <p>Datos locales, backups y mantenimiento de la base.</p>
+    </div>
+
+    {% if mensaje %}
+    <div class="config-alerta config-alerta--ok">{{ mensaje }}</div>
+    {% endif %}
+    {% if error %}
+    <div class="config-alerta config-alerta--error">{{ error }}</div>
+    {% endif %}
+
+    <div class="config-grid">
+        <section class="table-card config-card">
+            <h3><i class="fas fa-database"></i> Base de datos</h3>
+            <p class="config-text">Mimbre guarda todo localmente. Esta es la ruta actual:</p>
+            <code class="config-path">{{ dataPath }}</code>
+
+            <form method="post" action="/ui/configuracion/backup" style="margin-top:16px;">
+                <button type="submit" class="btn-primary"><i class="fas fa-download"></i> Crear backup ahora</button>
+            </form>
+        </section>
+
+        <section class="table-card config-card">
+            <h3><i class="fas fa-clock-rotate-left"></i> Backups disponibles</h3>
+
+            {% if backups.isEmpty() %}
+            <p class="config-text">Todavía no hay backups.</p>
+            {% else %}
+            <table class="data-table config-table">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tamaño</th>
+                    <th style="text-align:right">Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for b in backups %}
+                <tr>
+                    <td>
+                        <strong>{{ b.fecha }}</strong>
+                        <div class="product-sku">{{ b.archivo }}</div>
+                    </td>
+                    <td>{{ b.tamano }}</td>
+                    <td style="text-align:right">
+                        <form method="post" action="/ui/configuracion/restaurar"
+                              onsubmit="return confirm('¿Restaurar este backup? Se aplicará al reiniciar Mimbre.');">
+                            <input type="hidden" name="archivo" value="{{ b.archivo }}">
+                            <button type="submit" class="btn-ghost"><i class="fas fa-rotate-left"></i> Restaurar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </section>
+
+        <section class="table-card config-card config-danger">
+            <h3><i class="fas fa-triangle-exclamation"></i> Zona peligrosa</h3>
+            <p class="config-text">
+                Borra todos los datos de Mimbre y deja una base vacía. Esta acción no se puede deshacer.
+            </p>
+            <button type="button" class="btn-danger" onclick="abrirModalBorrarDb()">
+                <i class="fas fa-trash-alt"></i> Borrar base de datos
+            </button>
+        </section>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalBorrarDb" onclick="if(event.target===this) cerrarModalBorrarDb()">
+    <div class="modal-container" style="max-width: 480px;">
+        <div class="modal-header">
+            <h3 class="modal-title"><i class="fas fa-triangle-exclamation"></i> Borrar base de datos</h3>
+            <button class="modal-close-btn" onclick="cerrarModalBorrarDb()"><i class="fas fa-times"></i></button>
+        </div>
+        <form method="post" action="/ui/configuracion/borrar">
+            <div class="modal-body">
+                <p class="config-text">
+                    Se borrarán productos, ventas, compras, clientes y movimientos.
+                    La base se creará vacía al reiniciar.
+                </p>
+                <div class="form-group">
+                    <label class="form-label" for="confirmacionBorrar">Escribí <strong>ELIMINAR</strong> para confirmar</label>
+                    <input type="text" id="confirmacionBorrar" name="confirmacion" class="form-control" required autocomplete="off">
+                </div>
+            </div>
+            <div class="modal-footer modal-footer--izquierda">
+                <button type="button" class="btn-ghost" onclick="cerrarModalBorrarDb()">Cancelar</button>
+                <button type="submit" class="btn-danger">Borrar definitivamente</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

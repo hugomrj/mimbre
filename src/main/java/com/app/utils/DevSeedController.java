@@ -101,7 +101,8 @@ public class DevSeedController {
             p.setNombre("Producto " + (i + 1) + " " + categorias[random.nextInt(categorias.length)]);
             p.setSku("SKU-" + (1000 + i));
             BigDecimal precio = new BigDecimal(50000 + random.nextInt(500000));
-            p.setPrecio(precio);
+            p.setPrecioVenta(precio);
+            p.setPrecioCompra(precio.multiply(new BigDecimal("0.70")));
             p.setStock(50 + random.nextInt(200));
             p.setCategoria(categorias[random.nextInt(categorias.length)]);
             Long pid = productoService.save(p).getId();

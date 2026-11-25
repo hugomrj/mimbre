@@ -8,6 +8,13 @@
 para una myPyme, con inventario confiable, caja, cobros y compras a crédito,
 gastos y reportes. **Sin facturación electrónica.**
 
+> **Versión 1.0 (cerrada):** base operativa interna. Incluye inventario, precios
+> de venta/compra, ventas y compras, kardex, dashboard, reportes, backups,
+> restauración y borrado seguro. No incluye caja, cobranzas, gastos ni
+> devoluciones.
+>
+> **Versión 2:** hitos M4–M9. El alcance está registrado en la sección 9.
+
 ---
 
 ## 1. Alcance
@@ -120,9 +127,11 @@ Un hito **no** está terminado si:
 | **M6** | Compras a crédito | Pagar proveedores y ver vencimientos | 2–3 d | M5 |
 | **M7** | Gastos | Ver ganancia real, no solo ventas | 2–3 d | M4 |
 | **M8** | Devoluciones | Devolver parte de una venta | 3 d | M2, M5 |
-| **M9** | Reportes y release | Cierre de versión `v0.2` | 3–4 d | M0–M8 |
+| **M9** | Reportes y release | Cierre de versión `v2` | 3–4 d | M0–M8 |
 
 > Esfuerzo en días de trabajo efectivo, no calendario. Total: ~25–32 días.
+>
+> **M4–M9 corresponden a la versión 2.** La versión 1.0 se cerró con M0–M3 más dashboard, reportes, backups y configuración.
 
 ---
 
@@ -314,11 +323,15 @@ supera el cobro; los tests cubren pago parcial y total.
 **Objetivo:** saber la ganancia real del negocio.
 
 **Tareas**
+- [ ] Guardar `costo_unitario` en `venta_detalle` al momento de la venta (V10).
+      Es necesario para que el margen histórico no cambie cuando cambia el costo.
 - [ ] `categoria_gasto` y `gasto` (fecha, categoría, descripción, monto, forma
-      de pago, caja si es efectivo).
+      de pago, comprobante, caja si es efectivo).
 - [ ] UI: alta/listado de gastos y categorías.
-- [ ] Dashboard: `ganancia = ventas - costo de ventas - gastos` del período.
+- [ ] Dashboard: `resultado = ventas - costo de ventas - gastos` del período.
 - [ ] Los gastos en efectivo generan egreso de caja.
+- [ ] Reporte Estado de resultados: ventas, costo de ventas, margen bruto,
+      gastos y resultado neto.
 
 **Demo**
 - Cargar alquiler y sueldos del mes.
@@ -326,7 +339,8 @@ supera el cobro; los tests cubren pago parcial y total.
 - Ver el egreso reflejado en el cierre de caja.
 
 **Aceptación:** el total de gastos coincide con la suma de movimientos de caja
-de tipo egreso-gasto; el dashboard no cuenta dos veces.
+de tipo egreso-gasto; el dashboard no cuenta dos veces. El costo de ventas usa
+el costo guardado en el detalle, no el costo actual del producto.
 
 ---
 
@@ -353,7 +367,7 @@ de tipo egreso-gasto; el dashboard no cuenta dos veces.
 
 ### M9 — Reportes y release
 
-**Objetivo:** cerrar `v0.2` con información útil y datos protegidos.
+**Objetivo:** cerrar `v2` con información útil y datos protegidos.
 
 **Tareas**
 - [ ] Dashboard con consultas agregadas en SQL (no cargar todo en memoria).
@@ -364,7 +378,7 @@ de tipo egreso-gasto; el dashboard no cuenta dos veces.
 - [ ] Revisar `database_empty`, seed y migraciones desde cero.
 - [ ] Actualizar `README.md`, `CONTEXT.md`, `PROGRESS.md` y este plan.
 - [ ] `python build.py` y prueba del ejecutable en el SO objetivo.
-- [ ] Tag `v0.2`.
+- [ ] Tag `v2.0.0`.
 
 **Demo**
 - Recorrer cada reporte con datos reales.
@@ -386,13 +400,13 @@ Completar al terminar cada hito.
 | M0 | 2026-11-23 | Aprobado | Observación de ubicación resuelta en M1 | |
 | M1 | 2026-11-23 | Aprobado | Integridad completa; se continuó con M2 | |
 | M2 | 2026-11-23 | Aprobado | Kardex verificado; se continuó con M3 | |
-| M3 | 2026-11-23 | En revisión | Secuencias VENTA/COMPRA, backfill, bloqueo FOR UPDATE y tests de no reutilización | |
-| M4 | | Pendiente | | |
-| M5 | | Pendiente | | |
-| M6 | | Pendiente | | |
-| M7 | | Pendiente | | |
-| M8 | | Pendiente | | |
-| M9 | | Pendiente | | |
+| M3 | 2026-11-23 | Aprobado | Secuencias VENTA/COMPRA, backfill, bloqueo FOR UPDATE y tests de no reutilización | |
+| M4 | | v2 pendiente | | |
+| M5 | | v2 pendiente | | |
+| M6 | | v2 pendiente | | |
+| M7 | | v2 pendiente | | |
+| M8 | | v2 pendiente | | |
+| M9 | | v2 pendiente | | |
 
 **Resultados válidos:** `Pendiente`, `En revisión`, `Aprobado`, `Con observaciones`, `Rechazado`.
 
@@ -419,3 +433,47 @@ Completar al terminar cada hito.
 
 Si algo del hito no cierra, la IA debe **parar y preguntar** antes de inventar
 una solución que cambie el alcance.
+
+
+---
+
+## 9. Versión 2 — alcance registrado
+
+**Estado:** planificada. No iniciar sin pedido explícito.
+
+### Prioridad alta
+
+1. **Caja (M4):** apertura, cierre, movimientos y arqueo.
+2. **Formas de pago y vuelto:** efectivo, transferencia, tarjeta.
+3. **Consumidor final, descuentos y ticket térmico 58/80 mm.**
+4. **Cobranzas (M5):** cuenta por cobrar, cobros parciales y antigüedad.
+5. **Gastos y ganancia real (M7):** categorías, gastos operativos y estado de
+   resultados.
+6. **Costo de venta histórico:** `venta_detalle.costo_unitario` como snapshot.
+
+### Prioridad media
+
+7. **Compras a crédito y cuentas por pagar (M6).**
+8. **Devoluciones parciales (M8).**
+9. **Código de barras / lector.**
+10. **Importación de productos desde CSV.**
+11. **Reportes avanzados:** caja, aging de deuda, comparativos y XLSX.
+
+### Fuera de alcance
+
+- Facturación electrónica SIFEN, IVA y libros fiscales.
+- Multiempresa, multisucursal, multidepósito, login y roles.
+- Contabilidad formal, conciliación bancaria y moneda extranjera.
+
+### Fórmula de ganancia real
+
+```
+Ventas netas      = ventas completadas - devoluciones
+Costo de ventas   = suma(costo_unitario_snapshot * cantidad)
+Margen bruto      = ventas netas - costo de ventas
+Gastos operativos = suma(gastos del período)
+Resultado neto    = margen bruto - gastos operativos
+```
+
+Una compra de mercadería **no** es un gasto del período: queda en inventario y
+se reconoce como costo cuando se vende.

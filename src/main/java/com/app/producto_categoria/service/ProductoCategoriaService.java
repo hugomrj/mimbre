@@ -35,8 +35,14 @@ public class ProductoCategoriaService {
 
     // ✅ NUEVO MÉTODO CON PAGINACIÓN
     public Page<ProductoCategoriaDto> findPage(int page, int size) {
+        return findPage(page, size, null);
+    }
+
+    public Page<ProductoCategoriaDto> findPage(int page, int size, String q) {
         Pageable pageable = Pageable.from(page, size, Sort.of(Sort.Order.desc("id")));
-        Page<ProductoCategoria> pagina = productoCategoriaRepository.findAllByActivoTrue(pageable);
+        Page<ProductoCategoria> pagina = (q == null || q.trim().isEmpty())
+                ? productoCategoriaRepository.findAllByActivoTrue(pageable)
+                : productoCategoriaRepository.buscarPaginado("%" + q.trim() + "%", Pageable.from(page, size));
         return pagina.map(this::mapToDto);
     }
 

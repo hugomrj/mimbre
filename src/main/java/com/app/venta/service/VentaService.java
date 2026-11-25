@@ -147,8 +147,14 @@ public class VentaService {
                 if (prodOpt.isPresent()) {
                     Producto prod = prodOpt.get();
                     detalle.setProductoNombre(prod.getNombre());
-                    detalle.setPrecioUnitario(dDto.getPrecioUnitario() != null ? dDto.getPrecioUnitario() : prod.getPrecio());
-                    
+                    BigDecimal precioUnitario = dDto.getPrecioUnitario() != null
+                            ? dDto.getPrecioUnitario()
+                            : prod.getPrecioVenta();
+                    if (precioUnitario == null || precioUnitario.signum() < 0) {
+                        throw new BusinessException("El precio de venta no puede ser negativo.");
+                    }
+                    detalle.setPrecioUnitario(precioUnitario);
+
                     // Descontar stock
                     int cantidad = dDto.getCantidad() != null ? dDto.getCantidad() : 1;
                     detalle.setCantidad(cantidad);

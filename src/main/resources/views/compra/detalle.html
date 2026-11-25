@@ -5,8 +5,8 @@ Detalle de Factura de Compra: {{ compra.numeroFactura }}
 </h2>
 </div>
 <div class="toolbar-right">
-<button class="btn-ghost" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button>
-<button class="btn-ghost" hx-get="/ui/compras/list" hx-target="#id-main"><i class="fas fa-arrow-left"></i> Volver a Compras</button>
+<button class="btn-ghost" onclick="window.open('/ui/compras/reporte/{{ compra.id }}', '_blank')"><i class="fas fa-print"></i> Imprimir</button>
+<button class="btn-ghost" hx-get="/ui/compras/list" hx-target="#id-main" hx-select="#id-main"><i class="fas fa-arrow-left"></i> Volver a Compras</button>
 </div>
 </div>
 
@@ -24,15 +24,16 @@ Esta compra fue anulada el {{ compra.fechaAnulacion | date("dd/MM/yyyy HH:mm") }
 {% endif %}
 
 <!-- Encabezado Factura -->
-<div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--dark-card-border); padding-bottom: 20px; margin-bottom: 24px;">
-<div>
-<h3 style="font-size: 1.1rem; color: var(--dark-text); margin-bottom: 6px;">Factura {{ compra.numeroFactura }}</h3>
-<p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Proveedor:</strong> {{ compra.proveedorNombre }}</p>
-<p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Condición:</strong> {{ compra.condicion }}</p>
+<div style="display: flex; justify-content: space-between; gap: 32px; border-bottom: 1px solid var(--dark-card-border); padding-bottom: 24px; margin-bottom: 30px;">
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h3 style="font-size: 1.1rem; color: var(--dark-text); margin: 0 0 2px;">Factura {{ compra.numeroFactura }}</h3>
+<p style="color: var(--dark-text-muted); font-size: 0.875rem; line-height: 1.5; margin: 0;"><strong>Proveedor:</strong> {{ compra.proveedorNombre }}</p>
+<p style="color: var(--dark-text-muted); font-size: 0.875rem; line-height: 1.5; margin: 0;"><strong>Condición:</strong> {{ compra.condicion }}</p>
 </div>
-<div style="text-align: right;">
-<p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Fecha Emisión:</strong> {{ compra.fecha | date("dd/MM/yyyy HH:mm") }}</p>
-<p style="color: var(--dark-text-muted); font-size: 0.875rem;"><strong>Estado:</strong>
+<div style="text-align: right; display: flex; flex-direction: column; gap: 8px;">
+<p style="color: var(--dark-text-muted); font-size: 0.875rem; line-height: 1.5; margin: 0;"><strong>Fecha Emisión:</strong> {{ compra.fecha | date("dd/MM/yyyy") }}</p>
+            <p style="color: var(--dark-text-muted); font-size: 0.875rem; line-height: 1.5; margin: 0;"><strong>Hora:</strong> {{ compra.fecha | date("HH:mm") }}</p>
+<p style="color: var(--dark-text-muted); font-size: 0.875rem; line-height: 1.5; margin: 0;"><strong>Estado:</strong>
 {% if compra.estado == 'COMPLETADA' %}
 <span style="color: #22C55E; font-weight: 600;">Completada</span>
 {% else %}
@@ -40,7 +41,7 @@ Esta compra fue anulada el {{ compra.fechaAnulacion | date("dd/MM/yyyy HH:mm") }
 {% endif %}
 </p>
 {% if compra.estado == 'ANULADA' %}
-<p style="color: var(--dark-text-muted); font-size: 0.85rem; margin-top: 4px;"><strong>Anulada el:</strong> {{ compra.fechaAnulacion | date("dd/MM/yyyy HH:mm") }}</p>
+<p style="color: var(--dark-text-muted); font-size: 0.85rem; line-height: 1.5; margin: 0;"><strong>Anulada el:</strong> {{ compra.fechaAnulacion | date("dd/MM/yyyy HH:mm") }}</p>
 {% endif %}
 </div>
 </div>
@@ -60,8 +61,8 @@ Esta compra fue anulada el {{ compra.fechaAnulacion | date("dd/MM/yyyy HH:mm") }
 <tr>
 <td><strong>{{ d.productoNombre }}</strong></td>
 <td style="text-align: center;">{{ d.cantidad }}</td>
-<td style="text-align: right;">₲ {{ d.precioCosto }}</td>
-<td style="text-align: right;"><strong>₲ {{ d.subtotal }}</strong></td>
+<td style="text-align: right;">{{ d.precioCostoMiles }}</td>
+<td style="text-align: right;"><strong>{{ d.subtotalMiles }}</strong></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -70,6 +71,6 @@ Esta compra fue anulada el {{ compra.fechaAnulacion | date("dd/MM/yyyy HH:mm") }
 <!-- Resumen Total -->
 <div style="display: flex; justify-content: flex-end; align-items: center; gap: 16px; font-size: 1.25rem;">
 <span style="color: var(--dark-text-muted);">Total de la Compra:</span>
-<strong style="color: var(--primary); font-size: 1.5rem;">₲ {{ compra.montoTotal }}</strong>
+<strong style="color: var(--primary); font-size: 1.5rem;">{{ compra.montoTotalMiles }}</strong>
 </div>
 </div>

@@ -52,7 +52,7 @@ public class DatabaseInitializer {
             }
         }
 
-        backupService.respaldar();
+        backupService.respaldarDiario();
     }
 
     /**

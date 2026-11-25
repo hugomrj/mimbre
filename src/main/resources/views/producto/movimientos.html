@@ -22,46 +22,65 @@
         </div>
     </div>
 
+    <div class="toolbar" style="margin-top: -8px;">
+        <div class="toolbar-filters mov-filtros">
+            <button type="button" class="filter-chip active" onclick="filtrarMovimientos('TODOS', this)">Todos</button>
+            <button type="button" class="filter-chip" onclick="filtrarMovimientos('COMPRA', this)">Compras</button>
+            <button type="button" class="filter-chip" onclick="filtrarMovimientos('VENTA', this)">Ventas</button>
+        </div>
+    </div>
+
     <div class="table-card">
-        <table class="data-table">
+        <table class="data-table" id="tablaMovimientos">
             <thead>
             <tr>
                 <th>Fecha</th>
-                <th>Tipo</th>
+                <th>Movimiento</th>
                 <th>Cantidad</th>
-                <th>Stock antes</th>
-                <th>Stock después</th>
+                <th>Stock</th>
                 <th>Costo unitario</th>
-                <th>Origen</th>
                 <th>Motivo</th>
             </tr>
             </thead>
             <tbody>
             {% for m in movimientos %}
-            <tr class="row-anim">
-                <td><span class="mono" style="font-size:.8rem;">{{ m.creadoEn }}</span></td>
-                <td><span class="filter-chip" style="font-size:.75rem;">{{ m.tipo }}</span></td>
+            <tr class="row-anim" data-tipo="{{ m.tipo }}">
                 <td>
-                    <strong style="color: {% if m.cantidad > 0 %}#22C55E{% else %}#EF4444{% endif %};">
+                    <div class="mov-fecha">{{ m.creadoEn | date("dd/MM/yyyy") }}</div>
+                    <div class="mov-hora">{{ m.creadoEn | date("HH:mm") }}</div>
+                </td>
+                <td>
+                    <div class="mov-origen">
+                        <span class="filter-chip" style="font-size:.75rem;">{{ m.tipo }}</span>
+                        {% if m.origenId %}<span class="mono">#{{ m.origenId }}</span>{% endif %}
+                    </div>
+                </td>
+                <td>
+                    <span class="mov-cantidad {% if m.cantidad > 0 %}mov-cantidad--pos{% else %}mov-cantidad--neg{% endif %}">
                         {% if m.cantidad > 0 %}+{% endif %}{{ m.cantidad }}
-                    </strong>
+                    </span>
                 </td>
-                <td>{{ m.stockAnterior }}</td>
-                <td>{{ m.stockNuevo }}</td>
-                <td>₲ {{ m.costoUnitario | default(0) }}</td>
                 <td>
-                    {{ m.origenTipo | default('') }}
-                    {% if m.origenId %}<span class="mono">#{{ m.origenId }}</span>{% endif %}
+                    <span class="mov-stock">
+                        {{ m.stockAnterior }} <span class="mov-arrow">→</span>
+                        <strong>{{ m.stockNuevo }}</strong>
+                    </span>
                 </td>
+                <td>{{ m.costoUnitarioMiles }}</td>
                 <td>{{ m.motivo | default('') }}</td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="8" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                <td colspan="6" style="text-align: center; padding: 32px; color: var(--text-muted);">
                     No hay movimientos registrados para este producto.
                 </td>
             </tr>
             {% endfor %}
+            <tr id="movimientosVacioFiltro" style="display: none;">
+                <td colspan="6" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                    No hay movimientos de ese tipo.
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>

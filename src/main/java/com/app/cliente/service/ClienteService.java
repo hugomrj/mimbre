@@ -30,8 +30,14 @@ public class ClienteService {
 
     // ✅ NUEVO MÉTODO CON PAGINACIÓN
     public Page<ClienteDto> findPage(int page, int size) {
+        return findPage(page, size, null);
+    }
+
+    public Page<ClienteDto> findPage(int page, int size, String q) {
         Pageable pageable = Pageable.from(page, size, Sort.of(Sort.Order.desc("id")));
-        Page<Cliente> pagina = clienteRepository.findAllByActivoTrue(pageable);
+        Page<Cliente> pagina = (q == null || q.trim().isEmpty())
+                ? clienteRepository.findAllByActivoTrue(pageable)
+                : clienteRepository.buscarPaginado("%" + q.trim() + "%", Pageable.from(page, size));
         return pagina.map(this::mapToDto);
     }
 
