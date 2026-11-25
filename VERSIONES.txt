@@ -1,0 +1,132 @@
+MIMBRE — VERSIONES
+Actualizado: 2026-11-25
+Versión actual: 1.0.2
+
+============================================================
+VERSIÓN 1 — DISPONIBLE
+============================================================
+
+Es una versión local, monousuario y sin login, pensada para
+control interno de una pyme pequeña.
+
+INCLUYE
+- Productos con precio de venta, precio de compra, stock y stock mínimo.
+- Categorías de productos.
+- Clientes y proveedores.
+- Ventas con precio editable y numeración automática.
+- Compras con precio editable y costo promedio.
+- Kardex: todos los movimientos de stock quedan registrados.
+- Ajuste de stock con motivo.
+- Anulaciones de ventas y compras con reversión de stock.
+- Dashboard con KPIs, gráficos y alertas de bajo stock.
+- Alertas de bajo stock con acceso directo a ajustar stock.
+- Reportes con filtros de fecha, presets, CSV y vista PDF:
+  - Resumen ejecutivo.
+  - Ventas por período.
+  - Ventas por producto.
+  - Ventas por cliente.
+  - Compras por período.
+  - Compras por proveedor.
+  - Inventario valorizado.
+  - Movimientos de stock.
+  - Anulaciones.
+  - Productos sin movimiento.
+  - Margen estimado.
+- Reportes PDF de ventas y compras por comprobante.
+- Configuración con:
+  - backup manual;
+  - backup automático diario;
+  - restauración de backups;
+  - borrado seguro de la base con confirmación.
+- Paletas de color y tema claro/oscuro/automático.
+
+LIMITACIONES DE LA VERSIÓN 1
+- No tiene caja diaria ni arqueo.
+- No tiene formas de pago ni cálculo de vuelto.
+- No tiene cuentas por cobrar reales para ventas a crédito.
+- No tiene cuentas por pagar.
+- No tiene gastos ni ganancia real.
+- No tiene devoluciones parciales.
+- No emite factura legal ni integra SIFEN.
+- El margen se calcula con el costo actual y es estimado.
+- Es para una sola PC y un solo usuario a la vez.
+
+USO RECOMENDADO
+Sirve como control interno si el negocio:
+- trabaja con una sola persona y una PC;
+- registra ventas al contado;
+- no necesita factura legal;
+- no vende a crédito o lleva esas cuentas aparte.
+
+No se recomienda como único sistema de mostrador si se
+necesita caja, vuelto, cobranzas o facturación legal.
+
+============================================================
+VERSIÓN 2 — PLANIFICADA
+============================================================
+
+OBJETIVO
+Completar el uso diario en mostrador y obtener una ganancia
+real, no solo estimada.
+
+PRIORIDAD ALTA
+1. Caja diaria:
+   - apertura y cierre de turno;
+   - movimientos de caja;
+   - arqueo y diferencia.
+2. Formas de pago y vuelto:
+   - efectivo, transferencia y tarjeta;
+   - cálculo de vuelto.
+3. Venta rápida:
+   - consumidor final;
+   - descuentos;
+   - ticket térmico de 58/80 mm.
+4. Cobranzas:
+   - cuenta por cobrar por venta;
+   - cobros parciales;
+   - antigüedad de deuda.
+5. Gastos y ganancia real:
+   - categorías de gasto;
+   - gastos operativos;
+   - estado de resultados;
+   - costo histórico guardado en el detalle de venta.
+6. Compras a crédito y cuentas por pagar.
+
+PRIORIDAD MEDIA
+7. Devoluciones parciales de ventas.
+8. Código de barras y lector.
+9. Importación de productos desde CSV.
+10. Reportes avanzados:
+    - caja;
+    - aging de deuda;
+    - comparativos;
+    - exportación XLSX.
+
+FÓRMULA DE GANANCIA REAL
+Ventas netas      = ventas completadas - devoluciones
+Costo de ventas   = suma(costo histórico * cantidad)
+Margen bruto      = ventas netas - costo de ventas
+Gastos operativos = suma(gastos del período)
+Resultado neto    = margen bruto - gastos operativos
+
+Una compra de mercadería no es un gasto del período:
+queda en inventario y se reconoce como costo al vender.
+
+FUERA DE ALCANCE
+- Facturación electrónica SIFEN, IVA y libros fiscales.
+- Multiempresa, multisucursal, multidepósito.
+- Login, usuarios y roles.
+- Contabilidad formal y conciliación bancaria.
+- Moneda extranjera.
+
+============================================================
+ORDEN SUGERIDO PARA LA VERSIÓN 2
+============================================================
+
+1. Caja.
+2. Formas de pago, vuelto y consumidor final.
+3. Cobranzas / cuentas por cobrar.
+4. Gastos y ganancia real.
+5. Compras a crédito / cuentas por pagar.
+6. Devoluciones.
+7. Reportes avanzados y cierre de versión.

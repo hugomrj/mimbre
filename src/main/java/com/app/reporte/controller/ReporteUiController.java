@@ -59,6 +59,28 @@ public class ReporteUiController {
         model.put("hasta", fin.format(ISO));
         model.put("exportUrl", "/ui/reportes/exportar/" + tipo + "?desde=" + inicio.format(ISO)
                 + "&hasta=" + fin.format(ISO));
+        model.put("pdfUrl", "/ui/reportes/" + tipo + "/pdf?desde=" + inicio.format(ISO)
+                + "&hasta=" + fin.format(ISO));
+        return model;
+    }
+
+    @View("reportes/pdf")
+    @Get("/{tipo}/pdf{?desde,hasta}")
+    public Map<String, Object> pdf(@PathVariable String tipo,
+                                   @Nullable @QueryValue("desde") String desde,
+                                   @Nullable @QueryValue("hasta") String hasta) {
+        LocalDate inicio = parse(desde, LocalDate.now().withDayOfMonth(1));
+        LocalDate fin = parse(hasta, LocalDate.now());
+        if (inicio.isAfter(fin)) {
+            LocalDate tmp = inicio;
+            inicio = fin;
+            fin = tmp;
+        }
+        Map<String, Object> model = new HashMap<>();
+        model.put("reporte", reporteService.construir(tipo,
+                inicio.atStartOfDay(), fin.atTime(23, 59, 59)));
+        model.put("desde", inicio.format(ISO));
+        model.put("hasta", fin.format(ISO));
         return model;
     }
 

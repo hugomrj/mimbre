@@ -22,8 +22,8 @@
             <a class="btn-ghost" style="text-decoration:none;" href="{{ exportUrl }}">
                 <i class="fas fa-file-csv"></i> Exportar CSV
             </a>
-            <button class="btn-primary" onclick="window.print()">
-                <i class="fas fa-print"></i> Imprimir
+            <button class="btn-primary" onclick="window.open('{{ pdfUrl }}', '_blank')">
+                <i class="fas fa-file-pdf"></i> Ver PDF
             </button>
         </div>
     </div>

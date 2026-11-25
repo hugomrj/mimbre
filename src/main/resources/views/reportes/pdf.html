@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ reporte.titulo }}</title>
+    <link rel="stylesheet" href="/css/reporte.css">
+    <style>
+        @page { size: A4 landscape; margin: 10mm; }
+        .reporte-hoja { width: 297mm; min-height: 210mm; padding: 12mm; }
+        .reporte-tabla { font-size: 11px; }
+        .reporte-tabla thead th, .reporte-tabla tbody td { padding: 8px 10px; }
+        .reporte-kpis-pdf { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+        .reporte-kpi-pdf { border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; min-width: 140px; }
+        .reporte-kpi-pdf span { display: block; color: #6b7280; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; }
+        .reporte-kpi-pdf strong { display: block; margin-top: 3px; font-size: 16px; }
+        .reporte-documento .numero { font-size: 16px; max-width: 420px; }
+        @media print {
+            .reporte-hoja { width: auto; min-height: auto; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="reporte-acciones">
+    <button type="button" onclick="window.print()">Imprimir / Guardar PDF</button>
+    <button type="button" onclick="window.close()">Cerrar</button>
+</div>
+
+<main class="reporte-hoja">
+    <header class="reporte-cabecera">
+        <div class="reporte-marca">
+            <div class="reporte-logo">M</div>
+            <div>
+                <h1>MIMBRE</h1>
+                <p>Reportes de gestión</p>
+            </div>
+        </div>
+        <div class="reporte-documento">
+            <span class="tipo">Reporte</span>
+            <span class="numero">{{ reporte.titulo }}</span>
+        </div>
+    </header>
+
+    <section class="reporte-datos">
+        <div>
+            <span class="etiqueta">Período</span>
+            <span class="valor">{{ desde }} al {{ hasta }}</span>
+        </div>
+        <div>
+            <span class="etiqueta">Detalle</span>
+            <span class="valor">{{ reporte.subtitulo }}</span>
+        </div>
+    </section>
+
+    <section class="reporte-kpis-pdf">
+        {% for kpi in reporte.kpis %}
+        <div class="reporte-kpi-pdf">
+            <span>{{ kpi.etiqueta }}</span>
+            <strong>{{ kpi.valor }}</strong>
+        </div>
+        {% endfor %}
+    </section>
+
+    <table class="reporte-tabla">
+        <thead>
+        <tr>
+            {% for columna in reporte.columnas %}
+            <th>{{ columna }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for fila in reporte.filas %}
+        <tr>
+            {% for celda in fila %}
+            <td>{{ celda }}</td>
+            {% endfor %}
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="{{ reporte.columnas.size() }}">No hay datos para el período.</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <footer class="reporte-pie">
+        <span>Documento interno generado por Mimbre.</span>
+        <span>Reporte: {{ reporte.tipo }}</span>
+    </footer>
+</main>
+</body>
+</html>
