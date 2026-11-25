@@ -5,7 +5,7 @@
 > bloquea. Contexto del sistema: `CONTEXT.md`. Reglas de trabajo: `AGENTS.md`.
 > Plan por hitos y revisiones: `PLAN.md`. Traspaso de sesión: `PROCESS.md`.
 
-**Última actualización:** 2026-11-25 · **Versión:** 1.0 · **Rama:** `main` · **Commit base:** `75e225f` (+ v1 sin commitear)
+**Última actualización:** 2026-11-25 · **Versión:** 1.0 · **Rama:** `main` · **Commit v1:** `e27bee7`
 **Tests:** 13 · **Cobertura:** sin medir
 
 ---

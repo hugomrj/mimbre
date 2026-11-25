@@ -6,7 +6,7 @@
 > Reglas: `AGENTS.md`.
 
 **Fecha de corte:** 2026-11-25 (America/Asunción)
-**Rama:** `main` · **Commit:** `75e225f` + v1 sin commitear
+**Rama:** `main` · **Commit:** `e27bee7` · **Working tree:** limpio
 **App:** detenida
 **Base:** `~/.mimbre/data/database.mv.db` · **Backups:** `~/.mimbre/backups/`
 
