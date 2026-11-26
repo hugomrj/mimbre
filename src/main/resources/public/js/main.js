@@ -167,24 +167,7 @@ function inicializarBuscadorTabla() {
     const qActual = new URLSearchParams(window.location.search).get('q') || '';
     input.value = qActual;
 
-    const limpiar = document.getElementById('globalSearchClear');
     actualizarBotonLimpiarBuscador();
-
-    input.addEventListener('input', function() {
-        actualizarBotonLimpiarBuscador();
-        clearTimeout(buscadorTablaTimer);
-        buscadorTablaTimer = setTimeout(() => buscarEnTablaActual(input.value.trim()), 300);
-    });
-
-    if (limpiar) {
-        limpiar.addEventListener('click', function() {
-            input.value = '';
-            actualizarBotonLimpiarBuscador();
-            clearTimeout(buscadorTablaTimer);
-            buscarEnTablaActual('');
-            input.focus();
-        });
-    }
 }
 
 function actualizarBotonLimpiarBuscador() {
@@ -227,7 +210,31 @@ async function buscarEnTablaActual(termino) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', inicializarBuscadorTabla);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializarBuscadorTabla);
+} else {
+    inicializarBuscadorTabla();
+}
+
+// Delegación: funciona aunque el HTML se haya cargado antes que este script.
+document.addEventListener('input', function(e) {
+    if (!e.target || e.target.id !== 'globalSearch') return;
+    actualizarBotonLimpiarBuscador();
+    clearTimeout(buscadorTablaTimer);
+    buscadorTablaTimer = setTimeout(() => buscarEnTablaActual(e.target.value.trim()), 300);
+});
+
+document.addEventListener('click', function(e) {
+    const boton = e.target.closest ? e.target.closest('#globalSearchClear') : null;
+    if (!boton) return;
+    const input = document.getElementById('globalSearch');
+    if (!input) return;
+    input.value = '';
+    actualizarBotonLimpiarBuscador();
+    clearTimeout(buscadorTablaTimer);
+    buscarEnTablaActual('');
+    input.focus();
+});
 
 
 // =========================================================
